@@ -1,0 +1,192 @@
+/* ──────────────────────────────────────────────────────────
+   IRONMAN — Editorial Theme tokens (Light / Dark)
+   GQ × Hodinkee × Leather workshop
+   Toggle by class `.dark` on <html> (handled by
+   @nuxtjs/color-mode with classSuffix: '').
+   ────────────────────────────────────────────────────────── */
+
+:root,
+.light {
+  /* Surfaces — warm paper, brushed brass */
+  --paper:   #EDE6D8;
+  --cream:   #E2D9C5;
+  --linen:   #D6CBB3;
+  --warm:    #C8BC9F;
+  --surface: #F5F0E2;
+
+  /* Ink */
+  --text:  #161108;
+  --ink:   #0E0A04;
+  --mid:   #4A4036;
+  --smoke: #8C8071;
+
+  /* Accents — brass + oxblood */
+  --brass:       #A0763A;
+  --brass-light: #C8965A;
+  --brass-deep:  #6E5024;
+  --oxblood:     #6B2418;
+  --olive:       #3F4630;
+
+  /* Aliases */
+  --bg:        var(--paper);
+  --card:      var(--cream);
+  --card-alt:  var(--linen);
+  --accent:    var(--brass);
+  --accent-2:  var(--brass-light);
+  --on-accent: #FBF6EA;
+  --rule:      rgba(74, 64, 54, 0.20);
+  --rule-strong: rgba(160, 118, 58, 0.55);
+  --leather:   rgba(110, 80, 36, 0.06);
+
+  /* Backwards compat aliases */
+  --copper:  var(--brass);
+  --copper2: var(--brass-light);
+  --rust:    var(--oxblood);
+
+  /* Typography */
+  --font-display:   'Playfair Display', serif;
+  --font-body:      'Barlow', sans-serif;
+  --font-condensed: 'Barlow Condensed', sans-serif;
+
+  /* Effects */
+  --noise-opacity: 0.04;
+}
+
+.dark {
+  --paper:   #07070A;
+  --cream:   #111014;
+  --linen:   #18171B;
+  --warm:    #1F1E22;
+  --surface: #0E0D11;
+
+  --text:  #F1ECE0;
+  --ink:   #FFFAEC;
+  --mid:   #B0A99A;
+  --smoke: #6F6A60;
+
+  --brass:       #C9A24B;
+  --brass-light: #E8C97A;
+  --brass-deep:  #8C7032;
+  --oxblood:     #7C2A1F;
+  --olive:       #4A5240;
+
+  --bg:        var(--paper);
+  --card:      var(--cream);
+  --card-alt:  var(--linen);
+  --accent:    var(--brass);
+  --accent-2:  var(--brass-light);
+  --on-accent: #07070A;
+  --rule:      rgba(241, 236, 224, 0.10);
+  --rule-strong: rgba(201, 162, 75, 0.55);
+  --leather:   rgba(201, 162, 75, 0.05);
+
+  --copper:  var(--brass);
+  --copper2: var(--brass-light);
+  --rust:    var(--oxblood);
+
+  --font-display:   'Playfair Display', serif;
+  --font-body:      'Barlow', sans-serif;
+  --font-condensed: 'Barlow Condensed', sans-serif;
+
+  --noise-opacity: 0.06;
+}
+
+/* ── Spacing rhythm ────────────────────────────────────── */
+:root {
+  --sp-xl: 120px;
+  --sp-lg: 80px;
+  --sp-md: 60px;
+  --sp-sm: 32px;
+  --gutter: 56px;
+}
+@media (max-width: 900px) {
+  :root { --sp-xl: 80px; --sp-lg: 60px; --sp-md: 48px; --gutter: 24px; }
+}
+
+/* ── Body baseline ─────────────────────────────────────── */
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-weight: 300;
+  line-height: 1.7;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Selection */
+::selection {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--card); }
+::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border: 2px solid var(--card);
+  border-radius: 8px;
+}
+
+/* ── Page transition (View Transitions API) ────────────── */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* ── Editorial helpers ─────────────────────────────────── */
+.vrail {
+  font-family: var(--font-condensed);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--accent);
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+.eyebrow {
+  font-family: var(--font-condensed);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.hairline { height: 1px; background: var(--rule); width: 100%; }
+
+/* ── Keyframes ─────────────────────────────────────────── */
+@keyframes ironman-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes ironman-card-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+@keyframes ironman-fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes ironman-rotate-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes ironman-scroll-line {
+  0%, 100% { opacity: 0.3; transform: scaleY(0.6); }
+  50%      { opacity: 1;   transform: scaleY(1); }
+}
+@keyframes ironman-bounce-down {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50%      { transform: translateY(8px); opacity: 1; }
+}
+
+.anim-fade-up { animation: ironman-fade-up 0.7s ease both; }
+.anim-float   { animation: ironman-card-float 6s ease-in-out infinite; }
+.anim-rotate  { animation: ironman-rotate-slow 20s linear infinite; }
