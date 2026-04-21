@@ -1,5 +1,5 @@
 {
-  "name": "practice-math-fe",
+  "name": "an-ercom",
   "private": true,
   "type": "module",
   "scripts": {
@@ -7,16 +7,18 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
-    "openapi:practice-math": "tsx ./s-openapi.ts https://be-practice-math.vercel.app/api-docs-json ./src/schemas/practiceMathApi.json"
+    "postinstall": "nuxt prepare"
   },
   "dependencies": {
     "@nuxtjs/i18n": "^10.2.1",
+    "@pinia/nuxt": "^0.11.3",
     "@tanstack/vue-query": "^5.80.7",
     "axios": "^1.6.8",
     "boxicons": "^2.1.4",
     "dayjs": "^1.11.19",
     "nuxt": "^3.11.1",
+    "pinia": "^3.0.4",
+    "pinia-plugin-persistedstate": "^4.7.1",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
   },
@@ -30,7 +32,6 @@
     "@unocss/reset": "^66.5.10",
     "@vueuse/nuxt": "^10.9.0",
     "citty": "^0.1.6",
-    "nuxt-api-party": "^3.4.2",
     "ofetch": "^1.5.1",
     "tsx": "^4.21.0",
     "unocss": "^66.5.9"

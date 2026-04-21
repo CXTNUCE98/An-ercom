@@ -7,11 +7,14 @@ import { CATEGORIES } from '~/constants/landing';
     <SectionHeader tag="Danh mục" title="Khám Phá" accent="Theo Loại" />
 
     <div class="cat-grid">
-      <ItemsCategoryCard
-        v-for="c in CATEGORIES"
+      <NuxtLink
+        v-for="(c, i) in CATEGORIES"
         :key="c.name"
-        :category="c"
-      />
+        :to="`/categories/${c.slug}`"
+        class="cat-link"
+      >
+        <ItemsCategoryCard :category="c" :index="i" />
+      </NuxtLink>
     </div>
   </section>
 </template>
@@ -21,8 +24,14 @@ import { CATEGORIES } from '~/constants/landing';
 
 .cat-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
+}
+
+.cat-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
 }
 
 @media (max-width: 1100px) {

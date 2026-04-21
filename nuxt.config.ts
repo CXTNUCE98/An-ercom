@@ -1,13 +1,16 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import { createResolver } from "@nuxt/kit";
-const { resolve } = createResolver(import.meta.url);
-
 export default defineNuxtConfig({
   ssr: true,
   srcDir: "src/",
 
   imports: {
-    dirs: ["constants", "composables"],
+    dirs: [
+      "constants",
+      "composables",
+      "features/**/stores",
+      "features/**/composables",
+      "shared/utils",
+    ],
   },
 
   app: {
@@ -18,7 +21,7 @@ export default defineNuxtConfig({
         {
           name: "description",
           content:
-            "IRONMAN — Phụ kiện cao cấp dành cho nam giới: đồng hồ, Zippo, kính mắt, thắt lưng, ví da. Chính hãng, bảo hành, uy tín.",
+            "IRONMAN — Phụ kiện cao cấp dành cho nam giới: đồng hồ, Zippo, kính mắt, thắt lưng, ví da, mũ. Chính hãng, bảo hành, uy tín.",
         },
       ],
       link: [
@@ -30,7 +33,7 @@ export default defineNuxtConfig({
         },
         {
           rel: "stylesheet",
-          href: "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@300;400;500;600;700&family=Bebas+Neue&family=Oswald:wght@300;400;500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap",
+          href: "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@300;400;500;600;700&family=Bebas+Neue&display=swap",
         },
       ],
     },
@@ -43,9 +46,9 @@ export default defineNuxtConfig({
     "@element-plus/nuxt",
     "@unocss/nuxt",
     "@nuxtjs/i18n",
-    "nuxt-api-party",
     "@nuxt/image",
     "@nuxtjs/color-mode",
+    "@pinia/nuxt",
   ],
   colorMode: {
     classSuffix: "",
@@ -57,13 +60,9 @@ export default defineNuxtConfig({
     langDir: "locales",
     locales: [{ code: "vi", name: "Tiếng Việt", file: "vi.json" }],
   },
-  apiParty: {
-    endpoints: {
-      practiceMathApi: {
-        url: process.env.NUXT_PUBLIC_API_BASE || "http://localhost:3001",
-        schema: resolve("./src/schemas/practiceMathApi.json"),
-      },
-    },
+
+  image: {
+    domains: ["images.unsplash.com", "picsum.photos"],
   },
 
   css: [

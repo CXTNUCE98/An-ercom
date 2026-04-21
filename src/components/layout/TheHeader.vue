@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { NAV_ITEMS } from '~/constants/landing';
 import { useScrolled } from '~/composables/useScrolled';
+import { useCartStore } from '~/features/cart/stores/useCartStore';
 
 const { isScrolled } = useScrolled(20);
+const cart = useCartStore();
+const mobileMenuOpen = ref(false);
 </script>
 
 <template>
@@ -18,14 +21,31 @@ const { isScrolled } = useScrolled(20);
     </ul>
 
     <div class="nav-actions">
-      <button class="icon-btn" aria-label="Tìm kiếm">
+      <NuxtLink to="/products" class="icon-btn" aria-label="Tìm kiếm">
         <i class="bx bx-search" />
-      </button>
-      <button class="icon-btn" aria-label="Giỏ hàng">
+      </NuxtLink>
+      <NuxtLink to="/cart" class="icon-btn cart-btn" aria-label="Giỏ hàng">
         <i class="bx bx-shopping-bag" />
-      </button>
+        <span v-if="cart.count > 0" class="cart-badge">{{ cart.count }}</span>
+      </NuxtLink>
       <CommonThemeToggle />
+      <button class="icon-btn mobile-toggle" aria-label="Menu" @click="mobileMenuOpen = !mobileMenuOpen">
+        <i class="bx" :class="mobileMenuOpen ? 'bx-x' : 'bx-menu'" />
+      </button>
     </div>
+
+    <Transition name="slide">
+      <div v-if="mobileMenuOpen" class="mobile-menu" @click="mobileMenuOpen = false">
+        <NuxtLink v-for="item in NAV_ITEMS" :key="item.path" :to="item.path" class="mobile-link">
+          {{ item.name }}
+        </NuxtLink>
+        <NuxtLink to="/products" class="mobile-link">Tất Cả Sản Phẩm</NuxtLink>
+        <NuxtLink to="/cart" class="mobile-link">
+          Giỏ Hàng
+          <span v-if="cart.count > 0" class="mobile-badge">{{ cart.count }}</span>
+        </NuxtLink>
+      </div>
+    </Transition>
   </header>
 </template>
 
@@ -62,7 +82,7 @@ const { isScrolled } = useScrolled(20);
 .nav-links {
   display: flex;
   justify-content: center;
-  gap: 32px;
+  gap: 28px;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -104,11 +124,74 @@ const { isScrolled } = useScrolled(20);
   cursor: pointer;
   padding: 6px;
   transition: color 0.25s;
+  text-decoration: none;
+  position: relative;
 }
 .icon-btn:hover { color: var(--accent); }
+
+.cart-btn { position: relative; }
+.cart-badge {
+  position: absolute;
+  top: -2px; right: -6px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-family: var(--font-condensed);
+  font-size: 0.6rem;
+  font-weight: 700;
+  min-width: 16px; height: 16px;
+  border-radius: 999px;
+  display: flex; align-items: center; justify-content: center;
+  line-height: 1;
+}
+
+.mobile-toggle { display: none; }
+
+.mobile-menu {
+  position: absolute;
+  top: 100%; left: 0; right: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--rule);
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.mobile-link {
+  font-family: var(--font-condensed);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--mid);
+  text-decoration: none;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: color 0.25s;
+}
+.mobile-link:hover { color: var(--accent); }
+.mobile-badge {
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+}
+
+.slide-enter-active, .slide-leave-active {
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+.slide-enter-from, .slide-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
 
 @media (max-width: 900px) {
   .site-nav { grid-template-columns: auto auto; padding: 14px 24px; gap: 16px; }
   .nav-links { display: none; }
+  .mobile-toggle { display: block; }
 }
 </style>

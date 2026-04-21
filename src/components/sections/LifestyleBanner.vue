@@ -7,8 +7,8 @@ import { LIFESTYLE_FEATURES } from '~/constants/landing';
     <div class="ls-content">
       <div class="ls-tag">Quà tặng ý nghĩa</div>
       <h2 class="ls-title">
-        Tặng Quà<br>
-        Cho <em>Bố</em>
+        Món quà<br>
+        <em>Sang trọng</em>
       </h2>
       <p class="ls-desc">
         Nhân dịp Ngày Của Cha, giảm 15% toàn bộ đồng hồ và Zippo. Tặng kèm hộp quà cao cấp và thiệp viết tay miễn phí.
@@ -17,14 +17,8 @@ import { LIFESTYLE_FEATURES } from '~/constants/landing';
     </div>
 
     <div class="ls-features">
-      <ItemsFeatureItem
-        v-for="f in LIFESTYLE_FEATURES"
-        :key="f.title"
-        :icon="f.icon"
-        :title="f.title"
-        :desc="f.desc"
-        variant="lifestyle"
-      />
+      <ItemsFeatureItem v-for="f in LIFESTYLE_FEATURES" :key="f.title" :icon="f.icon" :title="f.title" :desc="f.desc"
+        variant="lifestyle" />
     </div>
   </section>
 </template>
@@ -41,20 +35,27 @@ import { LIFESTYLE_FEATURES } from '~/constants/landing';
   position: relative;
   overflow: hidden;
 }
+
 .lifestyle::before,
 .lifestyle::after {
   content: '';
   position: absolute;
   border-radius: 50%;
 }
+
 .lifestyle::before {
-  right: -80px; top: -80px;
-  width: 320px; height: 320px;
+  right: -80px;
+  top: -80px;
+  width: 320px;
+  height: 320px;
   border: 1px solid color-mix(in srgb, var(--accent-2) 20%, transparent);
 }
+
 .lifestyle::after {
-  right: -20px; top: -20px;
-  width: 200px; height: 200px;
+  right: -20px;
+  top: -20px;
+  width: 200px;
+  height: 200px;
   border: 1px solid color-mix(in srgb, var(--accent-2) 12%, transparent);
 }
 
@@ -67,6 +68,7 @@ import { LIFESTYLE_FEATURES } from '~/constants/landing';
   color: var(--accent-2);
   margin-bottom: 16px;
 }
+
 .ls-title {
   font-family: var(--font-display);
   font-size: clamp(2.4rem, 4.5vw, 4rem);
@@ -75,7 +77,11 @@ import { LIFESTYLE_FEATURES } from '~/constants/landing';
   line-height: 1;
   margin-bottom: 20px;
 }
-.ls-title em { font-style: italic; color: var(--accent-2); }
+
+.ls-title em {
+  font-style: italic;
+  color: var(--accent-2);
+}
 
 .ls-desc {
   color: rgba(245, 240, 232, 0.65);
@@ -94,6 +100,11 @@ import { LIFESTYLE_FEATURES } from '~/constants/landing';
 }
 
 @media (max-width: 900px) {
-  .lifestyle { margin: 0 24px 60px; padding: 48px 32px; grid-template-columns: 1fr; gap: 40px; }
+  .lifestyle {
+    margin: 0 24px 60px;
+    padding: 48px 32px;
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
 }
 </style>

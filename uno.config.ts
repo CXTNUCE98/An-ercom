@@ -174,6 +174,26 @@ export const unoConfig: UserConfig = {
       "border-2 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 px-6 py-2.5 rounded-xl font-semibold hover:bg-slate-50 dark:hover:bg-slate-900 hover:border-slate-900 dark:hover:border-white hover:text-slate-900 dark:hover:text-white transition-all duration-300 active:scale-[0.97] flex-center gap-2",
     ],
     [
+      "btn-gold",
+      "inline-flex items-center gap-2 px-6 py-3 border-none cursor-pointer font-semibold tracking-widest uppercase text-xs transition-all duration-300",
+    ],
+    [
+      "btn-ghost-gold",
+      "inline-flex items-center gap-2 px-6 py-3 bg-transparent border border-current cursor-pointer font-semibold tracking-widest uppercase text-xs transition-all duration-300",
+    ],
+    [
+      "card-luxury",
+      "border border-[var(--rule)] p-6 transition-all duration-300",
+    ],
+    [
+      "eyebrow-gold",
+      "text-xs font-semibold tracking-[4px] uppercase",
+    ],
+    [
+      "divider-gold",
+      "h-px w-full opacity-40",
+    ],
+    [
       "card",
       "bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] p-6 border border-slate-200/50 dark:border-slate-800/50",
     ],
@@ -269,6 +289,18 @@ export const unoConfig: UserConfig = {
         .animate-fade-in-up-delay { animation: fadeInUp 0.6s ease-out 0.4s both; }
         .animate-bounce-in { animation: bounceIn 0.6s ease-out; }
         .animate-hero-pattern { animation: heroPattern 20s linear infinite; }
+        @keyframes goldShimmer {
+          0% { background-position: -200% center; }
+          100% { background-position: 200% center; }
+        }
+        .gold-shimmer {
+          background: linear-gradient(90deg, var(--brass) 0%, var(--brass-light) 40%, var(--brass) 80%);
+          background-size: 200% auto;
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+          animation: goldShimmer 3s linear infinite;
+        }
       `,
     },
   ],

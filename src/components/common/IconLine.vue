@@ -127,6 +127,14 @@ const px = typeof props.size === 'number' ? `${props.size}px` : props.size;
       <line x1="12" y1="28" x2="20" y2="28" />
       <line x1="12" y1="31" x2="16" y2="31" />
     </template>
+
+    <!-- HAT (fedora) -->
+    <template v-else-if="name === 'hat'">
+      <ellipse cx="24" cy="34" rx="20" ry="4" />
+      <path d="M12 34 C12 28 16 18 20 16 C22 15 26 15 28 16 C32 18 36 28 36 34" />
+      <path d="M16 22 C18 20 30 20 32 22" />
+      <line x1="20" y1="16" x2="18" y2="12" />
+    </template>
   </svg>
 </template>
 

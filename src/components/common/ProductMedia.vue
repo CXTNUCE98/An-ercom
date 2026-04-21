@@ -34,7 +34,7 @@ withDefaults(
 .media-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
   transition: transform 0.7s ease;
 }
@@ -49,6 +49,7 @@ withDefaults(
     radial-gradient(120% 80% at 30% 20%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 60%),
     linear-gradient(145deg, var(--linen), var(--card-alt));
 }
+
 .media-placeholder :deep(.icon-line) {
   color: color-mix(in srgb, var(--accent) 70%, var(--mid));
   opacity: 0.85;

@@ -1,4 +1,4 @@
-// Domain types for the IRONMAN landing page
+// Domain types for the IRONMAN storefront
 
 export type IconName =
   | 'watch'
@@ -6,6 +6,7 @@ export type IconName =
   | 'glasses'
   | 'belt'
   | 'wallet'
+  | 'hat'
   | 'shield'
   | 'truck'
   | 'return'
@@ -15,6 +16,15 @@ export type IconName =
   | 'box'
   | 'card';
 
+export type CategorySlug =
+  | 'watches'
+  | 'zippo'
+  | 'glasses'
+  | 'belts'
+  | 'wallets'
+  | 'hats';
+
+// Landing (legacy, keeps backward compatibility)
 export interface Product {
   id: string;
   category: string;
@@ -33,6 +43,7 @@ export interface Category {
   count: number;
   featured?: boolean;
   image?: string;
+  slug?: CategorySlug;
 }
 
 export interface EditorialFeature {
@@ -70,4 +81,38 @@ export interface Stat {
   value: string;
   suffix: string;
   label: string;
+}
+
+// Catalog domain (new)
+export interface CatalogCategory {
+  id: string;
+  slug: CategorySlug;
+  name: string;
+  tagline: string;
+  description: string;
+  icon: IconName;
+  image?: string;
+  featured?: boolean;
+}
+
+export interface CatalogProduct {
+  id: string;
+  slug: string;
+  name: string;
+  brand: string;
+  categorySlug: CategorySlug;
+  categoryName: string;
+  price: number;           // VND
+  salePrice?: number;      // VND
+  icon: IconName;          // fallback icon
+  images: string[];        // absolute URLs (unsplash) or empty → icon fallback
+  description: string;
+  specs: Array<{ label: string; value: string }>;
+  tags: string[];
+  rating: number;          // 0–5
+  reviewCount: number;
+  stock: number;
+  isNew?: boolean;
+  isBestSeller?: boolean;
+  isLuxury?: boolean;
 }

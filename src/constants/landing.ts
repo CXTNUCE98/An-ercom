@@ -9,11 +9,12 @@ import type {
 } from '~/types/landing';
 
 export const NAV_ITEMS: NavItem[] = [
-  { name: 'Đồng Hồ', path: '/dong-ho' },
-  { name: 'Zippo', path: '/zippo' },
-  { name: 'Kính Mắt', path: '/kinh-mat' },
-  { name: 'Thắt Lưng', path: '/that-lung' },
-  { name: 'Ví Da', path: '/vi-da' },
+  { name: 'Watches', path: '/categories/watches' },
+  { name: 'Zippo', path: '/categories/zippo' },
+  { name: 'Glasses', path: '/categories/glasses' },
+  { name: 'Belts', path: '/categories/belts' },
+  { name: 'Wallets', path: '/categories/wallets' },
+  { name: 'Hats', path: '/categories/hats' },
 ];
 
 export const HERO_STATS: Stat[] = [
@@ -70,11 +71,12 @@ export const PRODUCTS: Product[] = [
 ];
 
 export const CATEGORIES: Category[] = [
-  { name: 'Đồng Hồ', icon: 'watch', count: 142, featured: true, image: '' },
-  { name: 'Zippo', icon: 'zippo', count: 89, image: '' },
-  { name: 'Kính Mắt', icon: 'glasses', count: 76, image: '' },
-  { name: 'Thắt Lưng', icon: 'belt', count: 58, image: '' },
-  { name: 'Ví Da', icon: 'wallet', count: 94, image: '' },
+  { name: 'Watches', icon: 'watch', count: 142, featured: true, image: '', slug: 'watches' },
+  { name: 'Zippo', icon: 'zippo', count: 89, image: '', slug: 'zippo' },
+  { name: 'Glasses', icon: 'glasses', count: 76, image: '', slug: 'glasses' },
+  { name: 'Belts', icon: 'belt', count: 58, image: '', slug: 'belts' },
+  { name: 'Wallets', icon: 'wallet', count: 94, image: '', slug: 'wallets' },
+  { name: 'Hats', icon: 'hat', count: 48, image: '', slug: 'hats' },
 ];
 
 export const EDITORIAL_FEATURES: EditorialFeature[] = [
@@ -134,6 +136,7 @@ export const MARQUEE_ITEMS: string[] = [
   'Kính Phân Cực',
   'Thắt Lưng Da Thật',
   'Ví Bò Italy',
+  'Mũ Fedora & Panama',
   'Khắc Tên Tặng Quà',
   'Bảo Hành Dài Hạn',
 ];
@@ -156,5 +159,5 @@ export const FOOTER_CONTACT: NavItem[] = [
 ];
 
 export const NEWSLETTER_TAGS: string[] = [
-  'Đồng Hồ', 'Zippo', 'Kính Mắt', 'Da Thuộc',
+  'Watches', 'Zippo', 'Glasses', 'Leather', 'Hats',
 ];

@@ -5,7 +5,7 @@ useHead({
     {
       name: 'description',
       content:
-        'Đồng hồ, Zippo, kính mắt, thắt lưng, ví — bộ sưu tập chọn lọc cho đàn ông hiện đại.',
+        'Đồng hồ, Zippo, kính mắt, thắt lưng, ví, mũ — bộ sưu tập chọn lọc cho đàn ông hiện đại.',
     },
   ],
 });
@@ -16,6 +16,7 @@ useHead({
   <SectionsEditorialStrip />
   <SectionsProductsShowcase />
   <SectionsCategoriesGrid />
+  <SectionsCraftStorySection />
   <SectionsLifestyleBanner />
   <SectionsBrandsMarquee />
   <SectionsTestimonialsSection />
