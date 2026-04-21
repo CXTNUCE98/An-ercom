@@ -115,4 +115,17 @@ export interface CatalogProduct {
   isNew?: boolean;
   isBestSeller?: boolean;
   isLuxury?: boolean;
+  /** Optional review video (YouTube embed, MP4 url, etc.) */
+  videoUrl?: string;
+  /** Optional poster shown over the video before play */
+  videoPoster?: string;
+  /** Optional rating breakdown for vertical detail page */
+  ratingBreakdown?: {
+    quality?: number;     // 0..5 — chất liệu
+    design?: number;      // 0..5 — thiết kế
+    durability?: number;  // 0..5 — độ bền
+    value?: number;       // 0..5 — giá trị
+  };
+  /** Optional highlight bullet points */
+  highlights?: string[];
 }

@@ -41,7 +41,7 @@ const delivery = (route.query.delivery as string) || '2-3 ngày làm việc';
 
       <div class="success-actions">
         <NuxtLink to="/" class="btn-home">Về Trang Chủ</NuxtLink>
-        <NuxtLink to="/products" class="btn-shop">Tiếp Tục Mua Sắm</NuxtLink>
+        <NuxtLink to="/#products" class="btn-shop">Tiếp Tục Mua Sắm</NuxtLink>
       </div>
     </div>
   </main>

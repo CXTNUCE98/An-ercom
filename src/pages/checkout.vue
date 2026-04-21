@@ -61,7 +61,7 @@ const paymentMethods = [
 
     <div v-if="cart.items.length === 0 && !submitting" class="empty">
       <p>Giỏ hàng trống. Vui lòng thêm sản phẩm trước khi thanh toán.</p>
-      <NuxtLink to="/products" class="btn-back">Quay Lại Mua Sắm</NuxtLink>
+      <NuxtLink to="/#products" class="btn-back">Quay Lại Mua Sắm</NuxtLink>
     </div>
 
     <div v-else class="checkout-layout">

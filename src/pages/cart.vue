@@ -26,7 +26,7 @@ function applyPromo() {
     <div v-if="cart.items.length === 0" class="empty">
       <CommonIconLine name="wallet" :size="80" />
       <p>Giỏ hàng trống</p>
-      <NuxtLink to="/products" class="btn-shop">Mua Sắm Ngay</NuxtLink>
+      <NuxtLink to="/#products" class="btn-shop">Mua Sắm Ngay</NuxtLink>
     </div>
 
     <div v-else class="cart-layout">
@@ -102,7 +102,7 @@ function applyPromo() {
           Tiến Hành Thanh Toán
         </NuxtLink>
 
-        <NuxtLink to="/products" class="btn-continue">
+        <NuxtLink to="/#products" class="btn-continue">
           ← Tiếp Tục Mua Sắm
         </NuxtLink>
       </div>

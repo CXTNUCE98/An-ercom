@@ -12,13 +12,22 @@ useHead({
 </script>
 
 <template>
-  <SectionsHeroSection />
+  <div id="top">
+    <SectionsHeroSection />
+  </div>
   <SectionsEditorialStrip />
+  <div id="combos">
+    <SectionsCombosShowcase />
+  </div>
+  <!-- Toàn bộ sản phẩm chia theo loại — section đã có id="products" -->
   <SectionsProductsShowcase />
-  <SectionsCategoriesGrid />
-  <SectionsCraftStorySection />
+  <div id="story">
+    <SectionsCraftStorySection />
+  </div>
   <SectionsLifestyleBanner />
   <SectionsBrandsMarquee />
   <SectionsTestimonialsSection />
-  <SectionsNewsletterSection />
+  <div id="contact">
+    <SectionsNewsletterSection />
+  </div>
 </template>

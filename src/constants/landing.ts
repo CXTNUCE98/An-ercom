@@ -9,12 +9,12 @@ import type {
 } from '~/types/landing';
 
 export const NAV_ITEMS: NavItem[] = [
-  { name: 'Watches', path: '/categories/watches' },
-  { name: 'Zippo', path: '/categories/zippo' },
-  { name: 'Glasses', path: '/categories/glasses' },
-  { name: 'Belts', path: '/categories/belts' },
-  { name: 'Wallets', path: '/categories/wallets' },
-  { name: 'Hats', path: '/categories/hats' },
+  { name: 'Watches', path: '/#cat-watches' },
+  { name: 'Zippo',   path: '/#cat-zippo' },
+  { name: 'Glasses', path: '/#cat-glasses' },
+  { name: 'Belts',   path: '/#cat-belts' },
+  { name: 'Wallets', path: '/#cat-wallets' },
+  { name: 'Hats',    path: '/#cat-hats' },
 ];
 
 export const HERO_STATS: Stat[] = [

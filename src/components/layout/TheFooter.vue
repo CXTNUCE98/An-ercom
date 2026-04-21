@@ -62,7 +62,7 @@ const year = new Date().getFullYear();
       <div class="f-copy">
         © {{ year }} IRONMAN. Tất cả quyền được bảo lưu. | MST: 0123456789
       </div>
-      <NuxtLink to="/products" class="f-all-products">Tất Cả Sản Phẩm →</NuxtLink>
+      <NuxtLink to="/#products" class="f-all-products">Tất Cả Sản Phẩm →</NuxtLink>
     </div>
   </footer>
 </template>
