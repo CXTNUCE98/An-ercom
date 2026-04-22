@@ -50,13 +50,6 @@ watch(drawerOpen, (v) => {
         <span v-if="cart.count > 0" class="cart-badge">{{ cart.count }}</span>
       </NuxtLink>
       <CommonThemeToggle />
-      <button
-        class="icon-btn menu-btn"
-        aria-label="Menu"
-        @click="drawerOpen = !drawerOpen"
-      >
-        <i class="bx" :class="drawerOpen ? 'bx-x' : 'bx-menu-alt-right'" />
-      </button>
     </div>
 
     <Transition name="fade">
@@ -124,8 +117,11 @@ watch(drawerOpen, (v) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 14px 24px;
+  gap: 8px;
+  padding: 12px var(--gutter, 24px);
+  max-width: 100vw;
+  overflow: hidden;
+  box-sizing: border-box;
   background: color-mix(in srgb, var(--bg) 85%, transparent);
   backdrop-filter: blur(14px) saturate(1.2);
   -webkit-backdrop-filter: blur(14px) saturate(1.2);
@@ -133,26 +129,30 @@ watch(drawerOpen, (v) => {
   transition: padding 0.3s ease, border-color 0.3s ease, background 0.3s ease;
 }
 .site-nav.is-scrolled {
-  padding: 10px 24px;
+  padding: 8px var(--gutter, 24px);
   border-bottom-color: var(--rule);
   background: color-mix(in srgb, var(--bg) 94%, transparent);
 }
 
 .nav-logo {
   font-family: var(--font-display);
-  font-size: 1.35rem;
+  font-size: 1.15rem;
   font-weight: 800;
-  letter-spacing: 4px;
+  letter-spacing: 2.5px;
   color: var(--accent);
   text-decoration: none;
   line-height: 1;
+  min-width: 0;
+  flex-shrink: 1;
+  white-space: nowrap;
 }
 .nav-logo span { color: var(--text); }
 
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 2px;
+  flex-shrink: 0;
 }
 
 .icon-btn {
@@ -160,7 +160,7 @@ watch(drawerOpen, (v) => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px; height: 40px;
+  width: 36px; height: 36px;
   background: transparent;
   border: 1px solid transparent;
   color: var(--mid);
@@ -358,10 +358,17 @@ watch(drawerOpen, (v) => {
   to { opacity: 1; transform: translateX(0); }
 }
 
+@media (min-width: 480px) {
+  .site-nav { gap: 12px; }
+  .nav-logo { font-size: 1.3rem; letter-spacing: 3.5px; }
+  .nav-actions { gap: 4px; }
+  .icon-btn { width: 40px; height: 40px; }
+}
+
 @media (min-width: 900px) {
-  .site-nav { padding: 16px 56px; }
-  .site-nav.is-scrolled { padding: 12px 56px; }
+  .site-nav { gap: 16px; }
   .nav-logo { font-size: 1.6rem; letter-spacing: 6px; }
+  .nav-actions { gap: 6px; }
   .icon-btn { width: 44px; height: 44px; }
 }
 </style>

@@ -101,11 +101,11 @@ export const COMBOS: Combo[] = [
     ],
     icon: "watch",
     items: [
-      { productId: "tissot-prx-powermatic", note: "Powermatic 80 · Swiss made" },
+      { productId: "rolex-do", note: "Rolex đỏ · Automatic flagship" },
       { productId: "zippo-armor-deep-carve", note: "Armor 1.5x · Khắc Celtic 360°" },
     ],
-    originalPrice: 12_500_000 + 1_350_000,
-    comboPrice: 12_490_000,
+    originalPrice: 280_000 + 1_350_000,
+    comboPrice: 1_490_000,
     stock: 6,
     occasion: "Quà sinh nhật · Tặng sếp · Kỉ niệm cha–con",
     perks: [
@@ -165,11 +165,11 @@ export const COMBOS: Combo[] = [
     icon: "hat",
     items: [
       { productId: "fedora-len-long-cuu", note: "Len lông cừu Úc · vành 7cm" },
-      { productId: "orient-bambino-v2", note: "Bauhaus · F6722 in-house" },
+      { productId: "omega-kham-trai", note: "Omega khảm trai · Automatic" },
       { productId: "that-lung-da-van-ca-sau", note: "Da vân cá sấu · khoá đồng" },
     ],
-    originalPrice: 680_000 + 3_800_000 + 890_000,
-    comboPrice: 4_890_000,
+    originalPrice: 680_000 + 300_000 + 890_000,
+    comboPrice: 1_590_000,
     stock: 12,
     occasion: "Sự kiện · Chụp hình cưới · Tiệc trang trọng",
     perks: [

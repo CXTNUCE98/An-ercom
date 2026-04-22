@@ -169,10 +169,9 @@ function salePercent(p: (typeof CATALOG_PRODUCTS)[number]) {
   margin: 0;
 }
 
-/* Pill nav (sticky under header) */
+/* Pill nav */
 .cat-nav {
-  position: sticky;
-  top: 68px;
+  position: relative;
   z-index: 5;
   display: flex;
   gap: 8px;
@@ -180,8 +179,6 @@ function salePercent(p: (typeof CATALOG_PRODUCTS)[number]) {
   justify-content: center;
   padding: 14px 0;
   margin: 0 0 32px;
-  background: color-mix(in srgb, var(--bg) 85%, transparent);
-  backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--rule);
 }
 .cat-pill {
@@ -375,9 +372,12 @@ function salePercent(p: (typeof CATALOG_PRODUCTS)[number]) {
   .products-grid { grid-template-columns: repeat(2, 1fr); }
   .cat-head { flex-direction: column; align-items: flex-start; }
 }
+@media (max-width: 560px) {
+  .products-grid { grid-template-columns: 1fr; gap: 20px; }
+}
 @media (max-width: 500px) {
   .products-section { padding: var(--sp-md) 20px; }
-  .cat-nav { top: 60px; padding: 10px 0; }
+  .cat-nav { position: static; padding: 10px 0; }
   .cat-pill { padding: 7px 12px; font-size: 0.7rem; letter-spacing: 1.5px; }
   .pill-name { display: none; }
 }
