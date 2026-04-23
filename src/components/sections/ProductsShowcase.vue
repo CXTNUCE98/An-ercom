@@ -21,12 +21,66 @@ const GROUPS: Group[] = [
 
 const activeSlug = ref<CategorySlug>('watches');
 const railOpen = ref(false);
+const hintDismissed = ref(false);
+
+const activeGroup = computed(
+  () => GROUPS.find(g => g.slug === activeSlug.value) ?? GROUPS[0]
+);
 
 function selectGroup(slug: CategorySlug) {
   activeSlug.value = slug;
   // auto-collapse the mobile rail after picking
   railOpen.value = false;
+  hintDismissed.value = true;
 }
+
+function onToggleRail() {
+  railOpen.value = !railOpen.value;
+  hintDismissed.value = true;
+}
+
+onMounted(() => {
+  // Stop pulsing after the user has had a few cycles to notice the handle
+  setTimeout(() => { hintDismissed.value = true; }, 6000);
+
+  // Sync active slug with the section currently in view while scrolling
+  if (typeof window === 'undefined' || !('IntersectionObserver' in window)) return;
+
+  const sections = GROUPS
+    .map(g => document.getElementById(`cat-${g.slug}`))
+    .filter((el): el is HTMLElement => el !== null);
+
+  if (!sections.length) return;
+
+  // Track visibility ratios per section so the most prominent one wins
+  const ratios = new Map<string, number>();
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        ratios.set(entry.target.id, entry.intersectionRatio);
+      }
+      let topId = '';
+      let topRatio = 0;
+      for (const [id, r] of ratios) {
+        if (r > topRatio) { topRatio = r; topId = id; }
+      }
+      if (topRatio > 0 && topId.startsWith('cat-')) {
+        const slug = topId.slice(4) as CategorySlug;
+        if (slug !== activeSlug.value) activeSlug.value = slug;
+      }
+    },
+    {
+      // Focus on the band roughly around viewport center
+      rootMargin: '-40% 0px -40% 0px',
+      threshold: [0, 0.1, 0.25, 0.5, 0.75, 1],
+    }
+  );
+
+  sections.forEach(el => observer.observe(el));
+
+  onBeforeUnmount(() => observer.disconnect());
+});
 
 const productsByGroup = computed(() => {
   const map: Record<string, typeof CATALOG_PRODUCTS> = {};
@@ -86,19 +140,37 @@ const badgeBase =
       <!-- Toggle handle (mobile only) — glued to the LEFT side of the rail; travels with it -->
       <button
         type="button"
-        class="hidden max-[500px]:inline-flex items-center justify-center w-8 h-14 -mr-px
-               border border-rule rounded-l-md border-r-0
-               bg-[color-mix(in_srgb,var(--surface)_94%,transparent)] backdrop-blur-[10px]
-               text-accent shadow-[0_8px_24px_color-mix(in_srgb,#000_22%,transparent)]
-               transition-colors duration-300 hover:text-text hover:border-accent
-               focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        :class="[
+          'hidden max-[500px]:flex flex-col items-center justify-between gap-1.5',
+          'w-10 min-h-[140px] py-2.5 -mr-px',
+          'border border-rule rounded-l-md border-r-0',
+          'bg-[color-mix(in_srgb,var(--surface)_94%,transparent)] backdrop-blur-[10px]',
+          'text-accent shadow-[0_8px_24px_color-mix(in_srgb,#000_22%,transparent)]',
+          'transition-colors duration-300 hover:text-text hover:border-accent',
+          'focus:outline-none focus-visible:ring-2 focus-visible:ring-accent',
+          !railOpen && !hintDismissed ? 'rail-handle-pulse' : ''
+        ]"
         :aria-expanded="railOpen"
         aria-controls="category-rail"
-        :aria-label="railOpen ? 'Đóng danh mục' : 'Mở danh mục'"
-        @click="railOpen = !railOpen"
+        :aria-label="railOpen ? 'Đóng danh mục' : 'Mở danh mục sản phẩm'"
+        @click="onToggleRail"
       >
+        <!-- Active category icon -->
+        <span class="inline-flex items-center justify-center w-6 h-6 text-accent">
+          <CommonIconLine :name="activeGroup.icon" :size="16" />
+        </span>
+
+        <!-- Vertical label -->
+        <span
+          class="font-condensed text-[0.62rem] font-bold tracking-[3px] uppercase text-mid leading-none"
+          style="writing-mode: vertical-rl; transform: rotate(180deg);"
+        >
+          Danh mục
+        </span>
+
+        <!-- Chevron -->
         <i
-          class="bx text-[1.25rem] transition-transform duration-300"
+          class="bx text-[1.1rem] transition-transform duration-300"
           :class="railOpen ? 'bx-chevron-right' : 'bx-chevron-left'"
         />
       </button>
@@ -231,3 +303,21 @@ const badgeBase =
     </div>
   </section>
 </template>
+
+<style scoped>
+@keyframes railHandlePulse {
+  0%, 100% {
+    box-shadow: 0 8px 24px color-mix(in srgb, #000 22%, transparent);
+    border-color: var(--rule);
+  }
+  50% {
+    box-shadow:
+      0 8px 24px color-mix(in srgb, #000 22%, transparent),
+      0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent);
+    border-color: var(--accent);
+  }
+}
+.rail-handle-pulse {
+  animation: railHandlePulse 1.6s ease-in-out 3;
+}
+</style>
