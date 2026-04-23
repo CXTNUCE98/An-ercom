@@ -45,11 +45,8 @@ import { HERO_STATS } from '~/constants/landing';
       <div class="grid-bg" aria-hidden="true" />
 
       <div class="hero-frame">
-        <CommonProductMedia
-          aspect="3/4"
-          placeholder-icon="watch"
-          :icon-size="240"
-        >
+        <CommonProductMedia aspect="3/4" placeholder-icon="watch"
+          src="https://i.pinimg.com/1200x/26/ea/3c/26ea3ced6503ce21d58cf458526b58f4.jpg" :icon-size="240">
           <span class="frame-counter">01 / 04</span>
           <span class="frame-caption">Sea-Master · Steel &amp; Leather</span>
           <span class="frame-credit">Photo · Studio Ironman</span>
@@ -85,7 +82,12 @@ import { HERO_STATS } from '~/constants/landing';
   color: var(--accent);
   z-index: 4;
 }
-@media (max-width: 900px) { .hero-rail { display: none; } }
+
+@media (max-width: 900px) {
+  .hero-rail {
+    display: none;
+  }
+}
 
 /* LEFT */
 .hero-left {
@@ -95,10 +97,13 @@ import { HERO_STATS } from '~/constants/landing';
   padding: 80px 56px 80px 80px;
   position: relative;
 }
+
 .hero-left::after {
   content: '';
   position: absolute;
-  right: 0; top: 12%; bottom: 12%;
+  right: 0;
+  top: 12%;
+  bottom: 12%;
   width: 1px;
   background: linear-gradient(to bottom, transparent, var(--rule) 30%, var(--rule) 70%, transparent);
 }
@@ -110,7 +115,13 @@ import { HERO_STATS } from '~/constants/landing';
   margin-bottom: 28px;
   animation: ironman-fade-up 0.7s ease 0.15s both;
 }
-.hero-eyebrow .rule { width: 32px; height: 1px; background: var(--accent); }
+
+.hero-eyebrow .rule {
+  width: 32px;
+  height: 1px;
+  background: var(--accent);
+}
+
 .hero-eyebrow .text {
   font-family: var(--font-condensed);
   font-size: 0.7rem;
@@ -130,7 +141,10 @@ import { HERO_STATS } from '~/constants/landing';
   color: var(--text);
   animation: ironman-fade-up 0.7s ease 0.3s both;
 }
-.hero-accent { color: var(--accent); }
+
+.hero-accent {
+  color: var(--accent);
+}
 
 .hero-tag {
   font-family: var(--font-display);
@@ -140,8 +154,14 @@ import { HERO_STATS } from '~/constants/landing';
   margin: 0 0 36px;
   animation: ironman-fade-up 0.7s ease 0.4s both;
 }
-.hero-tag em { font-style: italic; }
-.hero-tag em:last-child { color: var(--accent); }
+
+.hero-tag em {
+  font-style: italic;
+}
+
+.hero-tag em:last-child {
+  color: var(--accent);
+}
 
 .hero-sub {
   font-family: var(--font-condensed);
@@ -171,6 +191,7 @@ import { HERO_STATS } from '~/constants/landing';
   border-top: 1px solid var(--rule);
   animation: ironman-fade-up 0.7s ease 0.75s both;
 }
+
 .stat-num {
   font-family: var(--font-display);
   font-size: 2.2rem;
@@ -178,11 +199,13 @@ import { HERO_STATS } from '~/constants/landing';
   color: var(--text);
   line-height: 1;
 }
+
 .stat-num sup {
   font-size: 0.85rem;
   color: var(--accent);
   margin-left: 2px;
 }
+
 .stat-label {
   font-family: var(--font-condensed);
   font-size: 0.68rem;
@@ -191,6 +214,7 @@ import { HERO_STATS } from '~/constants/landing';
   color: var(--smoke);
   margin-top: 6px;
 }
+
 .stat-dot {
   font-family: var(--font-display);
   font-size: 1.6rem;
@@ -235,7 +259,8 @@ import { HERO_STATS } from '~/constants/landing';
 
 .frame-counter {
   position: absolute;
-  top: 22px; right: 22px;
+  top: 22px;
+  right: 22px;
   font-family: var(--font-condensed);
   font-size: 0.7rem;
   font-weight: 600;
@@ -243,18 +268,22 @@ import { HERO_STATS } from '~/constants/landing';
   color: var(--accent);
   z-index: 3;
 }
+
 .frame-caption {
   position: absolute;
-  bottom: 22px; left: 22px;
+  bottom: 22px;
+  left: 22px;
   font-family: var(--font-display);
   font-style: italic;
   font-size: 0.95rem;
   color: var(--text);
   z-index: 3;
 }
+
 .frame-credit {
   position: absolute;
-  bottom: 22px; right: 22px;
+  bottom: 22px;
+  right: 22px;
   font-family: var(--font-condensed);
   font-size: 0.6rem;
   font-weight: 500;
@@ -273,12 +302,33 @@ import { HERO_STATS } from '~/constants/landing';
 }
 
 @media (max-width: 900px) {
-  .hero { grid-template-columns: 1fr; }
-  .hero-left { padding: 100px 24px 60px; }
-  .hero-left::after { display: none; }
-  .hero-right { padding: 40px 24px 100px; }
-  .hero-frame { box-shadow: none; }
-  .stat-dot { display: none; }
-  .hero-stats { flex-wrap: wrap; gap: 24px; }
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-left {
+    padding: 100px 24px 60px;
+  }
+
+  .hero-left::after {
+    display: none;
+  }
+
+  .hero-right {
+    padding: 40px 24px 100px;
+  }
+
+  .hero-frame {
+    box-shadow: none;
+  }
+
+  .stat-dot {
+    display: none;
+  }
+
+  .hero-stats {
+    flex-wrap: wrap;
+    gap: 24px;
+  }
 }
 </style>
