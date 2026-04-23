@@ -11,38 +11,21 @@ interface Group {
 }
 
 const GROUPS: Group[] = [
-  { slug: 'watches', name: 'Watches',  tagline: 'Cỗ máy thời gian trên cổ tay',        icon: 'watch' },
-  { slug: 'zippo',   name: 'Zippo',    tagline: 'Ngọn lửa Mỹ — bảo hành trọn đời',     icon: 'zippo' },
-  { slug: 'glasses', name: 'Glasses',  tagline: 'Ánh nhìn sắc. Phong cách riêng.',     icon: 'glasses' },
-  { slug: 'belts',   name: 'Belts',    tagline: 'Da bò Italy · khoá đồng nguyên khối', icon: 'belt' },
-  { slug: 'wallets', name: 'Wallets',  tagline: 'Mềm tay. Gọn túi. Bền lâu.',          icon: 'wallet' },
-  { slug: 'hats',    name: 'Hats',     tagline: 'Hoàn thiện bộ trang phục đàn ông',    icon: 'hat' },
+  { slug: 'watches', name: 'Watches', tagline: 'Cỗ máy thời gian trên cổ tay', icon: 'watch' },
+  { slug: 'zippo', name: 'Zippo', tagline: 'Ngọn lửa Mỹ — bảo hành trọn đời', icon: 'zippo' },
+  { slug: 'glasses', name: 'Glasses', tagline: 'Ánh nhìn sắc. Phong cách riêng.', icon: 'glasses' },
+  { slug: 'belts', name: 'Belts', tagline: 'Da bò Italy · khoá đồng nguyên khối', icon: 'belt' },
+  { slug: 'wallets', name: 'Wallets', tagline: 'Mềm tay. Gọn túi. Bền lâu.', icon: 'wallet' },
+  { slug: 'hats', name: 'Hats', tagline: 'Hoàn thiện bộ trang phục đàn ông', icon: 'hat' },
 ];
 
 const activeSlug = ref<CategorySlug>('watches');
-const railOpen = ref(false);
-const hintDismissed = ref(false);
-
-const activeGroup = computed(
-  () => GROUPS.find(g => g.slug === activeSlug.value) ?? GROUPS[0]
-);
 
 function selectGroup(slug: CategorySlug) {
   activeSlug.value = slug;
-  // auto-collapse the mobile rail after picking
-  railOpen.value = false;
-  hintDismissed.value = true;
-}
-
-function onToggleRail() {
-  railOpen.value = !railOpen.value;
-  hintDismissed.value = true;
 }
 
 onMounted(() => {
-  // Stop pulsing after the user has had a few cycles to notice the handle
-  setTimeout(() => { hintDismissed.value = true; }, 6000);
-
   // Sync active slug with the section currently in view while scrolling
   if (typeof window === 'undefined' || !('IntersectionObserver' in window)) return;
 
@@ -103,10 +86,7 @@ const badgeBase =
 </script>
 
 <template>
-  <section
-    id="products"
-    class="py-lg px-gutter max-w-[1360px] mx-auto sm:px-5"
-  >
+  <section id="products" class="py-lg px-gutter max-w-[1360px] mx-auto sm:px-5 max-[500px]:pb-[80px]">
     <!-- Editorial head -->
     <div class="text-center max-w-[720px] mx-auto mb-10">
       <div class="flex items-center justify-center gap-3.5 mb-4">
@@ -125,173 +105,97 @@ const badgeBase =
       </p>
     </div>
 
-    <!-- Category nav — desktop: horizontal pill bar / mobile: drawer-style rail anchored to right edge -->
-    <div
-      :class="[
-        'relative z-[5] mb-8',
-        'max-[500px]:mb-0 max-[500px]:fixed max-[500px]:right-0 max-[500px]:top-1/2 max-[500px]:-translate-y-1/2 max-[500px]:z-40',
-        'max-[500px]:flex max-[500px]:items-center max-[500px]:gap-0',
-        'max-[500px]:transition-transform max-[500px]:duration-300 max-[500px]:ease-out',
-        railOpen
-          ? 'max-[500px]:translate-x-0'
-          : 'max-[500px]:translate-x-[64px]'
-      ]"
-    >
-      <!-- Toggle handle (mobile only) — glued to the LEFT side of the rail; travels with it -->
-      <button
-        type="button"
-        :class="[
-          'hidden max-[500px]:flex flex-col items-center justify-between gap-1.5',
-          'w-10 min-h-[140px] py-2.5 -mr-px',
-          'border border-rule rounded-l-md border-r-0',
-          'bg-[color-mix(in_srgb,var(--surface)_94%,transparent)] backdrop-blur-[10px]',
-          'text-accent shadow-[0_8px_24px_color-mix(in_srgb,#000_22%,transparent)]',
-          'transition-colors duration-300 hover:text-text hover:border-accent',
-          'focus:outline-none focus-visible:ring-2 focus-visible:ring-accent',
-          !railOpen && !hintDismissed ? 'rail-handle-pulse' : ''
-        ]"
-        :aria-expanded="railOpen"
-        aria-controls="category-rail"
-        :aria-label="railOpen ? 'Đóng danh mục' : 'Mở danh mục sản phẩm'"
-        @click="onToggleRail"
-      >
-        <!-- Active category icon -->
-        <span class="inline-flex items-center justify-center w-6 h-6 text-accent">
-          <CommonIconLine :name="activeGroup.icon" :size="16" />
-        </span>
-
-        <!-- Vertical label -->
-        <span
-          class="font-condensed text-[0.62rem] font-bold tracking-[3px] uppercase text-mid leading-none"
-          style="writing-mode: vertical-rl; transform: rotate(180deg);"
-        >
-          Danh mục
-        </span>
-
-        <!-- Chevron -->
-        <i
-          class="bx text-[1.1rem] transition-transform duration-300"
-          :class="railOpen ? 'bx-chevron-right' : 'bx-chevron-left'"
-        />
-      </button>
-
+    <!-- Category nav — desktop: horizontal pill bar / mobile: sticky horizontal bar pinned to top -->
+    <div class="relative z-[5] mb-8 max-[500px]:mb-6">
       <!-- Pill nav -->
-      <nav
-        id="category-rail"
-        :class="[
-          'flex flex-wrap justify-center gap-2 py-3.5 border-b border-rule',
-          'max-[500px]:py-2 max-[500px]:px-1.5 max-[500px]:w-16',
-          'max-[500px]:flex-col max-[500px]:flex-nowrap max-[500px]:gap-1.5',
-          'max-[500px]:border max-[500px]:border-rule max-[500px]:rounded-l-none max-[500px]:rounded-r-none',
-          'max-[500px]:bg-[color-mix(in_srgb,var(--surface)_94%,transparent)]',
-          'max-[500px]:backdrop-blur-[10px]',
-          'max-[500px]:shadow-[0_10px_28px_color-mix(in_srgb,#000_22%,transparent)]'
-        ]"
-        :aria-hidden="!railOpen ? 'true' : undefined"
-        aria-label="Chọn nhóm sản phẩm"
-      >
-          <a
-            v-for="g in GROUPS"
-            :key="g.slug"
-            :href="`#cat-${g.slug}`"
-            :class="[
-              pillBase,
-              activeSlug === g.slug && pillActive,
-              'max-[500px]:relative max-[500px]:w-11 max-[500px]:h-11 max-[500px]:p-0 max-[500px]:gap-0 max-[500px]:justify-center max-[500px]:rounded-sm'
-            ]"
-            :aria-label="g.name"
-            @click="selectGroup(g.slug)"
-          >
-            <CommonIconLine :name="g.icon" :size="18" />
-            <span class="max-[500px]:hidden">{{ g.name }}</span>
-            <span
-              class="font-display font-bold text-[0.72rem] py-0.5 px-1.5 rounded-full
-                     max-[500px]:absolute max-[500px]:-top-1 max-[500px]:-right-1 max-[500px]:text-[0.6rem]
-                     max-[500px]:py-0 max-[500px]:px-1 max-[500px]:min-w-[16px] max-[500px]:text-center max-[500px]:leading-[14px]"
-              :style="{
-                background: activeSlug === g.slug
-                  ? 'color-mix(in srgb, #fff 25%, transparent)'
-                  : 'color-mix(in srgb, var(--accent) 20%, transparent)',
-                color: activeSlug === g.slug ? '#fff' : 'var(--accent)'
-              }"
-            >{{ productsByGroup[g.slug].length }}</span>
-          </a>
-        </nav>
+      <nav id="category-rail" :class="[
+        'flex flex-wrap justify-center gap-2 py-3.5 border-b border-rule',
+        'max-[500px]:fixed max-[500px]:left-0 max-[500px]:right-0 max-[500px]:bottom-0 max-[500px]:top-auto max-[500px]:z-[90]',
+        'max-[500px]:flex-nowrap max-[500px]:overflow-hidden',
+        'max-[500px]:justify-around max-[500px]:gap-1 max-[500px]:py-2 max-[500px]:px-2',
+        'max-[500px]:pb-[max(0.5rem,env(safe-area-inset-bottom))]',
+        'max-[500px]:bg-[color-mix(in_srgb,var(--surface)_94%,transparent)]',
+        'max-[500px]:backdrop-blur-[10px]',
+        'max-[500px]:border-t max-[500px]:border-rule',
+        'max-[500px]:shadow-[0_-6px_20px_color-mix(in_srgb,#000_22%,transparent)]'
+      ]" aria-label="Chọn nhóm sản phẩm">
+        <a v-for="g in GROUPS" :key="g.slug" :href="`#cat-${g.slug}`" :class="[
+          pillBase,
+          activeSlug === g.slug && pillActive,
+          'max-[500px]:flex-shrink-0 max-[500px]:py-1.5 max-[500px]:px-2.5 max-[500px]:gap-1.5 max-[500px]:text-[0.65rem] max-[500px]:tracking-[1.5px] max-[500px]:rounded-sm'
+        ]" :aria-label="g.name" @click="selectGroup(g.slug)">
+          <CommonIconLine :name="g.icon" :size="18" />
+          <span class="max-[500px]:hidden">{{ g.name }}</span>
+          <span
+            class="font-display font-bold text-[0.72rem] py-0.5 px-1.5 rounded-full max-[500px]:hidden"
+            :style="{
+              background: activeSlug === g.slug
+                ? 'color-mix(in srgb, #fff 25%, transparent)'
+                : 'color-mix(in srgb, var(--accent) 20%, transparent)',
+              color: activeSlug === g.slug ? '#fff' : 'var(--accent)'
+            }">{{ productsByGroup[g.slug].length }}</span>
+        </a>
+      </nav>
     </div>
 
     <!-- Per-category rows -->
     <div class="flex flex-col gap-lg">
-      <section
-        v-for="g in GROUPS"
-        :key="g.slug"
-        :id="`cat-${g.slug}`"
-        class="scroll-mt-[130px]"
-      >
+      <section v-for="g in GROUPS" :key="g.slug" :id="`cat-${g.slug}`"
+        class="scroll-mt-[130px] max-[500px]:scroll-mt-[72px]">
         <header class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6 pb-4 border-b border-rule">
           <div class="flex items-center gap-4">
-            <span class="inline-flex w-[54px] h-[54px] items-center justify-center border border-rule-strong text-accent bg-surface">
+            <span
+              class="inline-flex w-[54px] h-[54px] items-center justify-center border border-rule-strong text-accent bg-surface">
               <CommonIconLine :name="g.icon" :size="28" />
             </span>
             <div>
-              <h3 class="font-display font-bold text-text m-0 leading-[1.1] tracking-[-0.5px] text-[clamp(1.5rem,3vw,2.2rem)]">{{ g.name }}</h3>
+              <h3
+                class="font-display font-bold text-text m-0 leading-[1.1] tracking-[-0.5px] text-[clamp(1.5rem,3vw,2.2rem)]">
+                {{ g.name }}</h3>
               <p class="m-0 mt-1 text-smoke text-[0.9rem]">{{ g.tagline }}</p>
             </div>
           </div>
-          <span class="font-condensed text-[0.72rem] font-semibold tracking-[2px] uppercase text-accent whitespace-nowrap">
+          <span
+            class="font-condensed text-[0.72rem] font-semibold tracking-[2px] uppercase text-accent whitespace-nowrap">
             {{ productsByGroup[g.slug].length }} sản phẩm
           </span>
         </header>
 
         <div class="grid grid-cols-1 min-[560px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 lg:gap-6">
-          <NuxtLink
-            v-for="p in productsByGroup[g.slug]"
-            :key="p.id"
-            :to="`/products/${p.slug}`"
-            class="group no-underline text-inherit flex flex-col cursor-pointer"
-          >
-            <div class="relative overflow-hidden bg-card [&_img]:transition-transform [&_img]:duration-500 group-hover:[&_img]:scale-[1.06]">
-              <CommonProductMedia
-                :src="p.images[0] || undefined"
-                :alt="p.name"
-                aspect="3/4"
-                :placeholder-icon="p.icon"
-                :icon-size="80"
-              />
-              <span
-                v-if="salePercent(p)"
-                class="absolute top-3 left-3 z-[3] bg-oxblood text-white font-condensed text-[0.7rem] font-bold tracking-[1px] py-1 px-2.5"
-              >-{{ salePercent(p) }}%</span>
-              <span
-                v-if="p.isNew"
-                :class="[badgeBase, 'bg-olive text-white']"
-              >Mới</span>
-              <span
-                v-else-if="p.isBestSeller"
-                :class="[badgeBase, 'bg-accent text-on-accent']"
-              >Bán Chạy</span>
-              <span
-                v-else-if="p.isLuxury"
-                :class="[badgeBase, 'text-ink bg-gradient-to-br from-accent to-[var(--accent-2)]']"
-              >Luxury</span>
+          <NuxtLink v-for="p in productsByGroup[g.slug]" :key="p.id" :to="`/products/${p.slug}`"
+            class="group no-underline text-inherit flex flex-col cursor-pointer">
+            <div
+              class="relative overflow-hidden bg-card [&_img]:transition-transform [&_img]:duration-500 group-hover:[&_img]:scale-[1.06]">
+              <CommonProductMedia :src="p.images[0] || undefined" :alt="p.name" aspect="3/4" :placeholder-icon="p.icon"
+                :icon-size="80" />
+              <span v-if="salePercent(p)"
+                class="absolute top-3 left-3 z-[3] bg-oxblood text-white font-condensed text-[0.7rem] font-bold tracking-[1px] py-1 px-2.5">-{{
+                salePercent(p) }}%</span>
+              <span v-if="p.isNew" :class="[badgeBase, 'bg-olive text-white']">Mới</span>
+              <span v-else-if="p.isBestSeller" :class="[badgeBase, 'bg-accent text-on-accent']">Bán Chạy</span>
+              <span v-else-if="p.isLuxury"
+                :class="[badgeBase, 'text-ink bg-gradient-to-br from-accent to-[var(--accent-2)]']">Luxury</span>
               <div
                 class="absolute inset-0 flex items-end justify-center pb-6 opacity-0 transition-opacity duration-400 z-[2] group-hover:opacity-100"
-                :style="{ background: 'linear-gradient(180deg, transparent 50%, rgba(7, 7, 10, 0.6))' }"
-              >
-                <span class="font-condensed text-[0.72rem] font-semibold tracking-[3px] uppercase text-[#f8f5ef] border border-[rgba(241,236,224,0.7)] py-2.5 px-5 translate-y-2 transition-transform duration-400 group-hover:translate-y-0">
+                :style="{ background: 'linear-gradient(180deg, transparent 50%, rgba(7, 7, 10, 0.6))' }">
+                <span
+                  class="font-condensed text-[0.72rem] font-semibold tracking-[3px] uppercase text-[#f8f5ef] border border-[rgba(241,236,224,0.7)] py-2.5 px-5 translate-y-2 transition-transform duration-400 group-hover:translate-y-0">
                   Xem Chi Tiết →
                 </span>
               </div>
             </div>
             <div class="pt-3.5 px-0.5 pb-1">
               <div class="flex justify-between items-center mb-1.5">
-                <span class="font-condensed text-[0.65rem] font-semibold tracking-[3px] uppercase text-accent">{{ p.brand }}</span>
+                <span class="font-condensed text-[0.65rem] font-semibold tracking-[3px] uppercase text-accent">{{
+                  p.brand }}</span>
                 <span class="inline-flex items-center gap-[3px] font-condensed text-[0.78rem] font-semibold text-mid">
                   <i class="bx bxs-star text-accent text-[0.8rem]" /> {{ p.rating }}
                 </span>
               </div>
               <h4 class="font-display text-base font-semibold text-text m-0 mb-2 leading-[1.3]">{{ p.name }}</h4>
               <div class="flex items-baseline gap-2">
-                <span v-if="p.salePrice" class="font-condensed text-[0.95rem] font-bold text-accent">{{ formatPrice(p.salePrice) }}</span>
+                <span v-if="p.salePrice" class="font-condensed text-[0.95rem] font-bold text-accent">{{
+                  formatPrice(p.salePrice) }}</span>
                 <span :class="p.salePrice
                   ? 'font-condensed text-[0.8rem] text-smoke line-through'
                   : 'font-condensed text-[0.95rem] font-semibold text-text'">{{ formatPrice(p.price) }}</span>
@@ -303,21 +207,3 @@ const badgeBase =
     </div>
   </section>
 </template>
-
-<style scoped>
-@keyframes railHandlePulse {
-  0%, 100% {
-    box-shadow: 0 8px 24px color-mix(in srgb, #000 22%, transparent);
-    border-color: var(--rule);
-  }
-  50% {
-    box-shadow:
-      0 8px 24px color-mix(in srgb, #000 22%, transparent),
-      0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent);
-    border-color: var(--accent);
-  }
-}
-.rail-handle-pulse {
-  animation: railHandlePulse 1.6s ease-in-out 3;
-}
-</style>
