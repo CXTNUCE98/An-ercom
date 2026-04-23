@@ -15,14 +15,25 @@ const px = typeof props.size === 'number' ? `${props.size}px` : props.size;
 
 <template>
   <!-- WATCH: raster image — render ngoài svg để tránh namespace mismatch khi hydrate -->
-  <img v-if="name === 'watch'" class="icon-line icon-line--img"
-    src="https://i.pinimg.com/736x/9b/75/99/9b759981ef4a9a03a7b3b32c21eb09a6.jpg" alt="watch"
-    :style="{ width: px, height: px }" />
-
-  <svg v-else class="icon-line" :width="px" :height="px" viewBox="0 0 48 48" fill="none" :stroke-width="stroke"
+  <svg class="icon-line" :width="px" :height="px" viewBox="0 0 48 48" fill="none" :stroke-width="stroke"
     stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <!-- WATCH -->
+    <template v-if="name === 'watch'">
+      <circle cx="24" cy="24" r="10" />
+      <circle cx="24" cy="24" r="1.2" fill="currentColor" />
+      <line x1="24" y1="24" x2="24" y2="18" />
+      <line x1="24" y1="24" x2="28" y2="24" />
+      <path d="M19 14 L20 8 H28 L29 14" />
+      <path d="M19 34 L20 40 H28 L29 34" />
+      <line x1="14" y1="24" x2="11" y2="24" />
+      <line x1="37" y1="24" x2="34" y2="24" />
+    </template>
+
+
+    <!-- <svg v-else class="icon-line" :width="px" :height="px" viewBox="0 0 48 48" fill="none" :stroke-width="stroke"
+    stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"> -->
     <!-- ZIPPO (lighter body + flame) -->
-    <template v-if="name === 'zippo'">
+    <template v-else-if="name === 'zippo'">
       <rect x="14" y="16" width="20" height="26" rx="1.5" />
       <line x1="14" y1="22" x2="34" y2="22" />
       <path d="M22 16 V12 H26 V16" />
