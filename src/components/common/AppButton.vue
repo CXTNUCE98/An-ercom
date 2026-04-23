@@ -1,111 +1,43 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+
 type Variant = 'filled' | 'outline' | 'ghost' | 'copper' | 'dark' | 'brass' | 'link';
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     variant?: Variant;
     type?: 'button' | 'submit';
   }>(),
   { variant: 'filled', type: 'button' },
 );
+
+// Per-variant utility classes. Box-shadow w/ color-mix uses arbitrary values.
+const variantClasses: Record<Variant, string> = {
+  filled:
+    'bg-[var(--text)] text-[var(--bg)] border-transparent hover:bg-[var(--accent)] hover:text-[var(--on-accent)] hover:-translate-y-px hover:shadow-[0_6px_20px_color-mix(in_srgb,var(--accent)_35%,transparent)]',
+  outline:
+    'bg-transparent text-[var(--text)] border-[var(--rule)] hover:border-[var(--accent)] hover:text-[var(--accent)]',
+  ghost:
+    'bg-transparent text-[var(--text)] border-transparent !py-[10px] !px-0 hover:text-[var(--accent)]',
+  copper:
+    'bg-[var(--accent-2)] text-[var(--on-accent)] border-transparent hover:brightness-110 hover:-translate-y-0.5 hover:shadow-[0_6px_24px_color-mix(in_srgb,var(--accent-2)_40%,transparent)]',
+  dark:
+    'bg-[#0a0a0a] text-[var(--accent)] border-transparent !px-[42px] !py-[18px] tracking-[3px] hover:bg-[#1a1a1a] hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.4)]',
+  brass:
+    'bg-[var(--accent)] text-[var(--on-accent)] border-[var(--accent)] hover:bg-[var(--accent-2)] hover:border-[var(--accent-2)] hover:-translate-y-px hover:shadow-[0_8px_24px_color-mix(in_srgb,var(--accent)_40%,transparent)]',
+  link:
+    'bg-transparent text-[var(--accent)] !px-0 !py-2 !border-0 !border-b !border-solid !border-[var(--rule-strong)] !rounded-none hover:text-[var(--accent-2)] hover:!border-b-[var(--accent-2)]',
+};
+
+const variantClass = computed(() => variantClasses[props.variant]);
 </script>
 
 <template>
-  <button :type="type" class="app-btn" :class="`app-btn--${variant}`">
+  <button
+    :type="type"
+    class="inline-flex items-center justify-center gap-2.5 font-condensed text-[0.82rem] font-semibold tracking-[2.5px] uppercase px-8 py-3.5 border border-solid cursor-pointer whitespace-nowrap transition-all duration-300"
+    :class="variantClass"
+  >
     <slot />
   </button>
 </template>
-
-<style scoped>
-.app-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  font-family: var(--font-condensed);
-  font-size: 0.82rem;
-  font-weight: 600;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  padding: 14px 32px;
-  border: 1px solid transparent;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.3s ease;
-}
-
-.app-btn--filled {
-  background: var(--text);
-  color: var(--bg);
-}
-.app-btn--filled:hover {
-  background: var(--accent);
-  color: var(--on-accent);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px color-mix(in srgb, var(--accent) 35%, transparent);
-}
-
-.app-btn--outline {
-  background: transparent;
-  color: var(--text);
-  border-color: var(--rule);
-}
-.app-btn--outline:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.app-btn--ghost {
-  background: transparent;
-  color: var(--text);
-  padding: 10px 0;
-}
-.app-btn--ghost:hover { color: var(--accent); }
-
-.app-btn--copper {
-  background: var(--accent-2);
-  color: var(--on-accent);
-}
-.app-btn--copper:hover {
-  filter: brightness(1.08);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 24px color-mix(in srgb, var(--accent-2) 40%, transparent);
-}
-
-.app-btn--dark {
-  background: #0a0a0a;
-  color: var(--accent);
-  padding: 18px 42px;
-  letter-spacing: 3px;
-}
-.app-btn--dark:hover {
-  background: #1a1a1a;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-}
-
-.app-btn--brass {
-  background: var(--accent);
-  color: var(--on-accent);
-  border-color: var(--accent);
-}
-.app-btn--brass:hover {
-  background: var(--accent-2);
-  border-color: var(--accent-2);
-  transform: translateY(-1px);
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--accent) 40%, transparent);
-}
-
-.app-btn--link {
-  background: transparent;
-  color: var(--accent);
-  padding: 8px 0;
-  border: none;
-  border-bottom: 1px solid var(--rule-strong);
-  border-radius: 0;
-}
-.app-btn--link:hover {
-  color: var(--accent-2);
-  border-bottom-color: var(--accent-2);
-}
-</style>

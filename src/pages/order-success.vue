@@ -11,136 +11,42 @@ const delivery = (route.query.delivery as string) || '2-3 ngày làm việc';
 </script>
 
 <template>
-  <main class="success-page">
-    <div class="success-card">
-      <div class="success-icon">
+  <main class="min-h-screen flex items-center justify-center py-20 px-[var(--gutter)]">
+    <div class="text-center max-w-[520px] w-full bg-[var(--card)] border border-[var(--rule)] py-15 px-12 sm:py-10 sm:px-6">
+      <div class="mb-6 text-[var(--accent)]">
         <CommonIconLine name="check" :size="80" />
       </div>
 
-      <h1>Đặt Hàng Thành Công!</h1>
-      <p class="success-sub">Cảm ơn bạn đã tin tưởng IRONMAN. Đơn hàng của bạn đang được xử lý.</p>
+      <h1 class="font-display text-[2rem] font-bold text-[var(--text)] m-0 mb-3">Đặt Hàng Thành Công!</h1>
+      <p class="text-[0.92rem] text-mid m-0 mb-9 leading-[1.6]">
+        Cảm ơn bạn đã tin tưởng IRONMAN. Đơn hàng của bạn đang được xử lý.
+      </p>
 
-      <div class="order-info">
-        <div class="info-row">
-          <span>Mã đơn hàng</span>
-          <span class="value">{{ orderId }}</span>
-        </div>
-        <div class="info-row">
-          <span>Số lượng sản phẩm</span>
-          <span class="value">{{ itemCount }}</span>
-        </div>
-        <div class="info-row">
-          <span>Tổng thanh toán</span>
-          <span class="value accent">{{ formatPrice(total) }}</span>
-        </div>
-        <div class="info-row">
-          <span>Dự kiến giao hàng</span>
-          <span class="value">{{ delivery }}</span>
+      <div class="text-left mb-9 border-t border-[var(--rule)]">
+        <div v-for="row in [
+          { label: 'Mã đơn hàng', value: orderId, accent: false },
+          { label: 'Số lượng sản phẩm', value: String(itemCount), accent: false },
+          { label: 'Tổng thanh toán', value: formatPrice(total), accent: true },
+          { label: 'Dự kiến giao hàng', value: delivery, accent: false },
+        ]" :key="row.label" class="flex justify-between py-3.5 border-b border-[var(--rule)] text-[0.88rem] text-mid">
+          <span>{{ row.label }}</span>
+          <span
+            class="font-condensed font-semibold"
+            :class="row.accent ? 'text-[var(--accent)]' : 'text-[var(--text)]'"
+          >{{ row.value }}</span>
         </div>
       </div>
 
-      <div class="success-actions">
-        <NuxtLink to="/" class="btn-home">Về Trang Chủ</NuxtLink>
-        <NuxtLink to="/#products" class="btn-shop">Tiếp Tục Mua Sắm</NuxtLink>
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <NuxtLink
+          to="/"
+          class="bg-transparent border border-[var(--rule)] text-mid font-condensed text-[0.75rem] font-semibold tracking-[2px] uppercase no-underline py-3 px-6 transition-all duration-300 hover:border-[var(--accent)] hover:text-[var(--accent)]"
+        >Về Trang Chủ</NuxtLink>
+        <NuxtLink
+          to="/#products"
+          class="bg-[var(--accent)] text-[var(--on-accent)] font-condensed text-[0.75rem] font-semibold tracking-[2px] uppercase no-underline py-3 px-6 transition-transform duration-300 hover:-translate-y-px"
+        >Tiếp Tục Mua Sắm</NuxtLink>
       </div>
     </div>
   </main>
 </template>
-
-<style scoped>
-.success-page {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 80px var(--gutter);
-}
-
-.success-card {
-  text-align: center;
-  max-width: 520px;
-  width: 100%;
-  background: var(--card);
-  border: 1px solid var(--rule);
-  padding: 60px 48px;
-}
-
-.success-icon {
-  margin-bottom: 24px;
-  color: var(--accent);
-}
-
-h1 {
-  font-family: var(--font-display);
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--text);
-  margin: 0 0 12px;
-}
-
-.success-sub {
-  font-size: 0.92rem;
-  color: var(--mid);
-  margin: 0 0 36px;
-  line-height: 1.6;
-}
-
-.order-info {
-  text-align: left;
-  margin-bottom: 36px;
-  border-top: 1px solid var(--rule);
-}
-.info-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--rule);
-  font-size: 0.88rem;
-  color: var(--mid);
-}
-.info-row .value {
-  font-family: var(--font-condensed);
-  font-weight: 600;
-  color: var(--text);
-}
-.info-row .accent { color: var(--accent); }
-
-.success-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-}
-.btn-home {
-  background: transparent;
-  border: 1px solid var(--rule);
-  color: var(--mid);
-  font-family: var(--font-condensed);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  text-decoration: none;
-  padding: 12px 24px;
-  transition: all 0.25s;
-}
-.btn-home:hover { border-color: var(--accent); color: var(--accent); }
-
-.btn-shop {
-  background: var(--accent);
-  color: var(--on-accent);
-  font-family: var(--font-condensed);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  text-decoration: none;
-  padding: 12px 24px;
-  transition: all 0.25s;
-}
-.btn-shop:hover { transform: translateY(-1px); }
-
-@media (max-width: 600px) {
-  .success-card { padding: 40px 24px; }
-  .success-actions { flex-direction: column; }
-}
-</style>

@@ -3,332 +3,96 @@ import { HERO_STATS } from '~/constants/landing';
 </script>
 
 <template>
-  <section class="hero">
-    <span class="hero-rail">EST. 2015 · Issue N°27 · Xuân Hè 2025</span>
+  <section class="min-h-screen pt-20 grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] relative overflow-hidden">
+    <span class="hidden lg:inline-block absolute top-1/2 left-[18px] -translate-y-1/2 vrail z-[4] !tracking-[6px]">
+      EST. 2015 · Issue N°27 · Xuân Hè 2025
+    </span>
 
-    <div class="hero-left">
-      <div class="hero-eyebrow">
-        <span class="rule" />
-        <span class="text">Bộ sưu tập mới · Spring/Summer Edition</span>
+    <!-- LEFT -->
+    <div class="flex flex-col justify-center py-20 px-6 lg:py-20 lg:pl-20 lg:pr-14 relative lg:after:content-[''] lg:after:absolute lg:after:right-0 lg:after:top-[12%] lg:after:bottom-[12%] lg:after:w-px lg:after:bg-gradient-to-b lg:after:from-transparent lg:after:via-rule lg:after:to-transparent">
+      <div class="flex items-center gap-[14px] mb-7 animate-fade-up [animation-delay:0.15s]">
+        <span class="w-8 h-px bg-accent" />
+        <span class="font-condensed text-[0.7rem] font-semibold tracking-[4px] uppercase text-accent">
+          Bộ sưu tập mới · Spring/Summer Edition
+        </span>
       </div>
 
-      <h1 class="hero-title">
-        IRON<span class="hero-accent">MAN</span>
+      <h1
+        class="font-display font-black text-[clamp(4.5rem,10vw,10rem)] leading-[0.86] tracking-[-2px] m-0 mb-3 text-text animate-fade-up [animation-delay:0.3s]"
+      >
+        IRON<span class="text-accent">MAN</span>
       </h1>
-      <p class="hero-tag">
+      <p
+        class="font-display text-[clamp(1.4rem,2.4vw,2.1rem)] leading-[0.95] text-mid m-0 mb-9 animate-fade-up [animation-delay:0.4s] [&_em]:italic [&_em:last-child]:text-accent"
+      >
         <em>for the man</em><br />
         <em>who knows.</em>
       </p>
 
-      <p class="hero-sub">
+      <p
+        class="font-condensed text-base font-light leading-[1.75] text-mid max-w-[460px] mb-11 animate-fade-up [animation-delay:0.5s]"
+      >
         Một chiếc đồng hồ. Một chiếc Zippo. Một chiếc ví đã mòn cạnh.
         Phụ kiện không nói thay được con người, nhưng đủ để hé lộ bạn là ai.
       </p>
 
-      <div class="hero-actions">
+      <div class="flex gap-[22px] items-center flex-wrap mb-14 animate-fade-up [animation-delay:0.6s]">
         <AppButton variant="brass">Khám Phá Lookbook</AppButton>
         <AppButton variant="link">Đặt lịch tư vấn 1-1 →</AppButton>
       </div>
 
-      <div class="hero-stats">
+      <div class="flex items-end gap-[22px] flex-wrap pt-7 border-t border-rule animate-fade-up [animation-delay:0.75s]">
         <template v-for="(s, i) in HERO_STATS" :key="s.label">
-          <div class="stat">
-            <div class="stat-num">{{ s.value }}<sup>{{ s.suffix }}</sup></div>
-            <div class="stat-label">{{ s.label }}</div>
+          <div>
+            <div class="font-display text-[2.2rem] font-bold text-text leading-none">
+              {{ s.value }}<sup class="text-[0.85rem] text-accent ml-0.5">{{ s.suffix }}</sup>
+            </div>
+            <div class="font-condensed text-[0.68rem] tracking-[2.5px] uppercase text-smoke mt-1.5">
+              {{ s.label }}
+            </div>
           </div>
-          <span v-if="i < HERO_STATS.length - 1" class="stat-dot">·</span>
+          <span
+            v-if="i < HERO_STATS.length - 1"
+            class="hidden lg:inline-block font-display text-[1.6rem] text-accent mx-1 mb-1"
+          >·</span>
         </template>
       </div>
     </div>
 
-    <div class="hero-right">
-      <div class="grid-bg" aria-hidden="true" />
+    <!-- RIGHT -->
+    <div class="relative bg-card flex items-center justify-center py-10 px-6 lg:py-[100px] lg:px-14 lg:pb-[60px] overflow-hidden">
+      <div
+        aria-hidden="true"
+        class="absolute -inset-10 pointer-events-none"
+        :style="{
+          backgroundImage:
+            'linear-gradient(color-mix(in srgb, var(--accent) 6%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--accent) 6%, transparent) 1px, transparent 1px)',
+          backgroundSize: '56px 56px'
+        }"
+      />
 
-      <div class="hero-frame">
-        <CommonProductMedia aspect="3/4" placeholder-icon="watch"
-          src="https://i.pinimg.com/1200x/26/ea/3c/26ea3ced6503ce21d58cf458526b58f4.jpg" :icon-size="240">
-          <span class="frame-counter">01 / 04</span>
-          <span class="frame-caption">Sea-Master · Steel &amp; Leather</span>
-          <span class="frame-credit">Photo · Studio Ironman</span>
+      <div
+        class="relative w-full max-w-[460px] z-[2] border border-rule-strong p-[14px] bg-surface animate-fade-up [animation-delay:0.55s] lg:shadow-[-22px_22px_0_-1px_var(--card-alt),-22px_22px_0_0_var(--rule-strong)]"
+      >
+        <CommonProductMedia
+          aspect="3/4"
+          placeholder-icon="watch"
+          src="https://i.pinimg.com/1200x/26/ea/3c/26ea3ced6503ce21d58cf458526b58f4.jpg"
+          :icon-size="240"
+        >
+          <span class="absolute top-[22px] right-[22px] font-condensed text-[0.7rem] font-semibold tracking-[3px] text-accent z-[3]">
+            01 / 04
+          </span>
+          <span class="absolute bottom-[22px] left-[22px] font-display italic text-[0.95rem] text-text z-[3]">
+            Sea-Master · Steel &amp; Leather
+          </span>
+          <span class="absolute bottom-[22px] right-[22px] font-condensed text-[0.6rem] font-medium tracking-[3px] uppercase text-smoke z-[3]">
+            Photo · Studio Ironman
+          </span>
         </CommonProductMedia>
       </div>
 
-      <CommonScrollCue label="Cuộn xuống" class="hero-cue" />
+      <CommonScrollCue label="Cuộn xuống" class="absolute bottom-9 left-1/2 -translate-x-1/2 z-[3]" />
     </div>
   </section>
 </template>
-
-<style scoped>
-.hero {
-  min-height: 100vh;
-  padding-top: 80px;
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  position: relative;
-  overflow: hidden;
-}
-
-.hero-rail {
-  position: absolute;
-  top: 50%;
-  left: 18px;
-  transform: translateY(-50%) rotate(180deg);
-  writing-mode: vertical-rl;
-  font-family: var(--font-condensed);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 6px;
-  text-transform: uppercase;
-  color: var(--accent);
-  z-index: 4;
-}
-
-@media (max-width: 900px) {
-  .hero-rail {
-    display: none;
-  }
-}
-
-/* LEFT */
-.hero-left {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 80px 56px 80px 80px;
-  position: relative;
-}
-
-.hero-left::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 12%;
-  bottom: 12%;
-  width: 1px;
-  background: linear-gradient(to bottom, transparent, var(--rule) 30%, var(--rule) 70%, transparent);
-}
-
-.hero-eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 28px;
-  animation: ironman-fade-up 0.7s ease 0.15s both;
-}
-
-.hero-eyebrow .rule {
-  width: 32px;
-  height: 1px;
-  background: var(--accent);
-}
-
-.hero-eyebrow .text {
-  font-family: var(--font-condensed);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-
-.hero-title {
-  font-family: var(--font-display);
-  font-weight: 900;
-  font-size: clamp(4.5rem, 10vw, 10rem);
-  line-height: 0.86;
-  letter-spacing: -2px;
-  margin: 0 0 12px;
-  color: var(--text);
-  animation: ironman-fade-up 0.7s ease 0.3s both;
-}
-
-.hero-accent {
-  color: var(--accent);
-}
-
-.hero-tag {
-  font-family: var(--font-display);
-  font-size: clamp(1.4rem, 2.4vw, 2.1rem);
-  line-height: 0.95;
-  color: var(--mid);
-  margin: 0 0 36px;
-  animation: ironman-fade-up 0.7s ease 0.4s both;
-}
-
-.hero-tag em {
-  font-style: italic;
-}
-
-.hero-tag em:last-child {
-  color: var(--accent);
-}
-
-.hero-sub {
-  font-family: var(--font-condensed);
-  font-size: 1rem;
-  font-weight: 300;
-  line-height: 1.75;
-  color: var(--mid);
-  max-width: 460px;
-  margin-bottom: 44px;
-  animation: ironman-fade-up 0.7s ease 0.5s both;
-}
-
-.hero-actions {
-  display: flex;
-  gap: 22px;
-  align-items: center;
-  flex-wrap: wrap;
-  margin-bottom: 56px;
-  animation: ironman-fade-up 0.7s ease 0.6s both;
-}
-
-.hero-stats {
-  display: flex;
-  align-items: flex-end;
-  gap: 22px;
-  padding-top: 28px;
-  border-top: 1px solid var(--rule);
-  animation: ironman-fade-up 0.7s ease 0.75s both;
-}
-
-.stat-num {
-  font-family: var(--font-display);
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: var(--text);
-  line-height: 1;
-}
-
-.stat-num sup {
-  font-size: 0.85rem;
-  color: var(--accent);
-  margin-left: 2px;
-}
-
-.stat-label {
-  font-family: var(--font-condensed);
-  font-size: 0.68rem;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  color: var(--smoke);
-  margin-top: 6px;
-}
-
-.stat-dot {
-  font-family: var(--font-display);
-  font-size: 1.6rem;
-  color: var(--accent);
-  margin: 0 4px 4px;
-}
-
-/* RIGHT */
-.hero-right {
-  position: relative;
-  background: var(--card);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 100px 56px 60px;
-  overflow: hidden;
-}
-
-.grid-bg {
-  position: absolute;
-  inset: -40px;
-  background-image:
-    linear-gradient(color-mix(in srgb, var(--accent) 6%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--accent) 6%, transparent) 1px, transparent 1px);
-  background-size: 56px 56px;
-  pointer-events: none;
-}
-
-.hero-frame {
-  position: relative;
-  width: 100%;
-  max-width: 460px;
-  z-index: 2;
-  border: 1px solid var(--rule-strong);
-  padding: 14px;
-  background: var(--surface);
-  animation: ironman-fade-up 0.9s ease 0.55s both;
-  box-shadow:
-    -22px 22px 0 -1px var(--card-alt),
-    -22px 22px 0 0 var(--rule-strong);
-}
-
-.frame-counter {
-  position: absolute;
-  top: 22px;
-  right: 22px;
-  font-family: var(--font-condensed);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 3px;
-  color: var(--accent);
-  z-index: 3;
-}
-
-.frame-caption {
-  position: absolute;
-  bottom: 22px;
-  left: 22px;
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 0.95rem;
-  color: var(--text);
-  z-index: 3;
-}
-
-.frame-credit {
-  position: absolute;
-  bottom: 22px;
-  right: 22px;
-  font-family: var(--font-condensed);
-  font-size: 0.6rem;
-  font-weight: 500;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--smoke);
-  z-index: 3;
-}
-
-.hero-cue {
-  position: absolute;
-  bottom: 36px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 3;
-}
-
-@media (max-width: 900px) {
-  .hero {
-    grid-template-columns: 1fr;
-  }
-
-  .hero-left {
-    padding: 100px 24px 60px;
-  }
-
-  .hero-left::after {
-    display: none;
-  }
-
-  .hero-right {
-    padding: 40px 24px 100px;
-  }
-
-  .hero-frame {
-    box-shadow: none;
-  }
-
-  .stat-dot {
-    display: none;
-  }
-
-  .hero-stats {
-    flex-wrap: wrap;
-    gap: 24px;
-  }
-}
-</style>

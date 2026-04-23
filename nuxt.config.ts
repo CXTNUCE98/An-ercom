@@ -43,7 +43,6 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: [
     "@vueuse/nuxt",
-    "@element-plus/nuxt",
     "@unocss/nuxt",
     "@nuxtjs/i18n",
     "@nuxt/image",

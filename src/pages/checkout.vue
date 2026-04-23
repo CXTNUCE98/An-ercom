@@ -53,61 +53,77 @@ const paymentMethods = [
   { value: 'bank-transfer', label: 'Chuyển khoản ngân hàng', icon: 'bx-building' },
   { value: 'card', label: 'Thẻ tín dụng / ghi nợ', icon: 'bx-credit-card' },
 ] as const;
+
+// Shared class strings
+const fieldLabel = 'block font-condensed text-[0.7rem] font-semibold tracking-[2px] uppercase text-smoke mb-1.5';
+const fieldInput = 'w-full bg-surface border border-rule text-text font-body text-[0.88rem] py-2.5 px-3.5 transition-colors duration-250 box-border focus:outline-none focus:border-accent';
+const summaryLineBase = 'flex justify-between text-[0.85rem] text-mid py-1';
 </script>
 
 <template>
-  <main class="checkout-page">
-    <h1 class="page-title">Thanh Toán</h1>
+  <main class="min-h-screen pt-[100px] px-gutter pb-lg max-[900px]:pt-[90px] max-[900px]:px-6 max-[900px]:pb-[60px]">
+    <h1 class="font-display text-[2.4rem] font-bold text-text m-0 mb-10">Thanh Toán</h1>
 
-    <div v-if="cart.items.length === 0 && !submitting" class="empty">
+    <div v-if="cart.items.length === 0 && !submitting" class="text-center py-[60px] text-smoke">
       <p>Giỏ hàng trống. Vui lòng thêm sản phẩm trước khi thanh toán.</p>
-      <NuxtLink to="/#products" class="btn-back">Quay Lại Mua Sắm</NuxtLink>
+      <NuxtLink
+        to="/#products"
+        class="inline-block mt-4 bg-accent text-on-accent font-condensed text-[0.75rem] tracking-[3px] uppercase no-underline py-3 px-7"
+      >Quay Lại Mua Sắm</NuxtLink>
     </div>
 
-    <div v-else class="checkout-layout">
-      <form class="checkout-form" @submit.prevent="submit">
-        <div v-if="errors.length" class="error-box">
-          <p v-for="e in errors" :key="e">{{ e }}</p>
+    <div v-else class="grid grid-cols-[1fr_380px] gap-12 max-[900px]:grid-cols-1">
+      <form class="max-[900px]:order-2" @submit.prevent="submit">
+        <div
+          v-if="errors.length"
+          class="border border-oxblood py-3 px-4 mb-5 bg-[color-mix(in_srgb,var(--oxblood)_12%,transparent)]"
+        >
+          <p v-for="e in errors" :key="e" class="text-[0.82rem] text-oxblood my-1">{{ e }}</p>
         </div>
 
-        <fieldset>
-          <legend>Thông tin giao hàng</legend>
-          <div class="field">
-            <label>Họ và tên *</label>
-            <input v-model="form.fullName" type="text" placeholder="Nguyễn Văn A" />
+        <fieldset class="border-0 p-0 m-0 mb-8">
+          <legend class="font-display text-[1.2rem] font-bold text-text mb-5">Thông tin giao hàng</legend>
+          <div class="mb-4">
+            <label :class="fieldLabel">Họ và tên *</label>
+            <input v-model="form.fullName" type="text" placeholder="Nguyễn Văn A" :class="fieldInput" />
           </div>
-          <div class="field-row">
-            <div class="field">
-              <label>Số điện thoại *</label>
-              <input v-model="form.phone" type="tel" placeholder="0987 654 321" />
+          <div class="grid grid-cols-2 gap-4 max-[900px]:grid-cols-1">
+            <div class="mb-4">
+              <label :class="fieldLabel">Số điện thoại *</label>
+              <input v-model="form.phone" type="tel" placeholder="0987 654 321" :class="fieldInput" />
             </div>
-            <div class="field">
-              <label>Email</label>
-              <input v-model="form.email" type="email" placeholder="email@example.com" />
+            <div class="mb-4">
+              <label :class="fieldLabel">Email</label>
+              <input v-model="form.email" type="email" placeholder="email@example.com" :class="fieldInput" />
             </div>
           </div>
-          <div class="field">
-            <label>Địa chỉ *</label>
-            <input v-model="form.address" type="text" placeholder="Số nhà, đường, phường/xã" />
+          <div class="mb-4">
+            <label :class="fieldLabel">Địa chỉ *</label>
+            <input v-model="form.address" type="text" placeholder="Số nhà, đường, phường/xã" :class="fieldInput" />
           </div>
-          <div class="field">
-            <label>Tỉnh/Thành phố *</label>
-            <input v-model="form.city" type="text" placeholder="Hà Nội / TP.HCM / ..." />
+          <div class="mb-4">
+            <label :class="fieldLabel">Tỉnh/Thành phố *</label>
+            <input v-model="form.city" type="text" placeholder="Hà Nội / TP.HCM / ..." :class="fieldInput" />
           </div>
-          <div class="field">
-            <label>Ghi chú</label>
-            <textarea v-model="form.note" rows="3" placeholder="Ghi chú cho đơn hàng (tuỳ chọn)" />
+          <div class="mb-4">
+            <label :class="fieldLabel">Ghi chú</label>
+            <textarea v-model="form.note" rows="3" placeholder="Ghi chú cho đơn hàng (tuỳ chọn)" :class="fieldInput" />
           </div>
         </fieldset>
 
-        <fieldset>
-          <legend>Phương thức thanh toán</legend>
-          <div class="payment-options">
+        <fieldset class="border-0 p-0 m-0 mb-8">
+          <legend class="font-display text-[1.2rem] font-bold text-text mb-5">Phương thức thanh toán</legend>
+          <div class="flex flex-col gap-2">
             <label
               v-for="pm in paymentMethods"
               :key="pm.value"
-              class="payment-option"
-              :class="{ active: form.paymentMethod === pm.value }"
+              :class="[
+                'flex items-center gap-3 py-3.5 px-4 border cursor-pointer text-[0.88rem] transition-all duration-250',
+                form.paymentMethod === pm.value
+                  ? 'border-accent text-text bg-mix-accent-8'
+                  : 'border-rule text-mid hover:border-accent',
+                '[&_input]:hidden [&_i]:text-accent [&_i]:text-[1.2rem]',
+              ]"
             >
               <input v-model="form.paymentMethod" type="radio" :value="pm.value" name="payment" />
               <i class="bx" :class="pm.icon" />
@@ -116,36 +132,40 @@ const paymentMethods = [
           </div>
         </fieldset>
 
-        <button type="submit" class="btn-place-order" :disabled="submitting">
+        <button
+          type="submit"
+          :disabled="submitting"
+          class="w-full bg-accent text-on-accent border-0 font-condensed text-[0.85rem] font-semibold tracking-[3px] uppercase py-4 cursor-pointer flex items-center justify-center gap-2 transition-all duration-300 hover:enabled:-translate-y-px disabled:opacity-60 disabled:cursor-not-allowed"
+        >
           <i v-if="submitting" class="bx bx-loader-alt bx-spin" />
           {{ submitting ? 'Đang xử lý...' : 'Đặt Hàng' }}
         </button>
       </form>
 
-      <div class="order-summary">
-        <h2>Đơn hàng của bạn</h2>
-        <div v-for="item in cart.items" :key="item.productId" class="summary-item">
-          <div class="si-info">
-            <span class="si-name">{{ item.name }}</span>
-            <span class="si-qty">× {{ item.quantity }}</span>
+      <div class="bg-card border border-rule p-7 self-start sticky top-[100px] max-[900px]:order-1 max-[900px]:static">
+        <h2 class="font-display text-[1.1rem] font-bold text-text m-0 mb-5">Đơn hàng của bạn</h2>
+        <div v-for="item in cart.items" :key="item.productId" class="flex justify-between items-start py-2 gap-3">
+          <div class="flex flex-col">
+            <span class="text-[0.85rem] text-text">{{ item.name }}</span>
+            <span class="text-[0.72rem] text-smoke">× {{ item.quantity }}</span>
           </div>
-          <span class="si-price">{{ formatPrice((item.salePrice ?? item.price) * item.quantity) }}</span>
+          <span class="font-condensed text-[0.85rem] font-semibold text-text whitespace-nowrap">{{ formatPrice((item.salePrice ?? item.price) * item.quantity) }}</span>
         </div>
-        <div class="summary-divider" />
-        <div class="summary-line">
+        <div class="h-px bg-rule my-3" />
+        <div :class="summaryLineBase">
           <span>Tạm tính</span>
           <span>{{ formatPrice(cart.subtotal) }}</span>
         </div>
-        <div v-if="cart.appliedPromo" class="summary-line promo">
+        <div v-if="cart.appliedPromo" :class="[summaryLineBase, '!text-olive']">
           <span>{{ cart.appliedPromo.label }}</span>
           <span>-{{ formatPrice(cart.discount) }}</span>
         </div>
-        <div class="summary-line">
+        <div :class="summaryLineBase">
           <span>Vận chuyển</span>
-          <span class="free">Miễn phí</span>
+          <span class="text-olive">Miễn phí</span>
         </div>
-        <div class="summary-divider" />
-        <div class="summary-line total">
+        <div class="h-px bg-rule my-3" />
+        <div class="flex justify-between py-1 font-display text-[1.1rem] font-bold text-text">
           <span>Tổng cộng</span>
           <span>{{ formatPrice(cart.total) }}</span>
         </div>
@@ -153,189 +173,3 @@ const paymentMethods = [
     </div>
   </main>
 </template>
-
-<style scoped>
-.checkout-page {
-  padding: 100px var(--gutter) var(--sp-lg);
-  min-height: 100vh;
-}
-.page-title {
-  font-family: var(--font-display);
-  font-size: 2.4rem;
-  font-weight: 700;
-  color: var(--text);
-  margin: 0 0 40px;
-}
-
-.empty { text-align: center; padding: 60px; color: var(--smoke); }
-.btn-back {
-  display: inline-block;
-  margin-top: 16px;
-  background: var(--accent);
-  color: var(--on-accent);
-  font-family: var(--font-condensed);
-  font-size: 0.75rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  text-decoration: none;
-  padding: 12px 28px;
-}
-
-.checkout-layout {
-  display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 48px;
-}
-
-.checkout-form fieldset {
-  border: none;
-  padding: 0;
-  margin: 0 0 32px;
-}
-.checkout-form legend {
-  font-family: var(--font-display);
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 20px;
-}
-
-.field { margin-bottom: 16px; }
-.field label {
-  display: block;
-  font-family: var(--font-condensed);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--smoke);
-  margin-bottom: 6px;
-}
-.field input, .field textarea {
-  width: 100%;
-  background: var(--surface);
-  border: 1px solid var(--rule);
-  color: var(--text);
-  font-family: var(--font-body);
-  font-size: 0.88rem;
-  padding: 10px 14px;
-  transition: border-color 0.25s;
-  box-sizing: border-box;
-}
-.field input:focus, .field textarea:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-.payment-options { display: flex; flex-direction: column; gap: 8px; }
-.payment-option {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  border: 1px solid var(--rule);
-  cursor: pointer;
-  font-size: 0.88rem;
-  color: var(--mid);
-  transition: all 0.25s;
-}
-.payment-option:hover { border-color: var(--accent); }
-.payment-option.active {
-  border-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 8%, transparent);
-  color: var(--text);
-}
-.payment-option input { display: none; }
-.payment-option i { color: var(--accent); font-size: 1.2rem; }
-
-.error-box {
-  background: color-mix(in srgb, var(--oxblood) 12%, transparent);
-  border: 1px solid var(--oxblood);
-  padding: 12px 16px;
-  margin-bottom: 20px;
-}
-.error-box p {
-  font-size: 0.82rem;
-  color: var(--oxblood);
-  margin: 4px 0;
-}
-
-.btn-place-order {
-  width: 100%;
-  background: var(--accent);
-  color: var(--on-accent);
-  border: none;
-  font-family: var(--font-condensed);
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  padding: 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: all 0.3s;
-}
-.btn-place-order:hover:not(:disabled) { transform: translateY(-1px); }
-.btn-place-order:disabled { opacity: 0.6; cursor: not-allowed; }
-
-/* Order summary */
-.order-summary {
-  background: var(--card);
-  border: 1px solid var(--rule);
-  padding: 28px;
-  align-self: start;
-  position: sticky;
-  top: 100px;
-}
-.order-summary h2 {
-  font-family: var(--font-display);
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--text);
-  margin: 0 0 20px;
-}
-.summary-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 8px 0;
-  gap: 12px;
-}
-.si-info { display: flex; flex-direction: column; }
-.si-name { font-size: 0.85rem; color: var(--text); }
-.si-qty { font-size: 0.72rem; color: var(--smoke); }
-.si-price {
-  font-family: var(--font-condensed);
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text);
-  white-space: nowrap;
-}
-.summary-divider { height: 1px; background: var(--rule); margin: 12px 0; }
-.summary-line {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.85rem;
-  color: var(--mid);
-  padding: 4px 0;
-}
-.summary-line.promo { color: var(--olive); }
-.free { color: var(--olive); }
-.summary-line.total {
-  font-family: var(--font-display);
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--text);
-}
-
-@media (max-width: 900px) {
-  .checkout-layout { grid-template-columns: 1fr; }
-  .order-summary { order: -1; }
-  .field-row { grid-template-columns: 1fr; }
-  .checkout-page { padding: 90px 24px 60px; }
-}
-</style>

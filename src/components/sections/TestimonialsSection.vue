@@ -3,7 +3,7 @@ import { TESTIMONIALS } from '~/constants/landing';
 </script>
 
 <template>
-  <section class="testimonials">
+  <section class="bg-[var(--card)] py-20 px-6 sm:px-14">
     <SectionHeader
       tag="Đánh giá khách hàng"
       title="Họ Nói Gì"
@@ -12,7 +12,7 @@ import { TESTIMONIALS } from '~/constants/landing';
       link-text="Xem tất cả đánh giá"
     />
 
-    <div class="tm-grid">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <ItemsTestimonialCard
         v-for="(t, i) in TESTIMONIALS"
         :key="i"
@@ -21,23 +21,3 @@ import { TESTIMONIALS } from '~/constants/landing';
     </div>
   </section>
 </template>
-
-<style scoped>
-.testimonials {
-  padding: 80px 56px;
-  background: var(--card);
-}
-
-.tm-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-}
-
-@media (max-width: 1100px) {
-  .tm-grid { grid-template-columns: 1fr; }
-}
-@media (max-width: 600px) {
-  .testimonials { padding: 60px 24px; }
-}
-</style>

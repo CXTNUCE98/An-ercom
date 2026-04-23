@@ -6,21 +6,61 @@ import { formatPrice } from '~/shared/utils/format';
 const combos = RESOLVED_COMBOS;
 const bestCombo = computed(() => combos[0]);
 const restCombos = computed(() => combos.slice(1));
+
+// Shared class strings
+const comboCard =
+  'group relative flex flex-col overflow-hidden bg-surface border border-rule transition-all duration-400 ease-[cubic-bezier(0.2,0.8,0.2,1)] shadow-[0_4px_20px_color-mix(in_srgb,#000_5%,transparent)] hover:-translate-y-1.5 hover:shadow-[0_24px_60px_color-mix(in_srgb,#000_16%,transparent),0_0_0_1px_color-mix(in_srgb,var(--accent)_30%,transparent)] before:content-[""] before:absolute before:inset-0 before:border before:border-accent before:opacity-0 before:pointer-events-none before:transition-opacity before:duration-300 before:z-[3] hover:before:opacity-50';
+
+const visualOverlay =
+  'absolute inset-0 bg-[linear-gradient(180deg,color-mix(in_srgb,#000_15%,transparent)_0%,transparent_30%,color-mix(in_srgb,#000_50%,transparent)_100%)]';
+
+const comboBadgeBase =
+  'absolute top-4 left-4 inline-flex items-center gap-1.5 py-[7px] px-3.5 font-condensed text-[0.7rem] font-bold tracking-[2.5px] uppercase text-[#fbf6ea] z-[2] border border-[color-mix(in_srgb,#fff_25%,transparent)] backdrop-blur-[8px]';
+
+function badgeVariantClass(v?: string) {
+  if (v === 'gold') return 'bg-gradient-to-br from-accent to-[var(--accent-2)] text-ink';
+  if (v === 'olive') return 'bg-olive';
+  if (v === 'oxblood') return 'bg-oxblood';
+  return '';
+}
+
+const stackChip =
+  'w-[42px] h-[42px] rounded-full bg-[color-mix(in_srgb,var(--bg)_90%,transparent)] backdrop-blur-[10px] border border-[color-mix(in_srgb,var(--accent)_50%,transparent)] flex items-center justify-center text-accent relative transition-transform duration-300 group-hover:ml-0 group-hover:-translate-y-0.5';
+
+const comboPricing =
+  'relative grid grid-cols-[1fr_auto] max-[720px]:grid-cols-1 gap-4 items-center p-[18px] border border-rule-strong overflow-hidden bg-[linear-gradient(135deg,color-mix(in_srgb,var(--accent)_12%,var(--card))_0%,var(--card)_60%)] before:content-[""] before:absolute before:top-[-1px] before:right-[-1px] before:w-1/2 before:h-full before:pointer-events-none before:bg-[radial-gradient(80%_100%_at_100%_0%,color-mix(in_srgb,var(--accent)_30%,transparent),transparent)]';
+
+const priceRow =
+  'flex items-baseline justify-between gap-2 font-condensed [&>span:first-child]:text-[0.7rem] [&>span:first-child]:tracking-[2px] [&>span:first-child]:uppercase [&>span:first-child]:text-smoke [&>span:first-child]:font-medium';
+
+const savePill =
+  'relative w-[76px] h-[76px] rounded-full text-[#fbf6ea] flex flex-col items-center justify-center font-condensed tracking-[1px] -rotate-[8deg] transition-transform duration-400 group-hover:rotate-0 group-hover:scale-105 max-[720px]:justify-self-end bg-[radial-gradient(circle,var(--oxblood)_0%,color-mix(in_srgb,var(--oxblood)_80%,#000)_100%)] shadow-[0_4px_16px_color-mix(in_srgb,var(--oxblood)_40%,transparent),inset_0_0_0_2px_color-mix(in_srgb,#fff_25%,transparent)]';
+
+const ctaText =
+  'inline-flex items-center gap-1.5 font-condensed text-[0.78rem] font-bold uppercase tracking-[2.5px] text-accent transition-[gap] duration-300 group-hover:gap-3';
 </script>
 
 <template>
-  <section id="combos" class="combos-section">
+  <section
+    id="combos"
+    class="relative overflow-hidden py-lg px-gutter sm:py-md bg-[radial-gradient(120%_60%_at_50%_0%,color-mix(in_srgb,var(--accent)_6%,transparent),transparent_60%),var(--bg)] before:content-[''] before:absolute before:inset-0 before:pointer-events-none before:opacity-50 before:bg-[linear-gradient(color-mix(in_srgb,var(--accent)_4%,transparent)_1px,transparent_1px),linear-gradient(90deg,color-mix(in_srgb,var(--accent)_4%,transparent)_1px,transparent_1px)] before:bg-[length:56px_56px]"
+  >
     <!-- Editorial header -->
-    <div class="combos-head">
-      <div class="head-eyebrow">
-        <span class="rule" />
-        <span class="text">Curated · Combo Tinh Tuyển</span>
-        <span class="rule" />
+    <div class="relative mx-auto mb-15 max-w-[720px] text-center">
+      <div class="mb-[18px] flex items-center justify-center gap-3.5">
+        <span class="block h-px w-10 bg-accent" />
+        <span class="font-condensed text-[0.72rem] font-semibold tracking-[4px] uppercase text-accent">
+          Curated · Combo Tinh Tuyển
+        </span>
+        <span class="block h-px w-10 bg-accent" />
       </div>
-      <h2 class="head-title">
-        Mua Theo Bộ — <em>Tiết Kiệm Đến 25%</em>
+      <h2
+        class="m-0 mb-[18px] font-display font-bold leading-[1.05] text-text text-[clamp(2rem,5vw,3.6rem)]"
+      >
+        Mua Theo Bộ —
+        <em class="relative italic text-accent after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-0.5 after:opacity-50 after:bg-[linear-gradient(90deg,transparent,var(--accent),transparent)]">Tiết Kiệm Đến 25%</em>
       </h2>
-      <p class="head-sub">
+      <p class="m-0 text-base font-light leading-[1.75] text-mid">
         Mỗi bộ là một câu chuyện. Một phong cách. Một cái cớ để bạn hào phóng
         với chính mình — hoặc với người đàn ông bạn yêu quý.
       </p>
@@ -30,96 +70,118 @@ const restCombos = computed(() => combos.slice(1));
     <article
       v-if="bestCombo"
       :key="bestCombo.id"
-      class="combo-card is-featured is-horizontal"
+      :class="[comboCard, 'mx-auto mb-8 max-w-[1280px] min-[900px]:grid min-[900px]:grid-cols-[1.2fr_1fr] min-[900px]:items-stretch']"
     >
-      <NuxtLink :to="`/combos/${bestCombo.slug}`" class="combo-link" />
+      <NuxtLink :to="`/combos/${bestCombo.slug}`" class="absolute inset-0 z-[4] indent-[-9999px]" />
 
       <!-- Visual -->
-      <div class="combo-visual">
-        <div class="visual-frame">
-          <img :src="bestCombo.heroImage" :alt="bestCombo.name" loading="lazy" />
-          <div class="visual-overlay" />
+      <div class="relative overflow-hidden bg-card min-[900px]:h-full">
+        <div class="relative overflow-hidden aspect-[4/5] min-[900px]:aspect-auto min-[900px]:h-full min-[900px]:min-h-[480px]">
+          <img
+            :src="bestCombo.heroImage"
+            :alt="bestCombo.name"
+            loading="lazy"
+            class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+          />
+          <div :class="visualOverlay" />
         </div>
 
-        <div v-if="bestCombo.badge" class="combo-badge" :class="`badge-${bestCombo.badgeVariant}`">
-          <i class="bx bxs-bookmark-star" />
+        <div
+          v-if="bestCombo.badge"
+          :class="[comboBadgeBase, badgeVariantClass(bestCombo.badgeVariant)]"
+        >
+          <i class="bx bxs-bookmark-star text-[0.85rem]" />
           {{ bestCombo.badge }}
         </div>
 
-        <div class="stack-items">
+        <div class="absolute bottom-4 left-4 z-[2] flex items-center gap-2">
           <div
             v-for="(it, i) in bestCombo.items"
             :key="it.product.id"
-            class="stack-chip"
-            :style="{ '--i': i }"
+            :class="stackChip"
+            :style="{ marginLeft: `${i * -10}px`, zIndex: 10 - i }"
           >
             <CommonIconLine :name="it.product.icon" :size="22" />
           </div>
-          <div class="stack-count">
-            <span>{{ bestCombo.items.length }}</span>
+          <div class="ml-3 flex flex-col font-condensed text-[0.7rem] font-semibold uppercase leading-none tracking-[2px] text-[#fbf6ea]">
+            <span class="mb-0.5 font-display text-[1.4rem] font-extrabold text-[var(--accent-2)]">{{ bestCombo.items.length }}</span>
             món
           </div>
         </div>
       </div>
 
       <!-- Body -->
-      <div class="combo-body">
-        <div class="combo-meta">
-          <span class="combo-tag">{{ bestCombo.occasion.split('·')[0].trim() }}</span>
-          <span v-if="bestCombo.isLimited" class="meta-limited">
-            <i class="bx bxs-flame" /> Còn {{ bestCombo.stock }} sets
+      <div class="flex flex-1 flex-col gap-[18px] p-6 min-[900px]:py-8 min-[900px]:px-9">
+        <div class="flex items-center justify-between gap-3">
+          <span class="font-condensed text-[0.65rem] font-semibold uppercase tracking-[3px] text-accent">
+            {{ bestCombo.occasion.split('·')[0].trim() }}
+          </span>
+          <span v-if="bestCombo.isLimited" class="inline-flex items-center gap-1 font-condensed text-[0.7rem] font-bold uppercase tracking-[1.5px] text-oxblood">
+            <i class="bx bxs-flame animate-pulse" /> Còn {{ bestCombo.stock }} sets
           </span>
         </div>
 
-        <h3 class="combo-name">{{ bestCombo.name }}</h3>
-        <div class="combo-tagline">{{ bestCombo.tagline }}</div>
+        <h3 class="m-0 font-display font-bold leading-[1.15] text-text text-[clamp(1.3rem,2.4vw,1.7rem)]">
+          {{ bestCombo.name }}
+        </h3>
+        <div class="-mt-2 font-display italic text-[0.95rem] leading-[1.4] text-smoke">
+          {{ bestCombo.tagline }}
+        </div>
 
-        <ul class="items-list">
-          <li v-for="it in bestCombo.items" :key="it.product.id">
-            <i class="bx bx-plus-medical" />
-            <div class="item-info">
-              <span class="item-name">{{ it.product.name }}</span>
-              <span v-if="it.note" class="item-note">{{ it.note }}</span>
+        <ul class="m-0 flex list-none flex-col gap-2 border-y border-dashed border-rule py-3 px-0">
+          <li
+            v-for="it in bestCombo.items"
+            :key="it.product.id"
+            class="grid grid-cols-[18px_1fr_auto] items-center gap-2.5"
+          >
+            <i class="bx bx-plus-medical text-[0.8rem] text-accent" />
+            <div class="flex min-w-0 flex-col">
+              <span class="truncate text-[0.86rem] font-medium leading-[1.3] text-text">{{ it.product.name }}</span>
+              <span v-if="it.note" class="text-[0.72rem] italic text-smoke">{{ it.note }}</span>
             </div>
-            <span class="item-price">{{ formatPrice(it.product.salePrice ?? it.product.price) }}</span>
+            <span class="whitespace-nowrap font-condensed text-[0.8rem] font-semibold text-mid">
+              {{ formatPrice(it.product.salePrice ?? it.product.price) }}
+            </span>
           </li>
         </ul>
 
-        <div class="combo-pricing">
-          <div class="price-rows">
-            <div class="price-row mute">
+        <div :class="comboPricing">
+          <div class="relative flex flex-col gap-1">
+            <div :class="priceRow">
               <span>Mua lẻ</span>
-              <span class="strike">{{ formatPrice(bestCombo.originalPrice) }}</span>
+              <span class="text-smoke line-through text-[0.92rem]">{{ formatPrice(bestCombo.originalPrice) }}</span>
             </div>
-            <div class="price-row save">
+            <div :class="[priceRow, '[&>span:first-child]:!text-oxblood']">
               <span>Bạn tiết kiệm</span>
-              <span class="save-amount">
+              <span class="font-bold text-[0.9rem] text-oxblood">
                 − {{ formatPrice(bestCombo.savings) }}
               </span>
             </div>
-            <div class="price-row final">
-              <span class="combo-label">Giá Combo</span>
-              <span class="combo-final">{{ formatPrice(bestCombo.comboPrice) }}</span>
+            <div :class="[priceRow, 'mt-1 items-center border-t border-rule pt-2']">
+              <span class="!text-[0.72rem] !text-accent !font-bold">Giá Combo</span>
+              <span class="font-display font-extrabold leading-none tracking-[-0.5px] text-accent text-[clamp(1.4rem,3vw,1.9rem)]">
+                {{ formatPrice(bestCombo.comboPrice) }}
+              </span>
             </div>
           </div>
-          <div class="save-pill">
-            <strong>−{{ bestCombo.savingsPercent }}%</strong>
-            <span>tiết kiệm</span>
+          <div :class="savePill">
+            <strong class="font-display text-[1.2rem] font-extrabold leading-none">−{{ bestCombo.savingsPercent }}%</strong>
+            <span class="mt-0.5 text-[0.55rem] uppercase tracking-[2px] opacity-85">tiết kiệm</span>
           </div>
         </div>
 
-        <ul class="perks">
-          <li v-for="p in bestCombo.perks.slice(0, 3)" :key="p">
-            <i class="bx bx-check" /> {{ p }}
+        <ul class="m-0 flex list-none flex-col gap-1.5 p-0">
+          <li v-for="p in bestCombo.perks.slice(0, 3)" :key="p" class="flex items-center gap-2 text-[0.82rem] leading-[1.4] text-mid">
+            <i class="bx bx-check text-[0.95rem] text-accent" /> {{ p }}
           </li>
         </ul>
 
-        <div class="combo-cta">
-          <span class="cta-text">
+        <div class="mt-auto flex items-center justify-between gap-3 border-t border-rule pt-4">
+          <span :class="ctaText">
             Khám Phá Combo
-            <i class="bx bx-right-arrow-alt" />
+            <i class="bx bx-right-arrow-alt text-[1.2rem]" />
           </span>
-          <span class="cta-mini">
+          <span class="inline-flex items-center gap-1 font-condensed text-[0.68rem] uppercase tracking-[1.5px] text-smoke">
             <i class="bx bx-shield-quarter" /> Bảo hành chính hãng
           </span>
         </div>
@@ -127,104 +189,120 @@ const restCombos = computed(() => combos.slice(1));
     </article>
 
     <!-- Other combos -->
-    <div class="combos-grid">
+    <div class="relative mx-auto grid max-w-[1280px] grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:[grid-auto-rows:1fr]">
       <article
         v-for="combo in restCombos"
         :key="combo.id"
-        class="combo-card"
+        :class="comboCard"
       >
-        <NuxtLink :to="`/combos/${combo.slug}`" class="combo-link" />
+        <NuxtLink :to="`/combos/${combo.slug}`" class="absolute inset-0 z-[4] indent-[-9999px]" />
 
-        <!-- Visual -->
-        <div class="combo-visual">
-          <div class="visual-frame">
-            <img :src="combo.heroImage" :alt="combo.name" loading="lazy" />
-            <div class="visual-overlay" />
+        <div class="relative overflow-hidden bg-card">
+          <div class="relative overflow-hidden aspect-[16/10]">
+            <img
+              :src="combo.heroImage"
+              :alt="combo.name"
+              loading="lazy"
+              class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+            />
+            <div :class="visualOverlay" />
           </div>
 
-          <div v-if="combo.badge" class="combo-badge" :class="`badge-${combo.badgeVariant}`">
-            <i class="bx bxs-bookmark-star" />
+          <div
+            v-if="combo.badge"
+            :class="[comboBadgeBase, badgeVariantClass(combo.badgeVariant)]"
+          >
+            <i class="bx bxs-bookmark-star text-[0.85rem]" />
             {{ combo.badge }}
           </div>
 
-          <!-- Stack mini items -->
-          <div class="stack-items">
+          <div class="absolute bottom-4 left-4 z-[2] flex items-center gap-2">
             <div
               v-for="(it, i) in combo.items"
               :key="it.product.id"
-              class="stack-chip"
-              :style="{ '--i': i }"
+              :class="stackChip"
+              :style="{ marginLeft: `${i * -10}px`, zIndex: 10 - i }"
             >
               <CommonIconLine :name="it.product.icon" :size="22" />
             </div>
-            <div class="stack-count">
-              <span>{{ combo.items.length }}</span>
+            <div class="ml-3 flex flex-col font-condensed text-[0.7rem] font-semibold uppercase leading-none tracking-[2px] text-[#fbf6ea]">
+              <span class="mb-0.5 font-display text-[1.4rem] font-extrabold text-[var(--accent-2)]">{{ combo.items.length }}</span>
               món
             </div>
           </div>
         </div>
 
-        <!-- Body -->
-        <div class="combo-body">
-          <div class="combo-meta">
-            <span class="combo-tag">{{ combo.occasion.split('·')[0].trim() }}</span>
-            <span v-if="combo.isLimited" class="meta-limited">
-              <i class="bx bxs-flame" /> Còn {{ combo.stock }} sets
+        <div class="flex flex-1 flex-col gap-[18px] p-6">
+          <div class="flex items-center justify-between gap-3">
+            <span class="font-condensed text-[0.65rem] font-semibold uppercase tracking-[3px] text-accent">
+              {{ combo.occasion.split('·')[0].trim() }}
+            </span>
+            <span v-if="combo.isLimited" class="inline-flex items-center gap-1 font-condensed text-[0.7rem] font-bold uppercase tracking-[1.5px] text-oxblood">
+              <i class="bx bxs-flame animate-pulse" /> Còn {{ combo.stock }} sets
             </span>
           </div>
 
-          <h3 class="combo-name">{{ combo.name }}</h3>
-          <div class="combo-tagline">{{ combo.tagline }}</div>
+          <h3 class="m-0 font-display font-bold leading-[1.15] text-text text-[clamp(1.3rem,2.4vw,1.7rem)]">
+            {{ combo.name }}
+          </h3>
+          <div class="-mt-2 font-display italic text-[0.95rem] leading-[1.4] text-smoke">
+            {{ combo.tagline }}
+          </div>
 
-          <!-- Items breakdown -->
-          <ul class="items-list">
-            <li v-for="it in combo.items" :key="it.product.id">
-              <i class="bx bx-plus-medical" />
-              <div class="item-info">
-                <span class="item-name">{{ it.product.name }}</span>
-                <span v-if="it.note" class="item-note">{{ it.note }}</span>
+          <ul class="m-0 flex list-none flex-col gap-2 border-y border-dashed border-rule py-3 px-0">
+            <li
+              v-for="it in combo.items"
+              :key="it.product.id"
+              class="grid grid-cols-[18px_1fr_auto] items-center gap-2.5"
+            >
+              <i class="bx bx-plus-medical text-[0.8rem] text-accent" />
+              <div class="flex min-w-0 flex-col">
+                <span class="truncate text-[0.86rem] font-medium leading-[1.3] text-text">{{ it.product.name }}</span>
+                <span v-if="it.note" class="text-[0.72rem] italic text-smoke">{{ it.note }}</span>
               </div>
-              <span class="item-price">{{ formatPrice(it.product.salePrice ?? it.product.price) }}</span>
+              <span class="whitespace-nowrap font-condensed text-[0.8rem] font-semibold text-mid">
+                {{ formatPrice(it.product.salePrice ?? it.product.price) }}
+              </span>
             </li>
           </ul>
 
-          <!-- Pricing zone — focal point -->
-          <div class="combo-pricing">
-            <div class="price-rows">
-              <div class="price-row mute">
+          <div :class="comboPricing">
+            <div class="relative flex flex-col gap-1">
+              <div :class="priceRow">
                 <span>Mua lẻ</span>
-                <span class="strike">{{ formatPrice(combo.originalPrice) }}</span>
+                <span class="text-smoke line-through text-[0.92rem]">{{ formatPrice(combo.originalPrice) }}</span>
               </div>
-              <div class="price-row save">
+              <div :class="[priceRow, '[&>span:first-child]:!text-oxblood']">
                 <span>Bạn tiết kiệm</span>
-                <span class="save-amount">
+                <span class="font-bold text-[0.9rem] text-oxblood">
                   − {{ formatPrice(combo.savings) }}
                 </span>
               </div>
-              <div class="price-row final">
-                <span class="combo-label">Giá Combo</span>
-                <span class="combo-final">{{ formatPrice(combo.comboPrice) }}</span>
+              <div :class="[priceRow, 'mt-1 items-center border-t border-rule pt-2']">
+                <span class="!text-[0.72rem] !text-accent !font-bold">Giá Combo</span>
+                <span class="font-display font-extrabold leading-none tracking-[-0.5px] text-accent text-[clamp(1.4rem,3vw,1.9rem)]">
+                  {{ formatPrice(combo.comboPrice) }}
+                </span>
               </div>
             </div>
-            <div class="save-pill">
-              <strong>−{{ combo.savingsPercent }}%</strong>
-              <span>tiết kiệm</span>
+            <div :class="savePill">
+              <strong class="font-display text-[1.2rem] font-extrabold leading-none">−{{ combo.savingsPercent }}%</strong>
+              <span class="mt-0.5 text-[0.55rem] uppercase tracking-[2px] opacity-85">tiết kiệm</span>
             </div>
           </div>
 
-          <!-- Perks -->
-          <ul class="perks">
-            <li v-for="p in combo.perks.slice(0, 3)" :key="p">
-              <i class="bx bx-check" /> {{ p }}
+          <ul class="m-0 flex list-none flex-col gap-1.5 p-0">
+            <li v-for="p in combo.perks.slice(0, 3)" :key="p" class="flex items-center gap-2 text-[0.82rem] leading-[1.4] text-mid">
+              <i class="bx bx-check text-[0.95rem] text-accent" /> {{ p }}
             </li>
           </ul>
 
-          <div class="combo-cta">
-            <span class="cta-text">
+          <div class="mt-auto flex items-center justify-between gap-3 border-t border-rule pt-4">
+            <span :class="ctaText">
               Khám Phá Combo
-              <i class="bx bx-right-arrow-alt" />
+              <i class="bx bx-right-arrow-alt text-[1.2rem]" />
             </span>
-            <span class="cta-mini">
+            <span class="inline-flex items-center gap-1 font-condensed text-[0.68rem] uppercase tracking-[1.5px] text-smoke">
               <i class="bx bx-shield-quarter" /> Bảo hành chính hãng
             </span>
           </div>
@@ -233,563 +311,15 @@ const restCombos = computed(() => combos.slice(1));
     </div>
 
     <!-- Trust strip -->
-    <div class="combo-trust">
-      <div><i class="bx bx-package" /> Hộp gỗ phôi · Khắc tên miễn phí</div>
-      <div><i class="bx bx-medal" /> Bảo hành chính hãng đầy đủ</div>
-      <div><i class="bx bx-time-five" /> Giao 2h nội thành · 24h toàn quốc</div>
-      <div><i class="bx bx-credit-card" /> Trả góp 0% — qua thẻ tín dụng</div>
+    <div class="relative mx-auto mt-15 grid max-w-[1280px] grid-cols-1 gap-3 border-y border-rule py-6 px-7 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+      <div v-for="trust in [
+        { icon: 'bx-package', text: 'Hộp gỗ phôi · Khắc tên miễn phí' },
+        { icon: 'bx-medal', text: 'Bảo hành chính hãng đầy đủ' },
+        { icon: 'bx-time-five', text: 'Giao 2h nội thành · 24h toàn quốc' },
+        { icon: 'bx-credit-card', text: 'Trả góp 0% — qua thẻ tín dụng' }
+      ]" :key="trust.text" class="flex items-center gap-2.5 font-condensed text-[0.78rem] font-medium uppercase tracking-[1.5px] text-mid">
+        <i class="bx text-[1.4rem] text-accent" :class="trust.icon" /> {{ trust.text }}
+      </div>
     </div>
   </section>
 </template>
-
-<style scoped>
-.combos-section {
-  padding: var(--sp-lg) var(--gutter);
-  background:
-    radial-gradient(120% 60% at 50% 0%, color-mix(in srgb, var(--accent) 6%, transparent), transparent 60%),
-    var(--bg);
-  position: relative;
-  overflow: hidden;
-}
-.combos-section::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(color-mix(in srgb, var(--accent) 4%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--accent) 4%, transparent) 1px, transparent 1px);
-  background-size: 56px 56px;
-  pointer-events: none;
-  opacity: 0.5;
-}
-
-.combos-head {
-  text-align: center;
-  max-width: 720px;
-  margin: 0 auto 60px;
-  position: relative;
-}
-.head-eyebrow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  margin-bottom: 18px;
-}
-.head-eyebrow .rule {
-  width: 40px;
-  height: 1px;
-  background: var(--accent);
-}
-.head-eyebrow .text {
-  font-family: var(--font-condensed);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-.head-title {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(2rem, 5vw, 3.6rem);
-  line-height: 1.05;
-  color: var(--text);
-  margin: 0 0 18px;
-}
-.head-title em {
-  font-style: italic;
-  color: var(--accent);
-  position: relative;
-}
-.head-title em::after {
-  content: '';
-  position: absolute;
-  left: 0; right: 0; bottom: -4px;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  opacity: 0.5;
-}
-.head-sub {
-  font-size: 1rem;
-  line-height: 1.75;
-  color: var(--mid);
-  font-weight: 300;
-  margin: 0;
-}
-
-.combos-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 32px;
-  position: relative;
-  max-width: 1280px;
-  margin: 0 auto;
-}
-@media (min-width: 720px) {
-  .combos-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (min-width: 1100px) {
-  .combos-grid {
-    grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: 1fr;
-  }
-}
-
-/* Best Combo — horizontal banner */
-.combo-card.is-horizontal {
-  max-width: 1280px;
-  margin: 0 auto 32px;
-}
-@media (min-width: 900px) {
-  .combo-card.is-horizontal {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    align-items: stretch;
-  }
-  .combo-card.is-horizontal .combo-visual { height: 100%; }
-  .combo-card.is-horizontal .visual-frame { aspect-ratio: auto; height: 100%; min-height: 480px; }
-  .combo-card.is-horizontal .combo-body { padding: 32px 36px; }
-}
-
-/* CARD */
-.combo-card {
-  position: relative;
-  background: var(--surface);
-  border: 1px solid var(--rule);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-  box-shadow: 0 4px 20px color-mix(in srgb, #000 5%, transparent);
-}
-.combo-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border: 1px solid var(--accent);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s;
-  z-index: 3;
-}
-.combo-card:hover {
-  transform: translateY(-6px);
-  box-shadow:
-    0 24px 60px color-mix(in srgb, #000 16%, transparent),
-    0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent);
-}
-.combo-card:hover::before { opacity: 0.5; }
-.combo-card:hover .visual-frame img { transform: scale(1.06); }
-
-.combo-link {
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-  text-indent: -9999px;
-}
-
-/* Visual */
-.combo-visual {
-  position: relative;
-  overflow: hidden;
-  background: var(--card);
-}
-.visual-frame {
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-  position: relative;
-}
-.is-featured .visual-frame { aspect-ratio: 4 / 5; }
-.visual-frame img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-.visual-overlay {
-  position: absolute; inset: 0;
-  background: linear-gradient(180deg,
-    color-mix(in srgb, #000 15%, transparent) 0%,
-    transparent 30%,
-    color-mix(in srgb, #000 50%, transparent) 100%);
-}
-
-.combo-badge {
-  position: absolute;
-  top: 16px; left: 16px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 14px;
-  font-family: var(--font-condensed);
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  color: #fbf6ea;
-  z-index: 2;
-  border: 1px solid color-mix(in srgb, #fff 25%, transparent);
-  backdrop-filter: blur(8px);
-}
-.combo-badge i { font-size: 0.85rem; }
-.badge-gold    { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: var(--ink); }
-.badge-olive   { background: var(--olive); }
-.badge-oxblood { background: var(--oxblood); }
-
-.stack-items {
-  position: absolute;
-  bottom: 16px; left: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  z-index: 2;
-}
-.stack-chip {
-  width: 42px; height: 42px;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--bg) 90%, transparent);
-  backdrop-filter: blur(10px);
-  border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
-  display: flex; align-items: center; justify-content: center;
-  color: var(--accent);
-  margin-left: calc(var(--i) * -10px);
-  position: relative;
-  z-index: calc(10 - var(--i));
-  transition: transform 0.3s;
-}
-.combo-card:hover .stack-chip {
-  margin-left: 0;
-  transform: translateY(-2px);
-}
-.stack-count {
-  margin-left: 12px;
-  font-family: var(--font-condensed);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: #fbf6ea;
-  display: flex;
-  flex-direction: column;
-  line-height: 1;
-}
-.stack-count span {
-  font-family: var(--font-display);
-  font-size: 1.4rem;
-  color: var(--accent-2);
-  font-weight: 800;
-  margin-bottom: 2px;
-}
-
-/* Body */
-.combo-body {
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  flex: 1;
-}
-
-.combo-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-.combo-tag {
-  font-family: var(--font-condensed);
-  font-size: 0.65rem;
-  font-weight: 600;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-.meta-limited {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-family: var(--font-condensed);
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--oxblood);
-}
-.meta-limited i { color: var(--oxblood); animation: pulse 1.6s ease-in-out infinite; }
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(1.15); }
-}
-
-.combo-name {
-  font-family: var(--font-display);
-  font-size: clamp(1.3rem, 2.4vw, 1.7rem);
-  font-weight: 700;
-  color: var(--text);
-  line-height: 1.15;
-  margin: 0;
-}
-.combo-tagline {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 0.95rem;
-  color: var(--smoke);
-  line-height: 1.4;
-  margin-top: -8px;
-}
-
-/* Items list */
-.items-list {
-  list-style: none;
-  margin: 0;
-  padding: 12px 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  border-top: 1px dashed var(--rule);
-  border-bottom: 1px dashed var(--rule);
-}
-.items-list li {
-  display: grid;
-  grid-template-columns: 18px 1fr auto;
-  align-items: center;
-  gap: 10px;
-}
-.items-list i {
-  color: var(--accent);
-  font-size: 0.8rem;
-}
-.item-info {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-.item-name {
-  font-size: 0.86rem;
-  font-weight: 500;
-  color: var(--text);
-  line-height: 1.3;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.item-note {
-  font-size: 0.72rem;
-  color: var(--smoke);
-  font-style: italic;
-}
-.item-price {
-  font-family: var(--font-condensed);
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--mid);
-  white-space: nowrap;
-}
-
-/* Pricing — the show-stopper */
-.combo-pricing {
-  position: relative;
-  background:
-    linear-gradient(135deg,
-      color-mix(in srgb, var(--accent) 12%, var(--card)) 0%,
-      var(--card) 60%);
-  border: 1px solid var(--rule-strong);
-  padding: 18px;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 16px;
-  align-items: center;
-  overflow: hidden;
-}
-.combo-pricing::before {
-  content: '';
-  position: absolute;
-  top: -1px; right: -1px;
-  width: 50%; height: 100%;
-  background: radial-gradient(80% 100% at 100% 0%,
-    color-mix(in srgb, var(--accent) 30%, transparent),
-    transparent);
-  pointer-events: none;
-}
-.price-rows { display: flex; flex-direction: column; gap: 4px; position: relative; }
-.price-row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px;
-  font-family: var(--font-condensed);
-}
-.price-row span:first-child {
-  font-size: 0.7rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--smoke);
-  font-weight: 500;
-}
-.price-row.mute .strike {
-  color: var(--smoke);
-  text-decoration: line-through;
-  font-size: 0.92rem;
-}
-.price-row.save .save-amount {
-  color: var(--oxblood);
-  font-weight: 700;
-  font-size: 0.9rem;
-}
-.price-row.save span:first-child { color: var(--oxblood); }
-.price-row.final {
-  margin-top: 4px;
-  padding-top: 8px;
-  border-top: 1px solid var(--rule);
-  align-items: center;
-}
-.combo-label {
-  font-size: 0.72rem !important;
-  color: var(--accent) !important;
-  font-weight: 700 !important;
-}
-.combo-final {
-  font-family: var(--font-display);
-  font-size: clamp(1.4rem, 3vw, 1.9rem);
-  font-weight: 800;
-  color: var(--accent);
-  line-height: 1;
-  letter-spacing: -0.5px;
-}
-
-.save-pill {
-  position: relative;
-  width: 76px; height: 76px;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle, var(--oxblood) 0%, color-mix(in srgb, var(--oxblood) 80%, #000) 100%);
-  color: #fbf6ea;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-condensed);
-  letter-spacing: 1px;
-  box-shadow:
-    0 4px 16px color-mix(in srgb, var(--oxblood) 40%, transparent),
-    inset 0 0 0 2px color-mix(in srgb, #fff 25%, transparent);
-  transform: rotate(-8deg);
-  transition: transform 0.4s ease;
-}
-.combo-card:hover .save-pill {
-  transform: rotate(0deg) scale(1.05);
-}
-.save-pill strong {
-  font-family: var(--font-display);
-  font-size: 1.2rem;
-  font-weight: 800;
-  line-height: 1;
-}
-.save-pill span {
-  font-size: 0.55rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-top: 2px;
-  opacity: 0.85;
-}
-
-/* Perks */
-.perks {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.perks li {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.82rem;
-  color: var(--mid);
-  line-height: 1.4;
-}
-.perks i {
-  color: var(--accent);
-  font-size: 0.95rem;
-}
-
-/* CTA */
-.combo-cta {
-  margin-top: auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding-top: 16px;
-  border-top: 1px solid var(--rule);
-}
-.cta-text {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--font-condensed);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  color: var(--accent);
-  position: relative;
-  transition: gap 0.3s;
-}
-.combo-card:hover .cta-text { gap: 12px; }
-.cta-text i { font-size: 1.2rem; }
-.cta-mini {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-family: var(--font-condensed);
-  font-size: 0.68rem;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--smoke);
-}
-
-/* Trust strip */
-.combo-trust {
-  margin: 60px auto 0;
-  max-width: 1280px;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-  padding: 24px 28px;
-  border-top: 1px solid var(--rule);
-  border-bottom: 1px solid var(--rule);
-  position: relative;
-}
-.combo-trust > div {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--font-condensed);
-  font-size: 0.78rem;
-  font-weight: 500;
-  letter-spacing: 1.5px;
-  color: var(--mid);
-  text-transform: uppercase;
-}
-.combo-trust i {
-  color: var(--accent);
-  font-size: 1.4rem;
-}
-@media (min-width: 720px) {
-  .combo-trust { grid-template-columns: repeat(2, 1fr); }
-}
-@media (min-width: 1100px) {
-  .combo-trust { grid-template-columns: repeat(4, 1fr); gap: 24px; }
-}
-
-@media (max-width: 720px) {
-  .combos-section { padding: var(--sp-md) var(--gutter); }
-  .combo-body { padding: 20px; gap: 14px; }
-  .combo-pricing { grid-template-columns: 1fr; }
-  .save-pill { justify-self: end; }
-}
-</style>

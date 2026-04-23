@@ -3,6 +3,12 @@
    GQ × Hodinkee × Leather workshop
    Toggle by class `.dark` on <html> (handled by
    @nuxtjs/color-mode with classSuffix: '').
+
+   NOTE: Helper classes (.vrail, .eyebrow, .hairline) and
+   .anim-* utilities have been migrated to UnoCSS shortcuts
+   in uno.config.ts. Keyframes remain here as the canonical
+   source — Uno's `theme.animation` registers them by name
+   so `animate-fade-up`, `animate-marquee`, etc. work.
    ────────────────────────────────────────────────────────── */
 
 :root,
@@ -138,30 +144,7 @@ body {
   mix-blend-mode: normal;
 }
 
-/* ── Editorial helpers ─────────────────────────────────── */
-.vrail {
-  font-family: var(--font-condensed);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 5px;
-  text-transform: uppercase;
-  color: var(--accent);
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-}
-
-.eyebrow {
-  font-family: var(--font-condensed);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-
-.hairline { height: 1px; background: var(--rule); width: 100%; }
-
-/* ── Keyframes ─────────────────────────────────────────── */
+/* ── Keyframes (registered as theme.animation in uno.config.ts) ── */
 @keyframes ironman-marquee {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
@@ -186,7 +169,42 @@ body {
   0%, 100% { transform: translateY(0); opacity: 0.6; }
   50%      { transform: translateY(8px); opacity: 1; }
 }
+@keyframes ironman-fade-up-x {
+  to { opacity: 1; transform: translateX(0); }
+}
 
-.anim-fade-up { animation: ironman-fade-up 0.7s ease both; }
-.anim-float   { animation: ironman-card-float 6s ease-in-out infinite; }
-.anim-rotate  { animation: ironman-rotate-slow 20s linear infinite; }
+/* ── Vue <Transition> classes — applied by name, can't be Uno utilities ── */
+.fade-enter-active,
+.fade-leave-active { transition: opacity 0.3s; }
+.fade-enter-from,
+.fade-leave-to { opacity: 0; }
+
+.slide-right-enter-active,
+.slide-right-leave-active { transition: transform 0.4s cubic-bezier(0.5, 0, 0.2, 1); }
+.slide-right-enter-from,
+.slide-right-leave-to { transform: translateX(100%); }
+
+.page-enter-active,
+.page-leave-active { transition: opacity 0.3s ease, filter 0.3s ease; }
+.page-enter-from,
+.page-leave-to { opacity: 0; filter: blur(4px); }
+
+/* PDP lightbox transition */
+.lb-enter-active,
+.lb-leave-active { transition: opacity 0.3s; }
+.lb-enter-from,
+.lb-leave-to { opacity: 0; }
+.lb-enter-active .lb-figure { animation: ironman-lb-zoom 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+@keyframes ironman-lb-zoom {
+  from { transform: scale(0.9); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+@keyframes ironman-pulse-ring {
+  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 60%, transparent); }
+  100% { box-shadow: 0 0 0 24px color-mix(in srgb, var(--accent) 0%, transparent); }
+}
+@keyframes ironman-pdp-scroll-line {
+  0%, 100% { transform: scaleY(0.4); opacity: 0.4; }
+  50%      { transform: scaleY(1); opacity: 1; }
+}

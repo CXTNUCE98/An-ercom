@@ -8,125 +8,38 @@ defineProps<{
 </script>
 
 <template>
-  <article class="tm-card">
-    <div class="tm-top">
-      <CommonNumeralIndex v-if="index !== undefined" :value="index" format="noun" class="tm-index" />
-      <div class="tm-stars">
+  <article
+    class="group relative bg-surface py-10 px-8 pb-8 border border-rule flex flex-col gap-4 overflow-hidden transition-all duration-400 hover:border-rule-strong hover:-translate-y-1 after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-accent after:transition-[width] after:duration-500 hover:after:w-full"
+  >
+    <div class="flex justify-between items-center">
+      <CommonNumeralIndex
+        v-if="index !== undefined"
+        :value="index"
+        format="noun"
+        class="text-[1.1rem]"
+      />
+      <div class="text-accent text-[0.95rem] tracking-[4px]">
         <span v-for="n in testimonial.stars" :key="n">★</span>
       </div>
     </div>
 
-    <span class="tm-mark">&ldquo;</span>
+    <span
+      class="block font-display italic text-[4.5rem] leading-[0.6] h-6"
+      :style="{ color: 'color-mix(in srgb, var(--accent) 40%, transparent)' }"
+    >&ldquo;</span>
 
-    <p class="tm-quote">{{ testimonial.quote }}</p>
+    <p class="font-display italic text-[1.05rem] leading-[1.75] text-mid m-0">{{ testimonial.quote }}</p>
 
-    <div class="tm-rule" />
+    <div class="h-px bg-rule" />
 
-    <div class="tm-author">
-      <div class="tm-avatar">{{ testimonial.initials }}</div>
+    <div class="flex items-center gap-3.5">
+      <div class="w-11 h-11 rounded-full flex items-center justify-center bg-transparent border border-accent text-accent font-display italic font-bold text-[0.95rem]">
+        {{ testimonial.initials }}
+      </div>
       <div>
-        <div class="tm-name">{{ testimonial.name }}</div>
-        <div class="tm-role">{{ testimonial.role }}</div>
+        <div class="font-condensed text-[0.95rem] font-semibold tracking-[2px] uppercase text-text">{{ testimonial.name }}</div>
+        <div class="font-condensed text-[0.72rem] tracking-[2px] uppercase text-smoke mt-0.5">{{ testimonial.role }}</div>
       </div>
     </div>
   </article>
 </template>
-
-<style scoped>
-.tm-card {
-  position: relative;
-  background: var(--surface);
-  padding: 40px 34px 32px;
-  border: 1px solid var(--rule);
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  overflow: hidden;
-  transition: border-color 0.4s ease, transform 0.4s ease;
-}
-.tm-card::after {
-  content: '';
-  position: absolute;
-  left: 0; bottom: 0;
-  height: 2px;
-  width: 0;
-  background: var(--accent);
-  transition: width 0.5s ease;
-}
-.tm-card:hover { border-color: var(--rule-strong); transform: translateY(-4px); }
-.tm-card:hover::after { width: 100%; }
-
-.tm-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.tm-index { font-size: 1.1rem; }
-
-.tm-stars {
-  color: var(--accent);
-  font-size: 0.95rem;
-  letter-spacing: 4px;
-}
-
-.tm-mark {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 4.5rem;
-  line-height: 0.6;
-  color: color-mix(in srgb, var(--accent) 40%, transparent);
-  display: block;
-  height: 24px;
-}
-
-.tm-quote {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 1.05rem;
-  line-height: 1.75;
-  color: var(--mid);
-  margin: 0;
-}
-
-.tm-rule { height: 1px; background: var(--rule); }
-
-.tm-author {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.tm-avatar {
-  width: 44px; height: 44px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  border: 1px solid var(--accent);
-  color: var(--accent);
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 700;
-  font-size: 0.95rem;
-}
-
-.tm-name {
-  font-family: var(--font-condensed);
-  font-size: 0.95rem;
-  font-weight: 600;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--text);
-}
-
-.tm-role {
-  font-family: var(--font-condensed);
-  font-size: 0.72rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--smoke);
-  margin-top: 2px;
-}
-</style>

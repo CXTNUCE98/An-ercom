@@ -25,7 +25,7 @@ const icons: Record<string, string> = {
       leave-to-class="transform scale-90 opacity-0">
 
       <div v-for="n in items" :key="n.id"
-        class="pointer-events-auto backdrop-blur-xl border-2 rounded-2xl shadow-2xl overflow-hidden p-4 relative flex items-center gap-4 animate-glow"
+        class="pointer-events-auto backdrop-blur-xl border-2 rounded-2xl shadow-2xl overflow-hidden p-4 relative flex items-center gap-4 animate-pulse"
         :class="themeClasses[n.type]">
 
         <div class="w-10 h-10 rounded-xl flex-center shrink-0" :class="themeClasses[n.type]">
@@ -44,21 +44,3 @@ const icons: Record<string, string> = {
     </TransitionGroup>
   </div>
 </template>
-
-<style scoped>
-@keyframes glow {
-
-  0%,
-  100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.9;
-  }
-}
-
-.animate-glow {
-  animation: glow 2s infinite ease-in-out;
-}
-</style>

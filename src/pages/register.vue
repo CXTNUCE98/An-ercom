@@ -24,14 +24,14 @@ const handleRegister = () => {
   <div class="min-h-screen flex items-center justify-center px-4 bg-slate-950 text-slate-300">
     <div class="max-w-md w-full glass-card p-10 bg-slate-900 border border-slate-800 rounded-sm">
       <div v-if="isSuccess" class="text-center">
-        <h2 class="text-2xl font-bold font-heading text-amber-500 mb-4">Đăng Ký Thành Công</h2>
+        <h2 class="text-2xl font-bold font-display text-amber-500 mb-4">Đăng Ký Thành Công</h2>
         <p class="mb-8">Chào mừng quý ông gia nhập cộng đồng.</p>
         <NuxtLink to="/login" class="inline-block bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-8 uppercase tracking-widest text-sm">Đăng Nhập</NuxtLink>
       </div>
 
       <div v-else>
         <div class="text-center mb-8">
-          <h2 class="text-3xl font-bold font-heading text-amber-500 uppercase tracking-widest mb-2">GENTLEMEN</h2>
+          <h2 class="text-3xl font-bold font-display text-amber-500 uppercase tracking-widest mb-2">GENTLEMEN</h2>
           <p class="text-sm">Gia nhập cộng đồng quý ông đích thực</p>
         </div>
 
@@ -63,8 +63,3 @@ const handleRegister = () => {
   </div>
 </template>
 
-<style scoped>
-.font-heading {
-  font-family: 'Playfair Display', serif;
-}
-</style>

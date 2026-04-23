@@ -14,44 +14,31 @@ withDefaults(
 </script>
 
 <template>
-  <div class="media" :style="{ aspectRatio: aspect.replace('/', ' / ') }">
-    <img v-if="src" :src="src" :alt="alt" class="media-img" />
-    <div v-else class="media-placeholder">
-      <CommonIconLine v-if="placeholderIcon" :name="placeholderIcon" :size="iconSize" />
+  <div
+    class="media relative w-full overflow-hidden bg-gradient-to-br from-linen to-card"
+    :style="{ aspectRatio: aspect.replace('/', ' / ') }"
+  >
+    <img
+      v-if="src"
+      :src="src"
+      :alt="alt"
+      class="block h-full w-full object-cover transition-transform duration-700 ease-out"
+    />
+    <div
+      v-else
+      class="media-placeholder absolute inset-0 flex items-center justify-center bg-mix-accent-10 [&_.icon-line]:opacity-85"
+      :style="{
+        background:
+          'radial-gradient(120% 80% at 30% 20%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 60%), linear-gradient(145deg, var(--linen), var(--card-alt))'
+      }"
+    >
+      <CommonIconLine
+        v-if="placeholderIcon"
+        :name="placeholderIcon"
+        :size="iconSize"
+        :style="{ color: 'color-mix(in srgb, var(--accent) 70%, var(--mid))' }"
+      />
     </div>
     <slot />
   </div>
 </template>
-
-<style scoped>
-.media {
-  position: relative;
-  width: 100%;
-  background: linear-gradient(145deg, var(--linen), var(--card));
-  overflow: hidden;
-}
-
-.media-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: transform 0.7s ease;
-}
-
-.media-placeholder {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background:
-    radial-gradient(120% 80% at 30% 20%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 60%),
-    linear-gradient(145deg, var(--linen), var(--card-alt));
-}
-
-.media-placeholder :deep(.icon-line) {
-  color: color-mix(in srgb, var(--accent) 70%, var(--mid));
-  opacity: 0.85;
-}
-</style>

@@ -6,7 +6,7 @@ const { theme, toggleTheme } = useTheme();
 
 <template>
   <button
-    class="theme-toggle"
+    class="w-[38px] h-[38px] inline-flex items-center justify-center bg-transparent border border-[var(--rule)] text-[var(--text)] text-[1.05rem] cursor-pointer rounded-full transition-all duration-300 hover:border-[var(--accent)] hover:text-[var(--accent)] hover:rotate-[15deg]"
     :aria-label="theme === 'dark' ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối'"
     @click="toggleTheme"
   >
@@ -14,25 +14,3 @@ const { theme, toggleTheme } = useTheme();
     <i v-else class="bx bx-moon" />
   </button>
 </template>
-
-<style scoped>
-.theme-toggle {
-  width: 38px;
-  height: 38px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  border: 1px solid var(--rule);
-  color: var(--text);
-  font-size: 1.05rem;
-  cursor: pointer;
-  border-radius: 999px;
-  transition: all 0.25s ease;
-}
-.theme-toggle:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  transform: rotate(15deg);
-}
-</style>

@@ -13,219 +13,201 @@ import {
 export const unoConfig: UserConfig = {
   theme: {
     colors: {
-      primary: {
-        DEFAULT: "var(--el-color-primary)",
-        light: {
-          3: "var(--el-color-primary-light-3)",
-          5: "var(--el-color-primary-light-5)",
-          7: "var(--el-color-primary-light-7)",
-          8: "var(--el-color-primary-light-8)",
-          9: "var(--el-color-primary-light-9)",
-        },
-        dark: {
-          2: "var(--el-color-primary-dark-2)",
-        },
+      // Editorial palette — driven by CSS vars in src/assets/css/theme.css
+      paper: "var(--paper)",
+      cream: "var(--cream)",
+      linen: "var(--linen)",
+      warm: "var(--warm)",
+      surface: "var(--surface)",
+
+      ink: "var(--ink)",
+      mid: "var(--mid)",
+      smoke: "var(--smoke)",
+
+      brass: {
+        DEFAULT: "var(--brass)",
+        light: "var(--brass-light)",
+        deep: "var(--brass-deep)",
       },
+      oxblood: "var(--oxblood)",
+      olive: "var(--olive)",
 
-      success: {
-        DEFAULT: "var(--el-color-success)",
-        light: {
-          3: "var(--el-color-success-light-3)",
-          5: "var(--el-color-success-light-5)",
-          7: "var(--el-color-success-light-7)",
-          8: "var(--el-color-success-light-8)",
-          9: "var(--el-color-success-light-9)",
-        },
-        dark: {
-          2: "var(--el-color-success-dark-2)",
-        },
+      accent: {
+        DEFAULT: "var(--accent)",
+        2: "var(--accent-2)",
       },
+      "on-accent": "var(--on-accent)",
+      leather: "var(--leather)",
 
-      warning: {
-        DEFAULT: "var(--el-color-warning)",
-        light: {
-          3: "var(--el-color-warning-light-3)",
-          5: "var(--el-color-warning-light-5)",
-          7: "var(--el-color-warning-light-7)",
-          8: "var(--el-color-warning-light-8)",
-          9: "var(--el-color-warning-light-9)",
-        },
-        dark: {
-          2: "var(--el-color-warning-dark-2)",
-        },
-      },
-
-      danger: {
-        DEFAULT: "var(--el-color-danger)",
-
-        light: {
-          3: "var(--el-color-danger-light-3)",
-          5: "var(--el-color-danger-light-5)",
-          7: "var(--el-color-danger-light-7)",
-          8: "var(--el-color-danger-light-8)",
-          9: "var(--el-color-danger-light-9)",
-        },
-        dark: {
-          2: "var(--el-color-danger-dark-2)",
-        },
-      },
-
-      error: {
-        DEFAULT: "var(--el-color-error)",
-        light: {
-          3: "var(--el-color-error-light-3)",
-          5: "var(--el-color-error-light-5)",
-          7: "var(--el-color-error-light-7)",
-          8: "var(--el-color-error-light-8)",
-          9: "var(--el-color-error-light-9)",
-        },
-        dark: {
-          2: "var(--el-color-error-dark-2)",
-        },
-      },
-
-      info: {
-        DEFAULT: "var(--el-color-info)",
-        light: {
-          3: "var(--el-color-info-light-3)",
-          5: "var(--el-color-info-light-5)",
-          7: "var(--el-color-info-light-7)",
-          8: "var(--el-color-info-light-8)",
-          9: "var(--el-color-info-light-9)",
-        },
-        dark: {
-          2: "var(--el-color-info-dark-2)",
-        },
-      },
-
+      // Semantic aliases
+      primary: "var(--accent)",
       bg: {
-        DEFAULT: "var(--el-bg-color)",
-        page: "var(--el-bg-color-page)",
-        overlay: "var(--el-bg-color-overlay)",
+        DEFAULT: "var(--bg)",
+        page: "var(--paper)",
+        card: "var(--card)",
+        "card-alt": "var(--card-alt)",
       },
-
+      card: "var(--card)",
+      "card-alt": "var(--card-alt)",
       text: {
-        primary: "var(--el-text-color-primary)",
-        regular: "var(--el-text-color-regular)",
-        secondary: "var(--el-text-color-secondary)",
-        placeholder: "var(--el-text-color-placeholder)",
-        disabled: "var(--el-text-color-disabled)",
+        DEFAULT: "var(--text)",
+        primary: "var(--text)",
+        regular: "var(--mid)",
+        secondary: "var(--smoke)",
+        soft: "var(--mid)",
       },
-
+      rule: "var(--rule)",
+      "rule-strong": "var(--rule-strong)",
       border: {
-        DEFAULT: "var(--el-border-color)",
-        light: "var(--el-border-color-light)",
-        lighter: "var(--el-border-color-lighter)",
-        extraLight: "var(--el-border-color-extra-light)",
-        dark: "var(--el-border-color-dark)",
-        darker: "var(--el-border-color-darker)",
-        hover: "var(--el-border-color-hover)",
+        DEFAULT: "var(--rule)",
+        strong: "var(--rule-strong)",
       },
 
-      fill: {
-        DEFAULT: "var(--el-fill-color)",
-        light: "var(--el-fill-color-light)",
-        lighter: "var(--el-fill-color-lighter)",
-        extraLight: "var(--el-fill-color-extra-light)",
-        dark: "var(--el-fill-color-dark)",
-        darker: "var(--el-fill-color-darker)",
-        blank: "var(--el-fill-color-blank)",
-      },
-
-      disabled: {
-        bg: "var(--el-disabled-bg-color)",
-        text: "var(--el-disabled-text-color)",
-        border: "var(--el-disabled-border-color)",
-      },
-
-      overlay: {
-        DEFAULT: "var(--el-overlay-color)",
-        light: "var(--el-overlay-color-light)",
-        lighter: "var(--el-overlay-color-lighter)",
-      },
-
-      mask: {
-        DEFAULT: "var(--el-mask-color)",
-        extraLight: "var(--el-mask-color-extra-light)",
-      },
-      svgMonochromeGrey: "var(--el-svg-monochrome-grey)",
+      // Status colors — kept for notifications / form states
+      success: "#3FA34D",
+      warning: "#D9A400",
+      danger: "#C0392B",
+      error: "#C0392B",
+      info: "#3B82F6",
     },
-    boxShadow: {
-      danger: "0 0 0 1px var(--el-color-danger) inset",
+    fontFamily: {
+      display: "var(--font-display)",
+      body: "var(--font-body)",
+      condensed: "var(--font-condensed)",
+      heading: "var(--font-display)",
+      sans: "var(--font-body)",
     },
+    spacing: {
+      xs: "16px",
+      sm: "var(--sp-sm)",
+      md: "var(--sp-md)",
+      lg: "var(--sp-lg)",
+      xl: "var(--sp-xl)",
+      gutter: "var(--gutter)",
+    },
+    // NOTE: keyframes live in src/assets/css/theme.css (ironman-*).
+    // We expose them via shortcuts (animate-fade-up, animate-marquee, …) below
+    // so we don't duplicate keyframe bodies in the Uno preflights.
   },
   shortcuts: [
-    ["text-helper", "text-13px leading-20px mb-4px font-medium text-slate-500"],
+    ["text-helper", "text-13px leading-20px mb-4px font-medium text-smoke"],
     ["flex-center", "flex items-center justify-center"],
     [
-      "el-form-label",
-      "[&_.el-form-item\\_\\_label]:(mb-6px! font-semibold! text-slate-700 dark:text-slate-300)",
-    ],
-    [
       "btn-primary",
-      "bg-gradient-to-r from-slate-900 to-slate-800 dark:from-slate-100 dark:to-slate-200 text-white dark:text-slate-900 px-6 py-2.5 rounded-xl font-semibold shadow-lg shadow-slate-900/5 dark:shadow-slate-100/5 hover:shadow-xl hover:shadow-slate-900/10 dark:hover:shadow-slate-100/10 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.97] flex-center gap-2",
+      "inline-flex items-center justify-center gap-2 px-6 py-3 bg-accent text-on-accent font-semibold tracking-widest uppercase text-xs transition-all duration-300 hover:bg-brass-light active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed",
     ],
     [
       "btn-secondary",
-      "bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 px-6 py-2.5 rounded-xl font-semibold shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300 active:scale-[0.97] flex-center gap-2",
+      "inline-flex items-center justify-center gap-2 px-6 py-3 bg-card text-text border border-rule font-semibold tracking-widest uppercase text-xs transition-all duration-300 hover:border-accent hover:text-accent active:scale-[0.97]",
     ],
     [
       "btn-outline",
-      "border-2 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 px-6 py-2.5 rounded-xl font-semibold hover:bg-slate-50 dark:hover:bg-slate-900 hover:border-slate-900 dark:hover:border-white hover:text-slate-900 dark:hover:text-white transition-all duration-300 active:scale-[0.97] flex-center gap-2",
+      "inline-flex items-center justify-center gap-2 px-6 py-3 bg-transparent border border-rule text-text font-semibold tracking-widest uppercase text-xs transition-all duration-300 hover:border-accent hover:text-accent active:scale-[0.97]",
     ],
     [
       "btn-gold",
-      "inline-flex items-center gap-2 px-6 py-3 border-none cursor-pointer font-semibold tracking-widest uppercase text-xs transition-all duration-300",
+      "inline-flex items-center gap-2 px-6 py-3 bg-accent text-on-accent border-none cursor-pointer font-semibold tracking-widest uppercase text-xs transition-all duration-300 hover:bg-brass-light",
     ],
     [
       "btn-ghost-gold",
-      "inline-flex items-center gap-2 px-6 py-3 bg-transparent border border-current cursor-pointer font-semibold tracking-widest uppercase text-xs transition-all duration-300",
+      "inline-flex items-center gap-2 px-6 py-3 bg-transparent border border-accent text-accent cursor-pointer font-semibold tracking-widest uppercase text-xs transition-all duration-300 hover:bg-accent hover:text-on-accent",
+    ],
+    [
+      "btn-shimmer",
+      "relative overflow-hidden before:content-[''] before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/25 before:to-transparent before:translate-x-[-100%] hover:before:translate-x-[100%] before:transition-transform before:duration-700",
     ],
     [
       "card-luxury",
-      "border border-[var(--rule)] p-6 transition-all duration-300",
+      "border border-rule bg-card p-6 transition-all duration-300",
+    ],
+    [
+      "eyebrow",
+      "inline-block font-condensed text-[0.7rem] font-semibold tracking-[4px] uppercase text-accent",
+    ],
+    [
+      "eyebrow-sm",
+      "inline-block font-condensed text-[0.6rem] font-semibold tracking-[3px] uppercase text-accent",
+    ],
+    [
+      "eyebrow-lg",
+      "inline-block font-condensed text-xs font-semibold tracking-[5px] uppercase text-accent",
     ],
     [
       "eyebrow-gold",
-      "text-xs font-semibold tracking-[4px] uppercase",
+      "text-xs font-semibold tracking-[4px] uppercase text-accent font-condensed",
     ],
     [
-      "divider-gold",
-      "h-px w-full opacity-40",
+      "vrail",
+      "font-condensed text-[0.7rem] font-semibold tracking-[5px] uppercase text-accent [writing-mode:vertical-rl] rotate-180",
     ],
+    ["hairline", "h-px w-full bg-rule"],
+    ["divider-gold", "h-px w-full bg-accent opacity-40"],
     [
       "card",
-      "bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] p-6 border border-slate-200/50 dark:border-slate-800/50",
+      "bg-card border border-rule p-6 transition-all duration-300",
     ],
     [
       "card-interactive",
-      "card hover:border-blue-500/50 dark:hover:border-blue-400/50 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] dark:hover:shadow-[0_20px_40px_rgb(0,0,0,0.3)] transition-all duration-500 cursor-pointer",
+      "card hover:border-accent hover:-translate-y-1 cursor-pointer",
     ],
     [
-      "gradient-border",
-      "relative before:absolute before:inset-0 before:rounded-2xl before:p-[1px] before:bg-gradient-to-r before:from-blue-500 before:to-purple-500 before:opacity-20 before:-z-10",
+      "card-hover-lift",
+      "transition-all duration-300 hover:-translate-y-1 hover:border-accent",
+    ],
+    [
+      "card-media-hover",
+      "overflow-hidden [&_img]:transition-transform [&_img]:duration-700 hover:[&_img]:scale-105",
     ],
     [
       "section-title",
-      "text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-8 tracking-tight font-heading",
+      "text-3xl md:text-4xl font-bold text-text mb-8 tracking-tight font-display",
     ],
     [
       "input-field",
-      "w-full px-4 py-3 border-2 border-slate-100 dark:border-slate-800 rounded-xl bg-slate-50/50 dark:bg-slate-900/50 text-slate-900 dark:text-white focus:border-blue-500 dark:focus:border-blue-400 outline-none transition-all duration-300 placeholder:text-slate-400",
+      "w-full px-4 py-3 border border-rule bg-card text-text focus:border-accent outline-none transition-all duration-300 placeholder:text-smoke",
     ],
     [
       "glass-card",
-      "backdrop-blur-2xl bg-white/40 dark:bg-slate-950/40 border border-white/20 dark:border-slate-800/40 shadow-2xl rounded-2xl",
+      "backdrop-blur-2xl bg-card/60 border border-rule shadow-2xl",
     ],
+    [
+      "chip",
+      "inline-flex items-center gap-2 px-4 py-2 border border-rule bg-card text-text font-condensed text-xs tracking-[3px] uppercase cursor-pointer transition-all duration-300 hover:border-accent hover:text-accent",
+    ],
+    [
+      "chip-active",
+      "border-accent text-on-accent bg-accent",
+    ],
+    [
+      "tab-btn",
+      "px-4 py-2 font-condensed text-xs tracking-[3px] uppercase border-b-2 border-transparent text-smoke cursor-pointer transition-all duration-300 hover:text-accent",
+    ],
+    [
+      "tab-btn-active",
+      "text-accent border-accent",
+    ],
+    [
+      "section-eyebrow-block",
+      "flex items-center gap-3 mb-4",
+    ],
+    // ── Animation shortcuts — wire Uno classes to ironman-* keyframes
+    // defined in src/assets/css/theme.css (single source of truth).
+    ["animate-fade-up", "[animation:ironman-fade-up_0.7s_ease_both]"],
+    ["animate-card-float", "[animation:ironman-card-float_6s_ease-in-out_infinite]"],
+    ["animate-rotate-slow", "[animation:ironman-rotate-slow_20s_linear_infinite]"],
+    ["animate-scroll-line", "[animation:ironman-scroll-line_2.4s_ease-in-out_infinite]"],
+    ["animate-bounce-down", "[animation:ironman-bounce-down_1.6s_ease-in-out_infinite]"],
+    ["animate-marquee", "[animation:ironman-marquee_30s_linear_infinite]"],
+    ["animate-fade-up-x", "[animation:ironman-fade-up-x_0.45s_ease_forwards]"],
+    ["animate-pulse-ring", "[animation:ironman-pulse-ring_2s_ease-out_infinite]"],
   ],
+  // NOTE: rules array (further below) also adds: stagger-N, bg-mix-*, text-clamp-*-*
   presets: [
     presetTypography(),
     presetAttributify(),
     presetIcons({
       warn: true,
       collections: {
-        ep: () =>
-          import("@iconify-json/ep/icons.json").then((i) => i.default as any),
         carbon: () =>
           import("@iconify-json/carbon/icons.json").then(
             (i) => i.default as any
@@ -236,6 +218,19 @@ export const unoConfig: UserConfig = {
     presetWebFonts({
       provider: "google",
       fonts: {
+        // Editorial display + body — match Google Fonts loaded in nuxt.config.ts head
+        display: {
+          name: "Playfair Display",
+          weights: ["400", "700", "900"],
+        },
+        body: {
+          name: "Barlow",
+          weights: ["300", "400", "500", "600"],
+        },
+        condensed: {
+          name: "Barlow Condensed",
+          weights: ["300", "400", "500", "600", "700"],
+        },
         sans: {
           name: "Plus Jakarta Sans",
           weights: ["300", "400", "500", "600", "700", "800"],
@@ -247,13 +242,33 @@ export const unoConfig: UserConfig = {
       },
     }),
   ],
-  safelist: [],
+  safelist: [
+    // Dynamic shortcuts that may not appear in source as literal strings
+    ...Array.from({ length: 12 }, (_, i) => `stagger-${i + 1}`),
+    "chip-active",
+    "tab-btn-active",
+  ],
   rules: [
-    ["box-shadow", { "box-shadow": "var(--el-box-shadow)" }],
-    ["box-shadow-light", { "box-shadow": "var(--el-box-shadow-light)" }],
-    ["box-shadow-lighter", { "box-shadow": "var(--el-box-shadow-lighter)" }],
-    ["box-shadow-dark", { "box-shadow": "var(--el-box-shadow-dark)" }],
     ["break-word", { "word-break": "break-word" }],
+    // Staircase animation delay (uses inline --i custom prop on element)
+    [
+      /^stagger-(\d+)$/,
+      ([, n]) => ({ "animation-delay": `calc(var(--i, 0) * ${n}ms)` }),
+    ],
+    // color-mix overlay backgrounds, e.g. bg-mix-accent-30 → 30% accent over transparent
+    [
+      /^bg-mix-(accent|ink|brass|paper|cream|on-accent|oxblood|olive)-(\d+)$/,
+      ([, name, pct]) => ({
+        background: `color-mix(in oklab, var(--${name}) ${pct}%, transparent)`,
+      }),
+    ],
+    // text-clamp utilities for fluid typography (e.g., text-clamp-32-64)
+    [
+      /^text-clamp-(\d+)-(\d+)$/,
+      ([, min, max]) => ({
+        "font-size": `clamp(${min}px, calc(${min}px + (${max} - ${min}) * (100vw - 360px) / (1440 - 360)), ${max}px)`,
+      }),
+    ],
   ],
   transformers: [transformerVariantGroup(), transformerDirectives()],
   preflights: [

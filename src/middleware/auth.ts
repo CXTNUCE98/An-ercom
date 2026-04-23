@@ -4,7 +4,8 @@ export default defineNuxtRouteMiddleware((to, from) => {
   if (!isAuthenticated.value) {
     // Show message to user
     if (process.client) {
-      ElMessage.warning('Vui lòng đăng nhập để tiếp tục');
+      const { notify } = useNotifications();
+      notify('warning', 'Vui lòng đăng nhập để tiếp tục');
     }
     // Redirect to home page (login modal will handle auth)
     return navigateTo(`/?redirect=${to.fullPath}`);

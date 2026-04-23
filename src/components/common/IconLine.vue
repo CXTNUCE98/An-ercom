@@ -15,7 +15,7 @@ const px = typeof props.size === 'number' ? `${props.size}px` : props.size;
 
 <template>
   <!-- WATCH: raster image — render ngoài svg để tránh namespace mismatch khi hydrate -->
-  <svg class="icon-line" :width="px" :height="px" viewBox="0 0 48 48" fill="none" :stroke-width="stroke"
+  <svg class="icon-line inline-block align-middle text-[var(--accent)]" :width="px" :height="px" viewBox="0 0 48 48" fill="none" :stroke-width="stroke"
     stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <!-- WATCH -->
     <template v-if="name === 'watch'">
@@ -131,18 +131,3 @@ const px = typeof props.size === 'number' ? `${props.size}px` : props.size;
     </template>
   </svg>
 </template>
-
-<style scoped>
-.icon-line {
-  color: var(--accent);
-  display: inline-block;
-  vertical-align: middle;
-}
-
-.icon-line--img {
-  object-fit: contain;
-  border-radius: 6px;
-  max-width: 100%;
-  max-height: 100%;
-}
-</style>

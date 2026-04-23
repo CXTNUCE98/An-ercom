@@ -10,71 +10,33 @@ defineProps<{
 </script>
 
 <template>
-  <header class="sec-header" :class="{ 'is-center': align === 'center' }">
+  <header
+    :class="[
+      align === 'center'
+        ? 'block text-center mb-12 pb-0 border-none'
+        : 'flex items-end justify-between gap-8 mb-12 pb-5 border-b border-[var(--rule)]',
+    ]"
+  >
     <div>
-      <div v-if="tag" class="sec-tag">{{ tag }}</div>
-      <h2 class="sec-title">
+      <div
+        v-if="tag"
+        class="font-condensed text-[0.68rem] font-semibold tracking-[4px] uppercase text-[var(--accent)] mb-2"
+      >
+        {{ tag }}
+      </div>
+      <h2
+        class="font-display font-bold text-[var(--text)] leading-none text-[clamp(2.2rem,4vw,3.8rem)]"
+      >
         <span>{{ title }}</span>
-        <em v-if="accent"> {{ accent }}</em>
+        <em v-if="accent" class="italic text-[var(--accent)] font-bold"> {{ accent }}</em>
       </h2>
     </div>
-    <a v-if="link" :href="link" class="sec-link">
+    <a
+      v-if="link"
+      :href="link"
+      class="font-condensed text-[0.75rem] font-semibold tracking-[2.5px] uppercase text-mid no-underline pb-4 transition-colors duration-300 whitespace-nowrap hover:text-[var(--accent)]"
+    >
       {{ linkText ?? 'Xem tất cả' }} →
     </a>
   </header>
 </template>
-
-<style scoped>
-.sec-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 32px;
-  margin-bottom: 48px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--rule);
-}
-.sec-header.is-center {
-  display: block;
-  text-align: center;
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-.sec-tag {
-  font-family: var(--font-condensed);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 8px;
-}
-
-.sec-title {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(2.2rem, 4vw, 3.8rem);
-  line-height: 1;
-  color: var(--text);
-}
-.sec-title em {
-  font-style: italic;
-  color: var(--accent);
-  font-weight: 700;
-}
-
-.sec-link {
-  font-family: var(--font-condensed);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  color: var(--mid);
-  text-decoration: none;
-  padding-bottom: 16px;
-  transition: color 0.25s;
-  white-space: nowrap;
-}
-.sec-link:hover { color: var(--accent); }
-</style>

@@ -29,16 +29,7 @@ const display = computed(() => {
 </script>
 
 <template>
-  <span class="numeral">{{ display }}</span>
+  <span class="font-display italic font-bold text-[var(--accent)] tracking-[-0.5px] leading-none">
+    {{ display }}
+  </span>
 </template>
-
-<style scoped>
-.numeral {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 700;
-  color: var(--accent);
-  letter-spacing: -0.5px;
-  line-height: 1;
-}
-</style>

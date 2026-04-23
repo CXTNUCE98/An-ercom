@@ -7,36 +7,36 @@ const pillars = [
 </script>
 
 <template>
-  <section class="craft">
-    <div class="craft-inner">
-      <div class="craft-text">
-        <div class="eyebrow">
-          <span class="rule" />
-          <span>Câu chuyện chế tác</span>
+  <section class="py-[var(--sp-xl)] px-[var(--gutter)] bg-[var(--surface)]">
+    <div class="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-[var(--sp-lg)] items-center">
+      <div class="order-2 lg:order-1">
+        <div class="flex items-center gap-3.5 mb-6">
+          <span class="w-8 h-px bg-[var(--accent)]" />
+          <span class="font-condensed text-[0.7rem] font-semibold tracking-[4px] uppercase text-[var(--accent)]">Câu chuyện chế tác</span>
         </div>
-        <h2 class="craft-title">
+        <h2 class="font-display font-bold leading-[1.1] text-[var(--text)] m-0 mb-7 text-[clamp(2rem,4vw,3.2rem)]">
           Chất liệu thật.<br />
-          <em>Tay nghề thật.</em>
+          <em class="italic text-[var(--accent)]">Tay nghề thật.</em>
         </h2>
-        <p class="craft-desc">
+        <p class="font-body text-[0.95rem] leading-[1.8] text-mid max-w-[520px] mb-11">
           Mỗi sản phẩm IRONMAN đều đi qua ít nhất 12 bước kiểm định — từ nguồn nguyên liệu,
           đường chỉ, đến cách đóng gói. Chúng tôi tin rằng phụ kiện tốt không cần quảng cáo —
           bạn sẽ cảm nhận được ngay khi cầm trên tay.
         </p>
 
-        <div class="pillars">
-          <div v-for="p in pillars" :key="p.title" class="pillar">
+        <div class="flex flex-col gap-7">
+          <div v-for="p in pillars" :key="p.title" class="flex items-start gap-5">
             <CommonIconLine :name="(p.icon as any)" :size="36" />
             <div>
-              <h3>{{ p.title }}</h3>
-              <p>{{ p.desc }}</p>
+              <h3 class="font-display text-[1.05rem] font-semibold text-[var(--text)] m-0 mb-1.5">{{ p.title }}</h3>
+              <p class="text-[0.85rem] text-smoke leading-[1.6] m-0">{{ p.desc }}</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="craft-visual">
-        <div class="craft-frame">
+      <div class="flex justify-center order-1 lg:order-2">
+        <div class="w-full max-w-[420px] border border-[var(--rule-strong)] p-3.5 bg-[var(--card)]">
           <CommonProductMedia
             aspect="4/5"
             placeholder-icon="engrave"
@@ -47,88 +47,3 @@ const pillars = [
     </div>
   </section>
 </template>
-
-<style scoped>
-.craft {
-  padding: var(--sp-xl) var(--gutter);
-  background: var(--surface);
-}
-.craft-inner {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: var(--sp-lg);
-  align-items: center;
-}
-
-.eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 24px;
-}
-.eyebrow .rule { width: 32px; height: 1px; background: var(--accent); }
-.eyebrow span:last-child {
-  font-family: var(--font-condensed);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-
-.craft-title {
-  font-family: var(--font-display);
-  font-size: clamp(2rem, 4vw, 3.2rem);
-  font-weight: 700;
-  line-height: 1.1;
-  color: var(--text);
-  margin: 0 0 28px;
-}
-.craft-title em {
-  font-style: italic;
-  color: var(--accent);
-}
-
-.craft-desc {
-  font-family: var(--font-body);
-  font-size: 0.95rem;
-  line-height: 1.8;
-  color: var(--mid);
-  max-width: 520px;
-  margin-bottom: 44px;
-}
-
-.pillars { display: flex; flex-direction: column; gap: 28px; }
-.pillar {
-  display: flex;
-  align-items: flex-start;
-  gap: 20px;
-}
-.pillar h3 {
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: var(--text);
-  margin: 0 0 6px;
-}
-.pillar p {
-  font-size: 0.85rem;
-  color: var(--smoke);
-  line-height: 1.6;
-  margin: 0;
-}
-
-.craft-visual { display: flex; justify-content: center; }
-.craft-frame {
-  width: 100%;
-  max-width: 420px;
-  border: 1px solid var(--rule-strong);
-  padding: 14px;
-  background: var(--card);
-}
-
-@media (max-width: 900px) {
-  .craft-inner { grid-template-columns: 1fr; }
-  .craft-visual { order: -1; }
-}
-</style>

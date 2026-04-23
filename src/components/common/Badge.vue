@@ -1,29 +1,32 @@
 <script setup lang="ts">
-withDefaults(
+import { computed } from 'vue';
+
+const props = withDefaults(
   defineProps<{
     label: string;
     variant?: 'copper' | 'olive' | 'dark';
   }>(),
   { variant: 'copper' },
 );
+
+const variantClass = computed(() => {
+  switch (props.variant) {
+    case 'olive':
+      return 'bg-olive text-white';
+    case 'dark':
+      return 'bg-[var(--text)] text-[var(--bg)]';
+    case 'copper':
+    default:
+      return 'bg-[var(--accent)] text-white';
+  }
+});
 </script>
 
 <template>
-  <span class="badge" :class="`badge--${variant}`">{{ label }}</span>
+  <span
+    class="inline-block px-3 py-[5px] font-condensed text-[0.62rem] font-semibold tracking-[2px] uppercase"
+    :class="variantClass"
+  >
+    {{ label }}
+  </span>
 </template>
-
-<style scoped>
-.badge {
-  display: inline-block;
-  padding: 5px 12px;
-  font-family: var(--font-condensed);
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: #fff;
-}
-.badge--copper { background: var(--accent); }
-.badge--olive  { background: var(--olive); }
-.badge--dark   { background: var(--text); color: var(--bg); }
-</style>

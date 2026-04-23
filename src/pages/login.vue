@@ -26,7 +26,7 @@ const handleLogin = () => {
   <div class="min-h-screen flex items-center justify-center px-4 bg-slate-950 text-slate-300">
     <div class="max-w-md w-full glass-card p-10 bg-slate-900 border border-slate-800 rounded-sm">
       <div class="text-center mb-8">
-        <h2 class="text-3xl font-bold font-heading text-amber-500 uppercase tracking-widest mb-2">GENTLEMEN</h2>
+        <h2 class="text-3xl font-bold font-display text-amber-500 uppercase tracking-widest mb-2">GENTLEMEN</h2>
         <p class="text-sm">Đăng nhập để trải nghiệm đặc quyền</p>
       </div>
 
@@ -57,8 +57,3 @@ const handleLogin = () => {
   </div>
 </template>
 
-<style scoped>
-.font-heading {
-  font-family: 'Playfair Display', serif;
-}
-</style>
