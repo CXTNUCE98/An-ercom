@@ -20,6 +20,13 @@ const GROUPS: Group[] = [
 ];
 
 const activeSlug = ref<CategorySlug>('watches');
+const railOpen = ref(false);
+
+function selectGroup(slug: CategorySlug) {
+  activeSlug.value = slug;
+  // auto-collapse the mobile rail after picking
+  railOpen.value = false;
+}
 
 const productsByGroup = computed(() => {
   const map: Record<string, typeof CATALOG_PRODUCTS> = {};
@@ -64,31 +71,81 @@ const badgeBase =
       </p>
     </div>
 
-    <!-- Category pill nav (anchor jump) -->
-    <nav
-      class="relative z-[5] flex flex-wrap justify-center gap-2 py-3.5 mb-8 border-b border-rule max-[500px]:static max-[500px]:py-2.5"
-      aria-label="Chọn nhóm sản phẩm"
+    <!-- Category nav — desktop: horizontal pill bar / mobile: drawer-style rail anchored to right edge -->
+    <div
+      :class="[
+        'relative z-[5] mb-8',
+        'max-[500px]:mb-0 max-[500px]:fixed max-[500px]:right-0 max-[500px]:top-1/2 max-[500px]:-translate-y-1/2 max-[500px]:z-40',
+        'max-[500px]:flex max-[500px]:items-center max-[500px]:gap-0',
+        'max-[500px]:transition-transform max-[500px]:duration-300 max-[500px]:ease-out',
+        railOpen
+          ? 'max-[500px]:translate-x-0'
+          : 'max-[500px]:translate-x-[64px]'
+      ]"
     >
-      <a
-        v-for="g in GROUPS"
-        :key="g.slug"
-        :href="`#cat-${g.slug}`"
-        :class="[pillBase, activeSlug === g.slug && pillActive, 'max-[500px]:py-1.5 max-[500px]:px-3 max-[500px]:text-[0.7rem] max-[500px]:tracking-[1.5px]']"
-        @click="activeSlug = g.slug"
+      <!-- Toggle handle (mobile only) — glued to the LEFT side of the rail; travels with it -->
+      <button
+        type="button"
+        class="hidden max-[500px]:inline-flex items-center justify-center w-8 h-14 -mr-px
+               border border-rule rounded-l-md border-r-0
+               bg-[color-mix(in_srgb,var(--surface)_94%,transparent)] backdrop-blur-[10px]
+               text-accent shadow-[0_8px_24px_color-mix(in_srgb,#000_22%,transparent)]
+               transition-colors duration-300 hover:text-text hover:border-accent
+               focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        :aria-expanded="railOpen"
+        aria-controls="category-rail"
+        :aria-label="railOpen ? 'Đóng danh mục' : 'Mở danh mục'"
+        @click="railOpen = !railOpen"
       >
-        <CommonIconLine :name="g.icon" :size="18" />
-        <span class="max-[500px]:hidden">{{ g.name }}</span>
-        <span
-          class="font-display font-bold text-[0.72rem] py-0.5 px-1.5 rounded-full"
-          :style="{
-            background: activeSlug === g.slug
-              ? 'color-mix(in srgb, #fff 25%, transparent)'
-              : 'color-mix(in srgb, var(--accent) 20%, transparent)',
-            color: activeSlug === g.slug ? '#fff' : 'var(--accent)'
-          }"
-        >{{ productsByGroup[g.slug].length }}</span>
-      </a>
-    </nav>
+        <i
+          class="bx text-[1.25rem] transition-transform duration-300"
+          :class="railOpen ? 'bx-chevron-right' : 'bx-chevron-left'"
+        />
+      </button>
+
+      <!-- Pill nav -->
+      <nav
+        id="category-rail"
+        :class="[
+          'flex flex-wrap justify-center gap-2 py-3.5 border-b border-rule',
+          'max-[500px]:py-2 max-[500px]:px-1.5 max-[500px]:w-16',
+          'max-[500px]:flex-col max-[500px]:flex-nowrap max-[500px]:gap-1.5',
+          'max-[500px]:border max-[500px]:border-rule max-[500px]:rounded-l-none max-[500px]:rounded-r-none',
+          'max-[500px]:bg-[color-mix(in_srgb,var(--surface)_94%,transparent)]',
+          'max-[500px]:backdrop-blur-[10px]',
+          'max-[500px]:shadow-[0_10px_28px_color-mix(in_srgb,#000_22%,transparent)]'
+        ]"
+        :aria-hidden="!railOpen ? 'true' : undefined"
+        aria-label="Chọn nhóm sản phẩm"
+      >
+          <a
+            v-for="g in GROUPS"
+            :key="g.slug"
+            :href="`#cat-${g.slug}`"
+            :class="[
+              pillBase,
+              activeSlug === g.slug && pillActive,
+              'max-[500px]:relative max-[500px]:w-11 max-[500px]:h-11 max-[500px]:p-0 max-[500px]:gap-0 max-[500px]:justify-center max-[500px]:rounded-sm'
+            ]"
+            :aria-label="g.name"
+            @click="selectGroup(g.slug)"
+          >
+            <CommonIconLine :name="g.icon" :size="18" />
+            <span class="max-[500px]:hidden">{{ g.name }}</span>
+            <span
+              class="font-display font-bold text-[0.72rem] py-0.5 px-1.5 rounded-full
+                     max-[500px]:absolute max-[500px]:-top-1 max-[500px]:-right-1 max-[500px]:text-[0.6rem]
+                     max-[500px]:py-0 max-[500px]:px-1 max-[500px]:min-w-[16px] max-[500px]:text-center max-[500px]:leading-[14px]"
+              :style="{
+                background: activeSlug === g.slug
+                  ? 'color-mix(in srgb, #fff 25%, transparent)'
+                  : 'color-mix(in srgb, var(--accent) 20%, transparent)',
+                color: activeSlug === g.slug ? '#fff' : 'var(--accent)'
+              }"
+            >{{ productsByGroup[g.slug].length }}</span>
+          </a>
+        </nav>
+    </div>
 
     <!-- Per-category rows -->
     <div class="flex flex-col gap-lg">

@@ -46,24 +46,14 @@ const ctaText =
     class="relative overflow-hidden py-lg px-gutter sm:py-md bg-[radial-gradient(120%_60%_at_50%_0%,color-mix(in_srgb,var(--accent)_6%,transparent),transparent_60%),var(--bg)] before:content-[''] before:absolute before:inset-0 before:pointer-events-none before:opacity-50 before:bg-[linear-gradient(color-mix(in_srgb,var(--accent)_4%,transparent)_1px,transparent_1px),linear-gradient(90deg,color-mix(in_srgb,var(--accent)_4%,transparent)_1px,transparent_1px)] before:bg-[length:56px_56px]"
   >
     <!-- Editorial header -->
-    <div class="relative mx-auto mb-15 max-w-[720px] text-center">
-      <div class="mb-[18px] flex items-center justify-center gap-3.5">
-        <span class="block h-px w-10 bg-accent" />
-        <span class="font-condensed text-[0.72rem] font-semibold tracking-[4px] uppercase text-accent">
-          Curated · Combo Tinh Tuyển
-        </span>
-        <span class="block h-px w-10 bg-accent" />
-      </div>
-      <h2
-        class="m-0 mb-[18px] font-display font-bold leading-[1.05] text-text text-[clamp(2rem,5vw,3.6rem)]"
+    <div class="relative mx-auto mb-12 max-w-[920px] px-4 text-center">
+      <p
+        class="m-0 font-display font-semibold leading-[1.35] text-text text-[clamp(1.25rem,2.4vw,1.75rem)] tracking-[0.01em]"
       >
-        Mua Theo Bộ —
-        <em class="relative italic text-accent after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-0.5 after:opacity-50 after:bg-[linear-gradient(90deg,transparent,var(--accent),transparent)]">Tiết Kiệm Đến 25%</em>
-      </h2>
-      <p class="m-0 text-base font-light leading-[1.75] text-mid">
-        Mỗi bộ là một câu chuyện. Một phong cách. Một cái cớ để bạn hào phóng
-        với chính mình — hoặc với người đàn ông bạn yêu quý.
+        Dành cho người đàn ông đã đi qua thành công —
+        <span class="text-accent">nơi mỗi phụ kiện là một dấu ấn của sự từng trải và vị thế.</span>
       </p>
+      <span class="mx-auto mt-6 block h-px w-16 bg-accent opacity-70" />
     </div>
 
     <!-- Best Combo banner — horizontal full-width -->
@@ -124,9 +114,6 @@ const ctaText =
         <h3 class="m-0 font-display font-bold leading-[1.15] text-text text-[clamp(1.3rem,2.4vw,1.7rem)]">
           {{ bestCombo.name }}
         </h3>
-        <div class="-mt-2 font-display italic text-[0.95rem] leading-[1.4] text-smoke">
-          {{ bestCombo.tagline }}
-        </div>
 
         <ul class="m-0 flex list-none flex-col gap-2 border-y border-dashed border-rule py-3 px-0">
           <li
@@ -137,7 +124,7 @@ const ctaText =
             <i class="bx bx-plus-medical text-[0.8rem] text-accent" />
             <div class="flex min-w-0 flex-col">
               <span class="truncate text-[0.86rem] font-medium leading-[1.3] text-text">{{ it.product.name }}</span>
-              <span v-if="it.note" class="text-[0.72rem] italic text-smoke">{{ it.note }}</span>
+              <span v-if="it.note" class="font-condensed text-[0.74rem] tracking-[0.5px] text-smoke">{{ it.note }}</span>
             </div>
             <span class="whitespace-nowrap font-condensed text-[0.8rem] font-semibold text-mid">
               {{ formatPrice(it.product.salePrice ?? it.product.price) }}
@@ -245,9 +232,6 @@ const ctaText =
           <h3 class="m-0 font-display font-bold leading-[1.15] text-text text-[clamp(1.3rem,2.4vw,1.7rem)]">
             {{ combo.name }}
           </h3>
-          <div class="-mt-2 font-display italic text-[0.95rem] leading-[1.4] text-smoke">
-            {{ combo.tagline }}
-          </div>
 
           <ul class="m-0 flex list-none flex-col gap-2 border-y border-dashed border-rule py-3 px-0">
             <li
@@ -258,7 +242,7 @@ const ctaText =
               <i class="bx bx-plus-medical text-[0.8rem] text-accent" />
               <div class="flex min-w-0 flex-col">
                 <span class="truncate text-[0.86rem] font-medium leading-[1.3] text-text">{{ it.product.name }}</span>
-                <span v-if="it.note" class="text-[0.72rem] italic text-smoke">{{ it.note }}</span>
+                <span v-if="it.note" class="font-condensed text-[0.74rem] tracking-[0.5px] text-smoke">{{ it.note }}</span>
               </div>
               <span class="whitespace-nowrap font-condensed text-[0.8rem] font-semibold text-mid">
                 {{ formatPrice(it.product.salePrice ?? it.product.price) }}

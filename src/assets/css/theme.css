@@ -50,7 +50,7 @@
   --rust:    var(--oxblood);
 
   /* Typography */
-  --font-display:   'Playfair Display', serif;
+  --font-display:   'Cormorant Garamond', 'Playfair Display', Georgia, serif;
   --font-body:      'Barlow', sans-serif;
   --font-condensed: 'Barlow Condensed', sans-serif;
 
@@ -90,7 +90,7 @@
   --copper2: var(--brass-light);
   --rust:    var(--oxblood);
 
-  --font-display:   'Playfair Display', serif;
+  --font-display:   'Cormorant Garamond', 'Playfair Display', Georgia, serif;
   --font-body:      'Barlow', sans-serif;
   --font-condensed: 'Barlow Condensed', sans-serif;
 
