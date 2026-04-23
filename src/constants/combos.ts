@@ -44,10 +44,12 @@ export interface ResolvedCombo extends Omit<Combo, "items"> {
 
 const findProduct = (slugOrId: string): CatalogProduct => {
   const p = CATALOG_PRODUCTS.find(
-    (x) => x.slug === slugOrId || x.id === slugOrId
+    (x) => x.slug === slugOrId || x.id === slugOrId,
   );
   if (!p)
-    throw new Error(`[combos] Product not found for "${slugOrId}". Check slug.`);
+    throw new Error(
+      `[combos] Product not found for "${slugOrId}". Check slug.`,
+    );
   return p;
 };
 
@@ -60,7 +62,7 @@ export const COMBOS: Combo[] = [
     story:
       "Khi ra khỏi nhà, bạn chỉ cần 3 thứ. Một chiếc thắt lưng giữ form chuẩn, một chiếc ví mềm tay, và một cặp kính giấu đi cái nhìn thấu suốt của một người đàn ông từng trải.",
     heroImage:
-      "https://images.unsplash.com/photo-1593030668930-8130abedd2f8?auto=format&fit=crop&w=1400&q=80",
+      "https://i.pinimg.com/1200x/93/cb/15/93cb150785903190c55ba2fd7033687d.jpg",
     galleryImages: [
       "https://images.unsplash.com/photo-1624222247344-550fb60583dc?auto=format&fit=crop&w=900&q=80",
       "https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=900&q=80",
@@ -69,8 +71,14 @@ export const COMBOS: Combo[] = [
     icon: "belt",
     items: [
       { productId: "da-bo-fullgrain-italy", note: "Da bò Italy full-grain" },
-      { productId: "vi-bifold-italy", note: "Veg-tan, lên patina theo năm tháng" },
-      { productId: "rayban-aviator-classic", note: "Phi công huyền thoại 1937" },
+      {
+        productId: "vi-bifold-italy",
+        note: "Veg-tan, lên patina theo năm tháng",
+      },
+      {
+        productId: "rayban-aviator-classic",
+        note: "Phi công huyền thoại 1937",
+      },
     ],
     originalPrice: 480_000 + 850_000 + 2_200_000,
     comboPrice: 2_990_000,
@@ -102,7 +110,10 @@ export const COMBOS: Combo[] = [
     icon: "watch",
     items: [
       { productId: "rolex-do", note: "Rolex đỏ · Automatic flagship" },
-      { productId: "zippo-armor-deep-carve", note: "Armor 1.5x · Khắc Celtic 360°" },
+      {
+        productId: "zippo-armor-deep-carve",
+        note: "Armor 1.5x · Khắc Celtic 360°",
+      },
     ],
     originalPrice: 280_000 + 1_350_000,
     comboPrice: 1_490_000,
@@ -166,7 +177,10 @@ export const COMBOS: Combo[] = [
     items: [
       { productId: "fedora-len-long-cuu", note: "Len lông cừu Úc · vành 7cm" },
       { productId: "omega-kham-trai", note: "Omega khảm trai · Automatic" },
-      { productId: "that-lung-da-van-ca-sau", note: "Da vân cá sấu · khoá đồng" },
+      {
+        productId: "that-lung-da-van-ca-sau",
+        note: "Da vân cá sấu · khoá đồng",
+      },
     ],
     originalPrice: 680_000 + 300_000 + 890_000,
     comboPrice: 1_590_000,
@@ -183,7 +197,7 @@ export const COMBOS: Combo[] = [
 ];
 
 export const COMBO_BY_SLUG: Record<string, Combo> = Object.fromEntries(
-  COMBOS.map((c) => [c.slug, c])
+  COMBOS.map((c) => [c.slug, c]),
 );
 
 export function resolveCombo(combo: Combo): ResolvedCombo {

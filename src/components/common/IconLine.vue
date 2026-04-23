@@ -16,8 +16,7 @@ const px = typeof props.size === 'number' ? `${props.size}px` : props.size;
 <template>
   <!-- WATCH: raster image — render ngoài svg để tránh namespace mismatch khi hydrate -->
   <img v-if="name === 'watch'" class="icon-line icon-line--img"
-    src="https://i.pinimg.com/736x/9b/75/99/9b759981ef4a9a03a7b3b32c21eb09a6.jpg"
-    :style="{ width: px, height: px }" alt="watch" />
+    src="https://i.pinimg.com/736x/9b/75/99/9b759981ef4a9a03a7b3b32c21eb09a6.jpg" alt="watch" />
 
   <svg v-else class="icon-line" :width="px" :height="px" viewBox="0 0 48 48" fill="none" :stroke-width="stroke"
     stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

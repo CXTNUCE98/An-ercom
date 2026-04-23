@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { RESOLVED_COMBOS } from '~/constants/combos';
 import { formatPrice } from '~/shared/utils/format';
 
 const combos = RESOLVED_COMBOS;
+const bestCombo = computed(() => combos[0]);
+const restCombos = computed(() => combos.slice(1));
 </script>
 
 <template>
@@ -23,13 +26,112 @@ const combos = RESOLVED_COMBOS;
       </p>
     </div>
 
-    <!-- Combos -->
+    <!-- Best Combo banner — horizontal full-width -->
+    <article
+      v-if="bestCombo"
+      :key="bestCombo.id"
+      class="combo-card is-featured is-horizontal"
+    >
+      <NuxtLink :to="`/combos/${bestCombo.slug}`" class="combo-link" />
+
+      <!-- Visual -->
+      <div class="combo-visual">
+        <div class="visual-frame">
+          <img :src="bestCombo.heroImage" :alt="bestCombo.name" loading="lazy" />
+          <div class="visual-overlay" />
+        </div>
+
+        <div v-if="bestCombo.badge" class="combo-badge" :class="`badge-${bestCombo.badgeVariant}`">
+          <i class="bx bxs-bookmark-star" />
+          {{ bestCombo.badge }}
+        </div>
+
+        <div class="stack-items">
+          <div
+            v-for="(it, i) in bestCombo.items"
+            :key="it.product.id"
+            class="stack-chip"
+            :style="{ '--i': i }"
+          >
+            <CommonIconLine :name="it.product.icon" :size="22" />
+          </div>
+          <div class="stack-count">
+            <span>{{ bestCombo.items.length }}</span>
+            món
+          </div>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="combo-body">
+        <div class="combo-meta">
+          <span class="combo-tag">{{ bestCombo.occasion.split('·')[0].trim() }}</span>
+          <span v-if="bestCombo.isLimited" class="meta-limited">
+            <i class="bx bxs-flame" /> Còn {{ bestCombo.stock }} sets
+          </span>
+        </div>
+
+        <h3 class="combo-name">{{ bestCombo.name }}</h3>
+        <div class="combo-tagline">{{ bestCombo.tagline }}</div>
+
+        <ul class="items-list">
+          <li v-for="it in bestCombo.items" :key="it.product.id">
+            <i class="bx bx-plus-medical" />
+            <div class="item-info">
+              <span class="item-name">{{ it.product.name }}</span>
+              <span v-if="it.note" class="item-note">{{ it.note }}</span>
+            </div>
+            <span class="item-price">{{ formatPrice(it.product.salePrice ?? it.product.price) }}</span>
+          </li>
+        </ul>
+
+        <div class="combo-pricing">
+          <div class="price-rows">
+            <div class="price-row mute">
+              <span>Mua lẻ</span>
+              <span class="strike">{{ formatPrice(bestCombo.originalPrice) }}</span>
+            </div>
+            <div class="price-row save">
+              <span>Bạn tiết kiệm</span>
+              <span class="save-amount">
+                − {{ formatPrice(bestCombo.savings) }}
+              </span>
+            </div>
+            <div class="price-row final">
+              <span class="combo-label">Giá Combo</span>
+              <span class="combo-final">{{ formatPrice(bestCombo.comboPrice) }}</span>
+            </div>
+          </div>
+          <div class="save-pill">
+            <strong>−{{ bestCombo.savingsPercent }}%</strong>
+            <span>tiết kiệm</span>
+          </div>
+        </div>
+
+        <ul class="perks">
+          <li v-for="p in bestCombo.perks.slice(0, 3)" :key="p">
+            <i class="bx bx-check" /> {{ p }}
+          </li>
+        </ul>
+
+        <div class="combo-cta">
+          <span class="cta-text">
+            Khám Phá Combo
+            <i class="bx bx-right-arrow-alt" />
+          </span>
+          <span class="cta-mini">
+            <i class="bx bx-shield-quarter" /> Bảo hành chính hãng
+          </span>
+        </div>
+      </div>
+    </article>
+
+    <!-- Other combos -->
     <div class="combos-grid">
       <article
-        v-for="(combo, idx) in combos"
+        v-for="combo in restCombos"
         :key="combo.id"
         class="combo-card"
-        :class="{ 'is-featured': idx === 0 }"
       >
         <NuxtLink :to="`/combos/${combo.slug}`" class="combo-link" />
 
@@ -229,10 +331,25 @@ const combos = RESOLVED_COMBOS;
 }
 @media (min-width: 1100px) {
   .combos-grid {
-    grid-template-columns: 1.4fr 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     grid-auto-rows: 1fr;
   }
-  .combo-card.is-featured { grid-row: span 2; grid-column: span 1; }
+}
+
+/* Best Combo — horizontal banner */
+.combo-card.is-horizontal {
+  max-width: 1280px;
+  margin: 0 auto 32px;
+}
+@media (min-width: 900px) {
+  .combo-card.is-horizontal {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    align-items: stretch;
+  }
+  .combo-card.is-horizontal .combo-visual { height: 100%; }
+  .combo-card.is-horizontal .visual-frame { aspect-ratio: auto; height: 100%; min-height: 480px; }
+  .combo-card.is-horizontal .combo-body { padding: 32px 36px; }
 }
 
 /* CARD */
