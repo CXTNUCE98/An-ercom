@@ -13,6 +13,8 @@ export const GLASSES_PRODUCTS: CatalogProduct[] = [
     icon: "glasses",
     images: [
       "https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=800&q=80",
+      "https://i.pinimg.com/1200x/cc/75/02/cc7502b3fd26e0327fa183e6ec0f134d.jpg",
+      "https://i.pinimg.com/1200x/20/ab/6c/20ab6c347889889d2a955cba0c087b80.jpg"
     ],
     description:
       "Biểu tượng phi công từ 1937. Gọng vàng, tròng G-15 xanh lá. UV400, phân cực.",
@@ -39,6 +41,8 @@ export const GLASSES_PRODUCTS: CatalogProduct[] = [
     icon: "glasses",
     images: [
       "https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=800&q=80",
+      "https://i.pinimg.com/1200x/68/b4/7a/68b47a8144ca65e8eb4e554a5e41026e.jpg",
+      "https://i.pinimg.com/1200x/d4/51/7e/d4517e8dc70a8b803da1e1b8e28f12a5.jpg",
     ],
     description:
       "Thiết kế Italy, bản lề Meflecto linh hoạt, acetate tortoise shell, tròng crystal green.",
@@ -63,7 +67,11 @@ export const GLASSES_PRODUCTS: CatalogProduct[] = [
     categoryName: "Glasses",
     price: 3100000,
     icon: "glasses",
-    images: [],
+    images: [
+      "https://i.pinimg.com/1200x/1f/51/33/1f5133f2f887984e8569c45708f6c6db.jpg",
+      "https://i.pinimg.com/736x/75/e8/7a/75e87a4c4026f715317e461c2e7b0df9.jpg",
+      "https://i.pinimg.com/1200x/32/a8/69/32a86910699f5929fbc268d5c4c33076.jpg"
+    ],
     description:
       "Gọng titanium siêu nhẹ, mặt vuông nam tính, tròng gradient smoke. Phong cách doanh nhân.",
     specs: [
@@ -87,7 +95,11 @@ export const GLASSES_PRODUCTS: CatalogProduct[] = [
     categoryName: "Glasses",
     price: 2800000,
     icon: "glasses",
-    images: [],
+    images: [
+      "https://i.pinimg.com/1200x/30/4c/78/304c787a905fde36e1ee072713f70cdc.jpg",
+      "https://i.pinimg.com/1200x/01/e5/07/01e507fd9f26d056545e4bb2ab0eb57b.jpg",
+      "https://i.pinimg.com/1200x/ac/27/d7/ac27d75ac1ddf5af4f4fbab7c8f0a8db.jpg",
+    ],
     description:
       "O Matter frame bền nhẹ, tròng Prizm tương phản cao. Casual, thể thao, sáng tối đều đẹp.",
     specs: [
@@ -110,7 +122,11 @@ export const GLASSES_PRODUCTS: CatalogProduct[] = [
     categoryName: "Glasses",
     price: 7200000,
     icon: "glasses",
-    images: [],
+    images: [
+      "https://i.pinimg.com/1200x/36/b9/60/36b9602d935700f007d9edb369a432c2.jpg",
+      "https://i.pinimg.com/1200x/ae/12/64/ae1264117258169e3ae3098e7b178aeb.jpg",
+      "https://i.pinimg.com/736x/f7/3a/6b/f73a6b2c5a69c11207f465306e825877.jpg"
+    ],
     description:
       "Logo snowcap trên gọng vàng hồng, acetate đen bóng, tròng xám chống lóa. Đẳng cấp thượng lưu.",
     specs: [
@@ -134,7 +150,11 @@ export const GLASSES_PRODUCTS: CatalogProduct[] = [
     categoryName: "Glasses",
     price: 2500000,
     icon: "glasses",
-    images: [],
+    images: [
+      "https://i.pinimg.com/1200x/a1/e2/11/a1e211a5bed347866caa73589549f23d.jpg",
+      "https://i.pinimg.com/1200x/9b/2d/da/9b2dda7f98a59a12aaaf305d9df01c23.jpg",
+      "https://i.pinimg.com/1200x/ca/58/1b/ca581b4654c4e080f6f6201240c9da30.jpg"
+    ],
     description:
       "Huyền thoại từ 1956. Acetate đen, tròng G-15. Không bao giờ lỗi mốt.",
     specs: [

@@ -193,7 +193,11 @@ export const WATCH_PRODUCTS: CatalogProduct[] = [
     price: 280_000,
     salePrice: 145_000,
     icon: "watch",
-    images: [],
+    images: [
+      "https://i.pinimg.com/736x/7e/f0/43/7ef043e51ced476d5a8d7d09b320fe75.jpg",
+      "https://i.pinimg.com/736x/81/6c/6e/816c6e12077d63eceb0734466c4c32ee.jpg",
+      "https://i.pinimg.com/1200x/46/ac/7d/46ac7d3bfb14df3c284aafe22dddeb78.jpg"
+    ],
     description:
       "Phong cách Rolex Submariner mặt đỏ rực, dây kim loại đặc, bộ máy automatic.",
     specs: [
