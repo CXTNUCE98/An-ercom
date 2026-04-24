@@ -27,7 +27,7 @@ import { LIFESTYLE_FEATURES } from '~/constants/landing';
       <p class="text-[rgba(245,240,232,0.65)] text-[0.95rem] leading-[1.7] mb-9 max-w-[460px]">
         Nhân dịp Ngày Của Cha, giảm 15% toàn bộ đồng hồ và Zippo. Tặng kèm hộp quà cao cấp và thiệp viết tay miễn phí.
       </p>
-      <AppButton variant="copper">Chọn Quà Ngay →</AppButton>
+      <CommonAppButton variant="copper">Chọn Quà Ngay →</CommonAppButton>
     </div>
 
     <div class="relative z-[1] grid grid-cols-2 gap-px bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.08)]">

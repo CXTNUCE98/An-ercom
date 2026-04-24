@@ -40,7 +40,6 @@ export const HAT_PRODUCTS: CatalogProduct[] = [
     price: 520000,
     icon: "hat",
     images: [
-      "https://i.pinimg.com/1200x/83/2c/a4/832ca4799a32ceaec2bff534e60a041d.jpg",
       "https://i.pinimg.com/1200x/15/4a/bb/154abb4b8d8cf8b291bdcab66974ccb0.jpg",
       "https://i.pinimg.com/1200x/4f/f5/6e/4ff56e991c9050610d984af728ebe60c.jpg"
     ],

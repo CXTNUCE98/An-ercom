@@ -15,16 +15,16 @@ useHead({
   <div id="top">
     <SectionsHeroSection />
   </div>
-  <SectionsEditorialStrip />
-  <div id="combos">
+  <!-- <SectionsEditorialStrip /> -->
+  <!-- <div id="combos">
     <SectionsCombosShowcase />
-  </div>
+  </div> -->
   <!-- Toàn bộ sản phẩm chia theo loại — section đã có id="products" -->
   <SectionsProductsShowcase />
-  <div id="story">
+  <!-- <div id="story">
     <SectionsCraftStorySection />
-  </div>
-  <SectionsLifestyleBanner />
+  </div> -->
+  <!-- <SectionsLifestyleBanner /> -->
   <SectionsBrandsMarquee />
   <SectionsTestimonialsSection />
   <div id="contact">

@@ -5,7 +5,7 @@ useHead({
 </script>
 
 <template>
-  <NuxtLoadingIndicator color="#B87333" />
+  <NuxtLoadingIndicator color="var(--accent)" />
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>

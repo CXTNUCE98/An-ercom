@@ -13,7 +13,7 @@ const onSubmit = () => {
 
 <template>
   <section class="bg-[var(--card)] text-center py-15 px-6 sm:py-20 sm:px-14">
-    <SectionHeader
+    <CommonSectionHeader
       align="center"
       tag="Ưu đãi độc quyền"
       title="Nhận"
@@ -36,7 +36,7 @@ const onSubmit = () => {
         placeholder="Email của bạn"
         class="flex-1 py-3.5 px-4 bg-transparent border border-[var(--rule)] text-[var(--text)] font-body text-[0.95rem] outline-none transition-colors duration-200 placeholder:text-smoke focus:border-[var(--accent)]"
       />
-      <AppButton type="submit" variant="filled">Đăng Ký</AppButton>
+      <CommonAppButton type="submit" variant="filled">Đăng Ký</CommonAppButton>
     </form>
 
     <p

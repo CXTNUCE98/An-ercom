@@ -29,7 +29,7 @@ const padIndex = computed(() => String(props.index ?? 1).padStart(2, '0'));
         :class="product.featured ? 'top-[22px] left-[26px] text-[1.8rem]' : 'top-4 left-[18px] text-[1.35rem]'"
       >N°{{ padIndex }}</span>
 
-      <Badge
+      <CommonBadge
         v-if="product.badge"
         :label="product.badge"
         :variant="product.badgeVariant ?? 'copper'"

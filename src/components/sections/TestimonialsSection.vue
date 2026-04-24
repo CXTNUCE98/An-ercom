@@ -4,7 +4,7 @@ import { TESTIMONIALS } from '~/constants/landing';
 
 <template>
   <section class="bg-[var(--card)] py-20 px-6 sm:px-14">
-    <SectionHeader
+    <CommonSectionHeader
       tag="Đánh giá khách hàng"
       title="Họ Nói Gì"
       accent="Về Chúng Tôi"
