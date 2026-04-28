@@ -9,7 +9,7 @@ export const useLoginMutation = () => {
 
   return useMutation({
     mutationFn: async (body: any) => {
-      const data = (await $practiceMathApi("/auth/login", {
+      const data = (await $anErcom("/auth/login", {
         method: "POST",
         body,
       })) as { accessToken: string };
@@ -30,7 +30,7 @@ export const useLoginMutation = () => {
 export const useRegisterMutation = () => {
   return useMutation({
     mutationFn: async (body: any) => {
-      return await $practiceMathApi("/auth/register", {
+      return await $anErcom("/auth/register", {
         method: "POST",
         body,
       });
@@ -49,7 +49,7 @@ export const useUpdateProfileMutation = () => {
 
   return useMutation({
     mutationFn: async (body: any) => {
-      return await $practiceMathApi("/users/profile", {
+      return await $anErcom("/users/profile", {
         method: "PATCH",
         body,
         headers: getAuthHeaders(),
@@ -66,7 +66,7 @@ export const useChangePasswordMutation = () => {
 
   return useMutation({
     mutationFn: async (body: any) => {
-      return await $practiceMathApi("/users/password", {
+      return await $anErcom("/users/password", {
         method: "PATCH",
         body,
         headers: getAuthHeaders(),

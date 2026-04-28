@@ -95,7 +95,7 @@ export function useAuth() {
 
     try {
       isFetchingProfile.value = true;
-      const data = await $practiceMathApi("/auth/me", {
+      const data = await $anErcom("/auth/me", {
         headers: getAuthHeaders(),
       });
 

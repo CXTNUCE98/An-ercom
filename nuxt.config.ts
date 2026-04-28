@@ -1,4 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { createResolver } from "@nuxt/kit";
+const { resolve } = createResolver(import.meta.url);
 export default defineNuxtConfig({
   ssr: true,
   srcDir: "src/",
@@ -48,6 +50,7 @@ export default defineNuxtConfig({
     "@nuxt/image",
     "@nuxtjs/color-mode",
     "@pinia/nuxt",
+    "nuxt-api-party",
   ],
   colorMode: {
     classSuffix: "",
@@ -71,9 +74,20 @@ export default defineNuxtConfig({
   ],
 
   compatibilityDate: "2025-04-15",
+  apiParty: {
+    endpoints: {
+      anErcom: {
+        url:
+          process.env.NUXT_PUBLIC_API_BASE || "http://localhost:9001/",
+        schema: resolve("./schemas/anErcom.json"),
+      },
+    },
+  },
+
   runtimeConfig: {
     public: {
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || "http://localhost:3001",
+      apiBase:
+        process.env.NUXT_PUBLIC_API_BASE || "http://localhost:9001/",
     },
   },
 });

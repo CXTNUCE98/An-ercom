@@ -6,7 +6,7 @@ export const useCategoriesQuery = () => {
   return useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
-      const res = await $practiceMathApi("/categories", {
+      const res = await $anErcom("/categories", {
         headers: getAuthHeaders(),
       });
       return res as unknown as any[];
@@ -21,7 +21,7 @@ export const useCategoryMutation = () => {
 
   const createCategory = useMutation({
     mutationFn: (data: any) =>
-      $practiceMathApi("/categories", {
+      $anErcom("/categories", {
         method: "POST",
         body: data,
         headers: getAuthHeaders(),
@@ -33,7 +33,7 @@ export const useCategoryMutation = () => {
 
   const updateCategory = useMutation({
     mutationFn: ({ id, data }: { id: string; data: any }) =>
-      $practiceMathApi(`/categories/${id}`, {
+      $anErcom(`/categories/${id}`, {
         method: "PATCH",
         body: data,
         headers: getAuthHeaders(),
@@ -45,7 +45,7 @@ export const useCategoryMutation = () => {
 
   const deleteCategory = useMutation({
     mutationFn: (id: string) =>
-      $practiceMathApi(`/categories/${id}`, {
+      $anErcom(`/categories/${id}`, {
         method: "DELETE",
         headers: getAuthHeaders(),
       }),

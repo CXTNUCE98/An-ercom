@@ -7,7 +7,8 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "openapi:an-ercom": "pnpm tsx ./s-openapi.ts https://be-an-ercom.vercel.app/api-docs-json ./schemas/anErcom.json"
   },
   "dependencies": {
     "@nuxtjs/i18n": "^10.2.1",
@@ -25,13 +26,17 @@
   "devDependencies": {
     "@antfu/utils": "^9.3.0",
     "@nuxt/image": "^1.11.0",
+    "@nuxt/kit": "^3.11.1",
     "@nuxtjs/color-mode": "^4.0.0",
+    "@openapitools/openapi-generator-cli": "^2.6.0",
     "@types/node": "^20.11.0",
     "@unocss/nuxt": "^66.5.9",
     "@unocss/reset": "^66.5.10",
     "@vueuse/nuxt": "^10.9.0",
     "citty": "^0.1.6",
+    "nuxt-api-party": "^0.22.0",
     "ofetch": "^1.5.1",
+    "openapi-typescript": "^6.7.5",
     "tsx": "^4.21.0",
     "unocss": "^66.5.9"
   },
