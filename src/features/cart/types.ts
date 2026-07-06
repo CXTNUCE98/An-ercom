@@ -12,6 +12,7 @@ export interface CartItem {
 
 export interface PromoCode {
   code: string;
-  discountPercent: number;
   label: string;
+  /** Số tiền giảm (VND) do BE tính chính xác theo subtotal + maxDiscount. */
+  discountAmount: number;
 }

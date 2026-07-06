@@ -3,7 +3,7 @@ import type { CatalogProduct, CategorySlug } from '~/types/landing';
 export type SortOption = 'newest' | 'price-asc' | 'price-desc' | 'rating' | 'best-seller';
 
 export interface CatalogFilters {
-  category?: CategorySlug;
+  category?: CategorySlug | string;
   brand?: string;
   priceMin?: number;
   priceMax?: number;

@@ -8,6 +8,7 @@ useHead({ title: 'Thanh Toán — IRONMAN' });
 
 const cart = useCartStore();
 const router = useRouter();
+const { isAuthenticated, getAuthHeaders, user } = useAuth();
 
 const form = reactive<CheckoutForm>({
   fullName: '',
@@ -16,13 +17,29 @@ const form = reactive<CheckoutForm>({
   address: '',
   city: '',
   note: '',
-  paymentMethod: 'cod',
+  paymentMethod: 'COD',
+});
+
+// Prefill từ profile user đã đăng nhập (giảm ma sát khi mua).
+watchEffect(() => {
+  if (user.value) {
+    if (!form.fullName) form.fullName = user.value.fullName ?? '';
+    if (!form.phone) form.phone = (user.value as any).phone ?? '';
+    if (!form.email) form.email = user.value.email ?? '';
+    if (!form.address) form.address = (user.value as any).address ?? '';
+  }
 });
 
 const errors = ref<string[]>([]);
 const submitting = ref(false);
 
 async function submit() {
+  // Đặt hàng yêu cầu đăng nhập (BE gắn đơn với userId).
+  if (!isAuthenticated.value) {
+    await router.push({ path: '/login', query: { redirect: '/checkout' } });
+    return;
+  }
+
   errors.value = checkoutService.validate(form);
   if (errors.value.length) return;
   if (cart.items.length === 0) {
@@ -32,7 +49,12 @@ async function submit() {
 
   submitting.value = true;
   try {
-    const confirmation = await checkoutService.placeOrder(form, cart.items, cart.total);
+    const confirmation = await checkoutService.placeOrder(
+      form,
+      cart.items,
+      getAuthHeaders(),
+      cart.appliedPromo?.code,
+    );
     cart.clearCart();
     await router.push({
       path: '/order-success',
@@ -43,15 +65,17 @@ async function submit() {
         delivery: confirmation.estimatedDelivery,
       },
     });
+  } catch (e: any) {
+    errors.value = [e?.data?.message || 'Đặt hàng thất bại, vui lòng thử lại'];
   } finally {
     submitting.value = false;
   }
 }
 
 const paymentMethods = [
-  { value: 'cod', label: 'Thanh toán khi nhận hàng (COD)', icon: 'bx-money' },
-  { value: 'bank-transfer', label: 'Chuyển khoản ngân hàng', icon: 'bx-building' },
-  { value: 'card', label: 'Thẻ tín dụng / ghi nợ', icon: 'bx-credit-card' },
+  { value: 'COD', label: 'Thanh toán khi nhận hàng (COD)', icon: 'bx-money' },
+  { value: 'BANK_TRANSFER', label: 'Chuyển khoản ngân hàng', icon: 'bx-building' },
+  { value: 'MOMO', label: 'Ví MoMo', icon: 'bx-wallet' },
 ] as const;
 
 // Shared class strings

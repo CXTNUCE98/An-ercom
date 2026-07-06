@@ -1,17 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
 
 export const useCategoriesQuery = () => {
-  const { isAuthenticated, getAuthHeaders } = useAuth();
-
+  // Dữ liệu công khai: khách chưa đăng nhập vẫn phải load được → không gate auth.
   return useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
-      const res = await $anErcom("/categories", {
-        headers: getAuthHeaders(),
-      });
+      const res = await $anErcom("/product-categories");
       return res as unknown as any[];
     },
-    enabled: isAuthenticated,
   });
 };
 
@@ -21,7 +17,7 @@ export const useCategoryMutation = () => {
 
   const createCategory = useMutation({
     mutationFn: (data: any) =>
-      $anErcom("/categories", {
+      $anErcom("/product-categories", {
         method: "POST",
         body: data,
         headers: getAuthHeaders(),
@@ -33,7 +29,7 @@ export const useCategoryMutation = () => {
 
   const updateCategory = useMutation({
     mutationFn: ({ id, data }: { id: string; data: any }) =>
-      $anErcom(`/categories/${id}`, {
+      $anErcom(`/product-categories/${id}`, {
         method: "PATCH",
         body: data,
         headers: getAuthHeaders(),
@@ -45,7 +41,7 @@ export const useCategoryMutation = () => {
 
   const deleteCategory = useMutation({
     mutationFn: (id: string) =>
-      $anErcom(`/categories/${id}`, {
+      $anErcom(`/product-categories/${id}`, {
         method: "DELETE",
         headers: getAuthHeaders(),
       }),

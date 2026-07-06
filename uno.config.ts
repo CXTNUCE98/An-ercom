@@ -74,6 +74,7 @@ export const unoConfig: UserConfig = {
       display: "var(--font-display)",
       body: "var(--font-body)",
       condensed: "var(--font-condensed)",
+      headline: "var(--font-headline)",
       heading: "var(--font-display)",
       sans: "var(--font-body)",
     },
@@ -200,6 +201,19 @@ export const unoConfig: UserConfig = {
     ["animate-marquee", "[animation:ironman-marquee_30s_linear_infinite]"],
     ["animate-fade-up-x", "[animation:ironman-fade-up-x_0.45s_ease_forwards]"],
     ["animate-pulse-ring", "[animation:ironman-pulse-ring_2s_ease-out_infinite]"],
+    // Editorial / high-fashion animations
+    ["animate-clip-reveal", "[animation:ironman-clip-reveal_0.8s_cubic-bezier(0.16,1,0.3,1)_both]"],
+    ["animate-clip-reveal-right", "[animation:ironman-clip-reveal-right_1s_cubic-bezier(0.16,1,0.3,1)_both]"],
+    ["animate-text-reveal", "[animation:ironman-text-reveal_0.6s_cubic-bezier(0.16,1,0.3,1)_both]"],
+    ["animate-underline-grow", "[animation:ironman-underline-grow_0.8s_cubic-bezier(0.16,1,0.3,1)_both]"],
+    ["animate-slow-zoom", "[animation:ironman-slow-zoom_12s_ease-out_both]"],
+    ["animate-glow-pulse", "[animation:ironman-glow-pulse_3s_ease-in-out_infinite]"],
+    ["animate-shimmer", "[animation:ironman-shimmer_2.5s_linear_infinite]"],
+    // Editorial typography
+    ["text-editorial-xl", "font-headline text-[clamp(3rem,6vw,5rem)] leading-[0.9] tracking-[2px]"],
+    ["text-editorial-2xl", "font-headline text-[clamp(4rem,8vw,7rem)] leading-[0.85] tracking-[3px]"],
+    ["text-editorial-3xl", "font-headline text-[clamp(5rem,10vw,10rem)] leading-[0.82] tracking-[4px]"],
+    ["text-editorial-4xl", "font-headline text-[clamp(6rem,14vw,14rem)] leading-[0.78] tracking-[5px]"],
   ],
   // NOTE: rules array (further below) also adds: stagger-N, bg-mix-*, text-clamp-*-*
   presets: [
@@ -268,6 +282,16 @@ export const unoConfig: UserConfig = {
       ([, min, max]) => ({
         "font-size": `clamp(${min}px, calc(${min}px + (${max} - ${min}) * (100vw - 360px) / (1440 - 360)), ${max}px)`,
       }),
+    ],
+    // Gold gradient text
+    [
+      "text-gradient-gold",
+      {
+        background: "linear-gradient(135deg, var(--brass) 0%, var(--brass-light) 50%, var(--brass) 100%)",
+        "-webkit-background-clip": "text",
+        "background-clip": "text",
+        "-webkit-text-fill-color": "transparent",
+      },
     ],
   ],
   transformers: [transformerVariantGroup(), transformerDirectives()],

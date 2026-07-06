@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { CATALOG_PRODUCTS } from '~/constants/products';
+import { catalogService } from '~/features/catalog/services/catalogService';
 import { formatPrice } from '~/shared/utils/format';
-import type { CategorySlug, IconName } from '~/types/landing';
+import type { CatalogProduct, CategorySlug, IconName } from '~/types/landing';
 
 interface Group {
   slug: CategorySlug;
@@ -18,6 +18,16 @@ const GROUPS: Group[] = [
   { slug: 'wallets', name: 'Wallets', tagline: 'Mềm tay. Gọn túi. Bền lâu.', icon: 'wallet' },
   { slug: 'hats', name: 'Hats', tagline: 'Hoàn thiện bộ trang phục đàn ông', icon: 'hat' },
 ];
+
+// Fetch toàn bộ sản phẩm từ BE (SSR-friendly). pageSize lớn để lấy đủ cho lưới.
+const { data: allProducts } = await useAsyncData(
+  'showcase-products',
+  async () => {
+    const res = await catalogService.listProducts({}, 'newest', 1, 100);
+    return res.items;
+  },
+  { default: () => [] as CatalogProduct[] },
+);
 
 const activeSlug = ref<CategorySlug>('watches');
 
@@ -66,14 +76,14 @@ onMounted(() => {
 });
 
 const productsByGroup = computed(() => {
-  const map: Record<string, typeof CATALOG_PRODUCTS> = {};
+  const map: Record<string, CatalogProduct[]> = {};
   for (const g of GROUPS) {
-    map[g.slug] = CATALOG_PRODUCTS.filter(p => p.categorySlug === g.slug);
+    map[g.slug] = (allProducts.value ?? []).filter(p => p.categorySlug === g.slug);
   }
   return map;
 });
 
-function salePercent(p: (typeof CATALOG_PRODUCTS)[number]) {
+function salePercent(p: CatalogProduct) {
   if (!p.salePrice) return 0;
   return Math.round((1 - p.salePrice / p.price) * 100);
 }

@@ -1,5 +1,16 @@
 import { ref, computed, onMounted } from "vue";
-import type { User } from "~/types/practice-math";
+
+/** Thông tin người dùng trả về từ BE (/auth/me). */
+export interface User {
+  id: string;
+  email: string;
+  role: string;
+  fullName?: string;
+  phone?: string;
+  address?: string;
+  avatar?: string;
+  createdAt?: string;
+}
 
 // Token storage key
 const TOKEN_KEY = "accessToken";
@@ -8,7 +19,7 @@ const PROFILE_KEY = "userProfile";
 // Helper to decode JWT
 function parseJwt(token: string) {
   try {
-    if (!process.client) return null;
+    if (!import.meta.client) return null;
 
     const base64Url = token.split(".")[1];
     const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
@@ -48,14 +59,14 @@ export function useAuth() {
 
   // Helper to save profile to cache
   const saveProfileToCache = (userData: User) => {
-    if (process.client) {
+    if (import.meta.client) {
       localStorage.setItem(PROFILE_KEY, JSON.stringify(userData));
     }
   };
 
   // Helper to get profile from cache
   const getProfileFromCache = (): User | null => {
-    if (!process.client) return null;
+    if (!import.meta.client) return null;
     const cached = localStorage.getItem(PROFILE_KEY);
     if (!cached) return null;
     try {
@@ -115,7 +126,7 @@ export function useAuth() {
 
   // Initial state from token (client-side only)
   const initUserFromToken = () => {
-    if (process.client && accessToken.value) {
+    if (import.meta.client && accessToken.value) {
       // Trước mắt decode token để lấy thông tin cơ bản
       const decoded = parseJwt(accessToken.value);
       if (decoded) {
@@ -162,7 +173,7 @@ export function useAuth() {
    * Logout user and clear auth state
    */
   const logout = () => {
-    if (process.client) {
+    if (import.meta.client) {
       localStorage.removeItem(PROFILE_KEY);
       // Also remove local token if it exists (for clean migration)
       localStorage.removeItem(TOKEN_KEY);
@@ -180,7 +191,7 @@ export function useAuth() {
   };
 
   // Initialize
-  if (process.client) {
+  if (import.meta.client) {
     // Migration: If no cookie but localStorage has token, set cookie
     const localToken = localStorage.getItem(TOKEN_KEY);
     if (!accessToken.value && localToken && localToken !== "undefined") {

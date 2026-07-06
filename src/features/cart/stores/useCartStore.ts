@@ -48,8 +48,8 @@ export const useCartStore = defineStore(
       }
     }
 
-    function applyPromo(code: string): boolean {
-      const promo = cartService.validatePromo(code);
+    async function applyPromo(code: string): Promise<boolean> {
+      const promo = await cartService.validatePromo(code, subtotal.value);
       if (promo) {
         appliedPromo.value = promo;
         return true;

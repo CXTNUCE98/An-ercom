@@ -1,35 +1,146 @@
 <script setup lang="ts">
-import { useCatalogStore } from '~/features/catalog/stores/useCatalogStore';
+import { catalogService } from '~/features/catalog/services/catalogService';
 import { useCartStore } from '~/features/cart/stores/useCartStore';
 import { formatPrice } from '~/shared/utils/format';
 
 const route = useRoute();
-const catalog = useCatalogStore();
 const cart = useCartStore();
 
 const slug = route.params.slug as string;
-const product = catalog.getProduct(slug);
-const related = catalog.getRelatedProducts(slug, 4);
 
-if (!product) {
+// Fetch SSR-friendly qua BE; 404 đúng khi không tồn tại.
+const { data: product } = await useAsyncData(`product-${slug}`, () =>
+  catalogService.getProduct(slug),
+);
+
+if (!product.value) {
   throw createError({ statusCode: 404, message: 'Sản phẩm không tồn tại' });
 }
 
-useHead({ title: `${product!.name} — IRONMAN` });
+const { data: relatedData } = await useAsyncData(
+  `product-related-${slug}`,
+  () => catalogService.getRelatedProducts(product.value!, 4),
+  { default: () => [] },
+);
+const related = computed(() => relatedData.value ?? []);
 
-const gallery = computed(() => {
-  const imgs = product!.images.filter(Boolean);
-  if (imgs.length >= 3) return imgs;
-  const base = imgs[0];
-  if (!base) return [];
-  const variants = [
-    base,
-    `${base}${base.includes('?') ? '&' : '?'}sat=-30`,
-    `${base}${base.includes('?') ? '&' : '?'}blur=0&sat=20`,
-    `${base}${base.includes('?') ? '&' : '?'}flip=h`,
-  ];
-  return Array.from(new Set([...imgs, ...variants])).slice(0, 4);
+// ─── SEO: meta + OG/Twitter + JSON-LD ─────────────────────────────────────────
+const config = useRuntimeConfig();
+const siteUrl = config.public.siteUrl as string;
+const canonicalUrl = `${siteUrl}/products/${slug}`;
+const p = product.value!;
+const seoDescription = (p.description || `${p.name} — ${p.brand}. Chính hãng, bảo hành tại IRONMAN.`).slice(0, 160);
+const ogImage = p.images?.[0] || `${siteUrl}/favicon.ico`;
+const availability = p.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock';
+
+useSeoMeta({
+  title: `${p.name} — IRONMAN`,
+  description: seoDescription,
+  ogTitle: `${p.name} — IRONMAN`,
+  ogDescription: seoDescription,
+  ogImage,
+  ogType: 'website',
+  ogUrl: canonicalUrl,
+  twitterCard: 'summary_large_image',
+  twitterTitle: `${p.name} — IRONMAN`,
+  twitterDescription: seoDescription,
+  twitterImage: ogImage,
 });
+
+useHead({
+  link: [{ rel: 'canonical', href: canonicalUrl }],
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: p.name,
+        image: p.images?.length ? p.images : [ogImage],
+        description: seoDescription,
+        brand: { '@type': 'Brand', name: p.brand },
+        sku: p.id,
+        offers: {
+          '@type': 'Offer',
+          url: canonicalUrl,
+          priceCurrency: 'VND',
+          price: p.salePrice ?? p.price,
+          availability,
+        },
+        ...(p.reviewCount > 0 && {
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: p.rating,
+            reviewCount: p.reviewCount,
+          },
+        }),
+      }),
+    },
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Trang Chủ', item: siteUrl },
+          { '@type': 'ListItem', position: 2, name: p.categoryName, item: `${siteUrl}/categories/${p.categorySlug}` },
+          { '@type': 'ListItem', position: 3, name: p.name, item: canonicalUrl },
+        ],
+      }),
+    },
+  ],
+});
+
+const gallery = computed(() => product.value!.images.filter(Boolean));
+
+// ─── Reviews ──────────────────────────────────────────────────────────────
+const productId = computed(() => product.value!.id);
+const { data: reviewsData, isPending: reviewsLoading } = useProductReviewsQuery(productId);
+const reviews = computed(() => reviewsData.value?.items ?? []);
+const { isAuthenticated } = useAuth();
+const { mutate: submitReview, isPending: submittingReview } = useCreateReviewMutation();
+
+const reviewForm = reactive({ rating: 5, comment: '' });
+const reviewMsg = ref('');
+const reviewError = ref(false);
+
+function postReview() {
+  reviewMsg.value = '';
+  reviewError.value = false;
+  submitReview(
+    { productId: productId.value, rating: reviewForm.rating, comment: reviewForm.comment || undefined },
+    {
+      onSuccess: () => {
+        reviewMsg.value = 'Cảm ơn bạn đã đánh giá!';
+        reviewForm.comment = '';
+        reviewForm.rating = 5;
+      },
+      onError: (e: any) => {
+        reviewError.value = true;
+        reviewMsg.value = e?.data?.message || 'Không gửi được đánh giá';
+      },
+    },
+  );
+}
+
+function reviewDate(iso: string) {
+  return new Date(iso).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+// ─── Wishlist ─────────────────────────────────────────────────────────────
+const { data: wishlist } = useWishlistQuery();
+const { add: addWish, remove: removeWish } = useWishlistMutations();
+const inWishlist = computed(() =>
+  (wishlist.value ?? []).some((w) => w.product.id === productId.value),
+);
+function toggleWishlist() {
+  if (!isAuthenticated.value) {
+    navigateTo({ path: '/login', query: { redirect: `/products/${slug}` } });
+    return;
+  }
+  if (inWishlist.value) removeWish.mutate(productId.value);
+  else addWish.mutate(productId.value);
+}
 
 const angleLabels = ['Mặt chính', 'Cạnh bên', 'Mặt sau', 'Chi tiết'];
 
@@ -54,14 +165,14 @@ const activeIdx = ref(0);
 const qty = ref(1);
 const addedToast = ref(false);
 function addToCart() {
-  cart.addItem(product!, qty.value);
+  cart.addItem(product.value!, qty.value);
   addedToast.value = true;
   setTimeout(() => (addedToast.value = false), 2000);
 }
 
 const ratingBreakdown = computed(() => {
-  const r = product!.ratingBreakdown ?? {};
-  const base = product!.rating;
+  const r = product.value!.ratingBreakdown ?? {};
+  const base = product.value!.rating;
   return {
     quality:    r.quality    ?? Math.min(5, base + 0.1),
     design:     r.design     ?? Math.max(0, base - 0.1),
@@ -71,11 +182,11 @@ const ratingBreakdown = computed(() => {
 });
 
 const highlights = computed(() => {
-  if (product!.highlights?.length) return product!.highlights;
-  return product!.specs.slice(0, 4).map((s) => `${s.label}: ${s.value}`);
+  if (product.value!.highlights?.length) return product.value!.highlights;
+  return product.value!.specs.slice(0, 4).map((s) => `${s.label}: ${s.value}`);
 });
 
-const videoUrl = computed(() => product!.videoUrl ?? '');
+const videoUrl = computed(() => product.value!.videoUrl ?? '');
 
 const rbLabels: Record<string, string> = {
   quality: 'Chất liệu',
@@ -100,7 +211,7 @@ const vblockHead = 'mb-7 max-w-[720px]';
       <span>/</span>
       <NuxtLink to="/#products">Sản Phẩm</NuxtLink>
       <span>/</span>
-      <NuxtLink :to="`/#cat-${product.categorySlug}`">{{ product.categoryName }}</NuxtLink>
+      <NuxtLink :to="`/categories/${product.categorySlug}`">{{ product.categoryName }}</NuxtLink>
       <span>/</span>
       <span class="text-text">{{ product.name }}</span>
     </nav>
@@ -228,6 +339,14 @@ const vblockHead = 'mb-7 max-w-[720px]';
           >
             <i class="bx bx-shopping-bag" />
             Thêm Vào Giỏ
+          </button>
+          <button
+            :aria-label="inWishlist ? 'Bỏ yêu thích' : 'Thêm yêu thích'"
+            class="w-12 h-12 flex-shrink-0 border border-rule-strong flex items-center justify-center text-[1.3rem] cursor-pointer transition-all duration-250 hover:border-accent"
+            :class="inWishlist ? 'text-oxblood border-oxblood' : 'text-mid'"
+            @click="toggleWishlist"
+          >
+            <i class="bx" :class="inWishlist ? 'bxs-heart' : 'bx-heart'" />
           </button>
         </div>
 
@@ -380,6 +499,67 @@ const vblockHead = 'mb-7 max-w-[720px]';
           </div>
         </div>
       </article>
+    </section>
+
+    <!-- Reviews -->
+    <section id="reviews" class="pt-md border-t border-rule mb-lg">
+      <header class="mb-7 max-w-[720px]">
+        <span :class="eyebrowCls">Đánh Giá Khách Hàng</span>
+        <h2 class="font-display font-bold text-text m-0 leading-[1.1] text-[clamp(1.6rem,3.4vw,2.4rem)]">
+          Người Mua Nói Gì
+        </h2>
+      </header>
+
+      <!-- Form gửi đánh giá -->
+      <div v-if="isAuthenticated" class="bg-card border border-rule p-5 mb-6 max-w-[640px]">
+        <p class="font-condensed text-[0.72rem] font-bold tracking-[2px] uppercase text-accent mb-3">Viết đánh giá</p>
+        <div class="flex items-center gap-1 mb-3">
+          <button
+            v-for="n in 5"
+            :key="n"
+            type="button"
+            class="text-[1.4rem] cursor-pointer bg-transparent border-0 p-0"
+            :class="n <= reviewForm.rating ? 'text-accent' : 'text-smoke'"
+            @click="reviewForm.rating = n"
+          >
+            <i class="bx" :class="n <= reviewForm.rating ? 'bxs-star' : 'bx-star'" />
+          </button>
+        </div>
+        <textarea
+          v-model="reviewForm.comment"
+          rows="3"
+          placeholder="Chia sẻ cảm nhận của bạn về sản phẩm..."
+          class="w-full bg-surface border border-rule text-text font-body text-[0.88rem] py-2.5 px-3.5 box-border focus:outline-none focus:border-accent mb-3"
+        />
+        <p v-if="reviewMsg" class="text-[0.82rem] mb-3" :class="reviewError ? 'text-oxblood' : 'text-olive'">{{ reviewMsg }}</p>
+        <button
+          :disabled="submittingReview"
+          class="bg-accent text-on-accent border-0 font-condensed text-[0.78rem] font-semibold tracking-[2px] uppercase py-2.5 px-6 cursor-pointer disabled:opacity-60"
+          @click="postReview"
+        >
+          {{ submittingReview ? 'Đang gửi...' : 'Gửi đánh giá' }}
+        </button>
+      </div>
+      <p v-else class="text-smoke text-[0.88rem] mb-6">
+        <NuxtLink to="/login" class="text-accent hover:underline">Đăng nhập</NuxtLink>
+        để đánh giá (chỉ khách đã mua sản phẩm mới đánh giá được).
+      </p>
+
+      <!-- Danh sách đánh giá -->
+      <div v-if="reviewsLoading" class="text-smoke text-[0.9rem]">Đang tải đánh giá...</div>
+      <div v-else-if="!reviews.length" class="text-smoke text-[0.9rem]">Chưa có đánh giá nào. Hãy là người đầu tiên!</div>
+      <div v-else class="flex flex-col gap-5 max-w-[720px]">
+        <article v-for="r in reviews" :key="r.id" class="border-b border-rule pb-5">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="font-display font-semibold text-text text-[0.95rem]">{{ r.user?.fullName ?? 'Khách hàng' }}</span>
+            <span class="text-[0.75rem] text-smoke">{{ reviewDate(r.createdAt) }}</span>
+          </div>
+          <div class="flex gap-0.5 text-accent mb-2">
+            <i v-for="n in 5" :key="n" class="bx text-[0.9rem]" :class="n <= r.rating ? 'bxs-star' : 'bx-star'" />
+          </div>
+          <p v-if="r.comment" class="text-[0.9rem] text-mid leading-[1.6] m-0">{{ r.comment }}</p>
+        </article>
+      </div>
     </section>
 
     <!-- Related -->

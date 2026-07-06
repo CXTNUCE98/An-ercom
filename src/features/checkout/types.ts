@@ -5,7 +5,7 @@ export interface CheckoutForm {
   address: string;
   city: string;
   note: string;
-  paymentMethod: 'cod' | 'bank-transfer' | 'card';
+  paymentMethod: 'COD' | 'BANK_TRANSFER' | 'MOMO';
 }
 
 export interface OrderConfirmation {

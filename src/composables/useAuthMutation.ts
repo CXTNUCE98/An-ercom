@@ -39,8 +39,25 @@ export const useRegisterMutation = () => {
 };
 
 /**
- * Mutation cập nhật thông tin cá nhân
+ * Mutation yêu cầu đặt lại mật khẩu
  */
+export const useForgotPasswordMutation = () => {
+  return useMutation({
+    mutationFn: async (body: { email: string }) =>
+      await $anErcom("/auth/forgot-password", { method: "POST", body }),
+  });
+};
+
+/**
+ * Mutation đặt lại mật khẩu bằng token
+ */
+export const useResetPasswordMutation = () => {
+  return useMutation({
+    mutationFn: async (body: { token: string; newPassword: string }) =>
+      await $anErcom("/auth/reset-password", { method: "POST", body }),
+  });
+};
+
 /**
  * Mutation cập nhật thông tin cá nhân
  */

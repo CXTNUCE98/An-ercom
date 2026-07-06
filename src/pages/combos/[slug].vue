@@ -1,27 +1,77 @@
 <script setup lang="ts">
-import { COMBO_BY_SLUG, resolveCombo } from '~/constants/combos';
 import { useCartStore } from '~/features/cart/stores/useCartStore';
 import { formatPrice } from '~/shared/utils/format';
+import type { IconName } from '~/types/landing';
+
+interface ApiComboItem {
+  id: string;
+  quantity: number;
+  product: {
+    id: string; slug: string; name: string; brand: string;
+    price: number; salePrice?: number | null; images: string[];
+  };
+}
+interface ApiCombo {
+  id: string; slug: string; name: string; description?: string | null;
+  image?: string | null; comboPrice: number; originalPrice: number; savings: number;
+  items: ApiComboItem[];
+}
 
 const route = useRoute();
 const slug = route.params.slug as string;
-const raw = COMBO_BY_SLUG[slug];
 
-if (!raw) {
+const { data: raw } = await useAsyncData(`combo-${slug}`, () =>
+  $anErcom(`/combos/slug/${slug}`) as Promise<ApiCombo>,
+);
+if (!raw.value) {
   throw createError({ statusCode: 404, message: 'Combo không tồn tại' });
 }
 
-const combo = resolveCombo(raw);
+// Map BE combo → shape template cần (bù các field editorial bằng fallback).
+const combo = computed(() => {
+  const c = raw.value!;
+  const originalPrice = c.originalPrice || c.comboPrice;
+  return {
+    name: c.name,
+    tagline: c.description || 'Bộ sưu tập chọn lọc cho quý ông.',
+    story: c.description || 'Combo được tuyển chọn kỹ lưỡng để bổ trợ cho nhau, mang lại giá trị tốt nhất.',
+    heroImage: c.image || c.items[0]?.product.images?.[0] || '',
+    badge: undefined as string | undefined,
+    badgeVariant: undefined as string | undefined,
+    occasion: 'Quà tặng & sưu tầm',
+    stock: 99,
+    perks: ['Chính hãng 100%', 'Đóng hộp quà cao cấp', 'Bảo hành theo hãng', 'Miễn phí giao nội thành'],
+    comboPrice: c.comboPrice,
+    originalPrice,
+    savings: c.savings,
+    savingsPercent: originalPrice > 0 ? Math.round((c.savings / originalPrice) * 100) : 0,
+    items: c.items.map((it) => ({
+      note: undefined as string | undefined,
+      product: {
+        id: it.product.id,
+        slug: it.product.slug,
+        name: it.product.name,
+        brand: it.product.brand,
+        price: it.product.price,
+        salePrice: it.product.salePrice ?? undefined,
+        images: it.product.images ?? [],
+        icon: 'gift' as IconName,
+        categoryName: '',
+      },
+    })),
+  };
+});
+
 const cart = useCartStore();
 const addedToast = ref(false);
 
-useHead({
-  title: `${combo.name} — IRONMAN Combo`,
-  meta: [{ name: 'description', content: combo.tagline }],
+useSeoMeta({
+  title: () => `${combo.value.name} — IRONMAN Combo`,
+  description: () => combo.value.tagline,
 });
 
 function addComboToCart() {
-  combo.items.forEach((it) => cart.addItem(it.product, 1));
+  combo.value.items.forEach((it) => cart.addItem(it.product as any, 1));
   addedToast.value = true;
   setTimeout(() => (addedToast.value = false), 2200);
 }

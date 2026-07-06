@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { useScrolled } from '~/composables/useScrolled';
 import { useCartStore } from '~/features/cart/stores/useCartStore';
+import { useAuth } from '~/composables/useAuth';
 
 const { isScrolled } = useScrolled(20);
 const cart = useCartStore();
+const { isAuthenticated } = useAuth();
 const drawerOpen = ref(false);
 const router = useRouter();
 const route = useRoute();
 
 const QUICK_LINKS = [
   { label: 'Trang Chủ',     hash: '#top',      icon: 'bx-home-alt' },
-  { label: 'Combo Nổi Bật', hash: '#combos',   icon: 'bx-gift' },
   { label: 'Sản Phẩm',      hash: '#products', icon: 'bx-diamond' },
-  { label: 'Câu Chuyện',    hash: '#story',    icon: 'bx-book-open' },
   { label: 'Liên Hệ',       hash: '#contact',  icon: 'bx-phone' },
 ];
 
@@ -61,14 +61,9 @@ const drawerLink =
     </a>
 
     <div class="flex items-center gap-0.5 sm:gap-1 lg:gap-1.5 flex-shrink-0">
-      <a
-        href="#products"
-        :class="iconBtn"
-        aria-label="Tìm sản phẩm"
-        @click.prevent="goTo('#products')"
-      >
+      <NuxtLink to="/search" :class="iconBtn" aria-label="Tìm sản phẩm">
         <i class="bx bx-search-alt" />
-      </a>
+      </NuxtLink>
       <NuxtLink to="/cart" :class="iconBtn" aria-label="Giỏ hàng">
         <i class="bx bx-shopping-bag" />
         <span
@@ -76,7 +71,17 @@ const drawerLink =
           class="absolute top-0.5 right-0.5 bg-oxblood text-[#fbf6ea] font-condensed text-[0.58rem] font-bold min-w-4 h-4 px-1 rounded-full flex items-center justify-center leading-none border-2 border-bg"
         >{{ cart.count }}</span>
       </NuxtLink>
+      <NuxtLink
+        :to="isAuthenticated ? '/account' : '/login'"
+        :class="iconBtn"
+        :aria-label="isAuthenticated ? 'Tài khoản' : 'Đăng nhập'"
+      >
+        <i class="bx" :class="isAuthenticated ? 'bxs-user-circle' : 'bx-user'" />
+      </NuxtLink>
       <CommonThemeToggle />
+      <button :class="iconBtn" aria-label="Mở menu" @click="drawerOpen = true">
+        <i class="bx bx-menu" />
+      </button>
     </div>
 
     <Transition name="fade">

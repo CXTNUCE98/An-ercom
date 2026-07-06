@@ -1,9 +1,11 @@
 import type { CartItem, PromoCode } from '../types';
 
-const PROMO_CODES: Record<string, PromoCode> = {
-  IRONMAN10: { code: 'IRONMAN10', discountPercent: 10, label: 'Giảm 10% toàn đơn' },
-  WELCOME5: { code: 'WELCOME5', discountPercent: 5, label: 'Giảm 5% khách mới' },
-};
+interface ApplyCouponResponse {
+  code: string;
+  type: 'PERCENT' | 'FIXED';
+  value: number;
+  discount: number;
+}
 
 export const cartService = {
   calcSubtotal(items: CartItem[]): number {
@@ -12,10 +14,26 @@ export const cartService = {
 
   calcDiscount(subtotal: number, promo?: PromoCode): number {
     if (!promo) return 0;
-    return Math.round(subtotal * promo.discountPercent / 100);
+    return Math.min(promo.discountAmount, subtotal);
   },
 
-  validatePromo(code: string): PromoCode | null {
-    return PROMO_CODES[code.toUpperCase()] ?? null;
+  /** Kiểm tra mã giảm giá qua BE (/coupons/apply). */
+  async validatePromo(code: string, subtotal: number): Promise<PromoCode | null> {
+    try {
+      const res = (await $anErcom('/coupons/apply', {
+        method: 'POST',
+        body: { code, subtotal },
+      })) as unknown as ApplyCouponResponse;
+      return {
+        code: res.code,
+        label:
+          res.type === 'PERCENT'
+            ? `Giảm ${res.value}%`
+            : `Giảm ${res.value.toLocaleString('vi-VN')}đ`,
+        discountAmount: res.discount,
+      };
+    } catch {
+      return null;
+    }
   },
 };

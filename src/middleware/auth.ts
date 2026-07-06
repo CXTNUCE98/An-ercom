@@ -3,7 +3,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
 
   if (!isAuthenticated.value) {
     // Show message to user
-    if (process.client) {
+    if (import.meta.client) {
       const { notify } = useNotifications();
       notify('warning', 'Vui lòng đăng nhập để tiếp tục');
     }

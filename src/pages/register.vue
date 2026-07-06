@@ -21,42 +21,67 @@ const handleRegister = () => {
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center px-4 bg-slate-950 text-slate-300">
-    <div class="max-w-md w-full glass-card p-10 bg-slate-900 border border-slate-800 rounded-sm">
+  <div class="min-h-screen flex items-center justify-center px-4 py-20 bg-bg text-text">
+    <div class="max-w-md w-full bg-card border border-rule p-10">
       <div v-if="isSuccess" class="text-center">
-        <h2 class="text-2xl font-bold font-display text-amber-500 mb-4">Đăng Ký Thành Công</h2>
-        <p class="mb-8">Chào mừng quý ông gia nhập cộng đồng.</p>
-        <NuxtLink to="/login" class="inline-block bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-8 uppercase tracking-widest text-sm">Đăng Nhập</NuxtLink>
+        <i class="bx bx-check-circle text-olive text-[3rem]" />
+        <h2 class="font-display text-[1.6rem] font-bold text-text mt-3 mb-3">Đăng Ký Thành Công</h2>
+        <p class="text-mid mb-8">Tài khoản đã được tạo. Đăng nhập để bắt đầu mua sắm.</p>
+        <NuxtLink
+          to="/login"
+          class="inline-block bg-accent text-on-accent no-underline font-condensed text-[0.82rem] font-semibold tracking-[3px] uppercase py-3 px-8"
+        >Đăng Nhập</NuxtLink>
       </div>
 
       <div v-else>
         <div class="text-center mb-8">
-          <h2 class="text-3xl font-bold font-display text-amber-500 uppercase tracking-widest mb-2">GENTLEMEN</h2>
-          <p class="text-sm">Gia nhập cộng đồng quý ông đích thực</p>
+          <NuxtLink to="/" class="font-display font-extrabold text-accent no-underline text-[1.6rem] tracking-[6px]">
+            IRON<span class="text-text">MAN</span>
+          </NuxtLink>
+          <p class="text-[0.9rem] text-mid mt-3">Tạo tài khoản để mua sắm và theo dõi đơn</p>
         </div>
 
         <form class="space-y-5" @submit.prevent="handleRegister">
           <div>
-            <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-slate-400">Họ và tên</label>
-            <input v-model="registerData.fullName" type="text" required class="w-full bg-slate-950 border border-slate-800 px-4 py-3 text-white focus:border-amber-500 focus:outline-none transition-colors" />
+            <label class="block font-condensed text-[0.7rem] font-semibold tracking-[2px] uppercase text-smoke mb-1.5">Họ và tên</label>
+            <input
+              v-model="registerData.fullName"
+              type="text"
+              required
+              class="w-full bg-surface border border-rule text-text font-body text-[0.88rem] py-2.5 px-3.5 transition-colors duration-250 box-border focus:outline-none focus:border-accent"
+            />
           </div>
           <div>
-            <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-slate-400">Email</label>
-            <input v-model="registerData.email" type="email" required class="w-full bg-slate-950 border border-slate-800 px-4 py-3 text-white focus:border-amber-500 focus:outline-none transition-colors" />
+            <label class="block font-condensed text-[0.7rem] font-semibold tracking-[2px] uppercase text-smoke mb-1.5">Email</label>
+            <input
+              v-model="registerData.email"
+              type="email"
+              required
+              class="w-full bg-surface border border-rule text-text font-body text-[0.88rem] py-2.5 px-3.5 transition-colors duration-250 box-border focus:outline-none focus:border-accent"
+            />
           </div>
           <div>
-            <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-slate-400">Mật khẩu</label>
-            <input v-model="registerData.password" type="password" required class="w-full bg-slate-950 border border-slate-800 px-4 py-3 text-white focus:border-amber-500 focus:outline-none transition-colors" />
+            <label class="block font-condensed text-[0.7rem] font-semibold tracking-[2px] uppercase text-smoke mb-1.5">Mật khẩu</label>
+            <input
+              v-model="registerData.password"
+              type="password"
+              required
+              class="w-full bg-surface border border-rule text-text font-body text-[0.88rem] py-2.5 px-3.5 transition-colors duration-250 box-border focus:outline-none focus:border-accent"
+            />
           </div>
 
-          <button type="submit" :disabled="isPending" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-4 uppercase tracking-widest text-sm mt-8">
-            <span v-if="!isPending">Đăng ký</span>
-            <span v-else>Đang xử lý...</span>
+          <button
+            type="submit"
+            :disabled="isPending"
+            class="w-full bg-accent text-on-accent border-0 font-condensed text-[0.82rem] font-semibold tracking-[3px] uppercase py-3.5 cursor-pointer transition-all duration-300 hover:enabled:-translate-y-px disabled:opacity-60"
+          >
+            {{ isPending ? 'Đang xử lý...' : 'Đăng Ký' }}
           </button>
         </form>
 
-        <div class="mt-8 text-center text-sm">
-          <p>Đã có tài khoản? <NuxtLink to="/login" class="text-amber-500 hover:underline">Đăng nhập</NuxtLink></p>
+        <div class="mt-8 text-center text-[0.85rem] text-mid">
+          Đã có tài khoản?
+          <NuxtLink to="/login" class="text-accent hover:underline">Đăng nhập</NuxtLink>
         </div>
       </div>
     </div>

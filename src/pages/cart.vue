@@ -8,14 +8,22 @@ const cart = useCartStore();
 const promoInput = ref('');
 const promoError = ref('');
 
-function applyPromo() {
+const promoLoading = ref(false);
+
+async function applyPromo() {
   promoError.value = '';
   if (!promoInput.value.trim()) return;
-  const ok = cart.applyPromo(promoInput.value.trim());
-  if (!ok) {
-    promoError.value = 'Mã giảm giá không hợp lệ';
+  promoLoading.value = true;
+  try {
+    const ok = await cart.applyPromo(promoInput.value.trim());
+    if (!ok) {
+      promoError.value = 'Mã giảm giá không hợp lệ hoặc đã hết hạn';
+    } else {
+      promoInput.value = '';
+    }
+  } finally {
+    promoLoading.value = false;
   }
-  promoInput.value = '';
 }
 </script>
 

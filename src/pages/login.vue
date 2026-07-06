@@ -12,46 +12,78 @@ const loginData = reactive({
 });
 
 const router = useRouter();
+const route = useRoute();
 const { mutate: login, isPending, error } = useLoginMutation();
+
+const errorMessage = computed(
+  () => (error.value as any)?.data?.message || 'Đăng nhập thất bại',
+);
 
 const handleLogin = () => {
   login(
     { email: loginData.email, password: loginData.password },
-    { onSuccess: () => router.push('/') }
+    {
+      onSuccess: () => {
+        const redirect = (route.query.redirect as string) || '/';
+        router.push(redirect);
+      },
+    }
   );
 };
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center px-4 bg-slate-950 text-slate-300">
-    <div class="max-w-md w-full glass-card p-10 bg-slate-900 border border-slate-800 rounded-sm">
+  <div class="min-h-screen flex items-center justify-center px-4 py-20 bg-bg text-text">
+    <div class="max-w-md w-full bg-card border border-rule p-10">
       <div class="text-center mb-8">
-        <h2 class="text-3xl font-bold font-display text-amber-500 uppercase tracking-widest mb-2">GENTLEMEN</h2>
-        <p class="text-sm">Đăng nhập để trải nghiệm đặc quyền</p>
+        <NuxtLink to="/" class="font-display font-extrabold text-accent no-underline text-[1.6rem] tracking-[6px]">
+          IRON<span class="text-text">MAN</span>
+        </NuxtLink>
+        <p class="text-[0.9rem] text-mid mt-3">Đăng nhập để mua sắm và theo dõi đơn hàng</p>
       </div>
 
-      <form class="space-y-6" @submit.prevent="handleLogin">
-        <div class="space-y-4">
-          <div>
-            <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-slate-400">Email</label>
-            <input v-model="loginData.email" type="email" required class="w-full bg-slate-950 border border-slate-800 px-4 py-3 text-white focus:border-amber-500 focus:outline-none transition-colors" placeholder="email@example.com" />
-          </div>
-          <div>
-            <div class="flex justify-between mb-2">
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Mật khẩu</label>
-            </div>
-            <input v-model="loginData.password" type="password" required class="w-full bg-slate-950 border border-slate-800 px-4 py-3 text-white focus:border-amber-500 focus:outline-none transition-colors" placeholder="••••••••" />
-          </div>
+      <form class="space-y-5" @submit.prevent="handleLogin">
+        <div>
+          <label class="block font-condensed text-[0.7rem] font-semibold tracking-[2px] uppercase text-smoke mb-1.5">Email</label>
+          <input
+            v-model="loginData.email"
+            type="email"
+            required
+            class="w-full bg-surface border border-rule text-text font-body text-[0.88rem] py-2.5 px-3.5 transition-colors duration-250 box-border focus:outline-none focus:border-accent"
+            placeholder="email@example.com"
+          />
+        </div>
+        <div>
+          <label class="block font-condensed text-[0.7rem] font-semibold tracking-[2px] uppercase text-smoke mb-1.5">Mật khẩu</label>
+          <input
+            v-model="loginData.password"
+            type="password"
+            required
+            class="w-full bg-surface border border-rule text-text font-body text-[0.88rem] py-2.5 px-3.5 transition-colors duration-250 box-border focus:outline-none focus:border-accent"
+            placeholder="••••••••"
+          />
         </div>
 
-        <button type="submit" :disabled="isPending" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-4 uppercase tracking-widest text-sm transition-colors mt-8">
-          <span v-if="!isPending">Đăng nhập</span>
-          <span v-else>Đang xử lý...</span>
+        <p v-if="error" class="text-[0.82rem] text-oxblood">
+          {{ errorMessage }}
+        </p>
+
+        <div class="text-right">
+          <NuxtLink to="/forgot-password" class="text-[0.8rem] text-accent hover:underline">Quên mật khẩu?</NuxtLink>
+        </div>
+
+        <button
+          type="submit"
+          :disabled="isPending"
+          class="w-full bg-accent text-on-accent border-0 font-condensed text-[0.82rem] font-semibold tracking-[3px] uppercase py-3.5 cursor-pointer transition-all duration-300 hover:enabled:-translate-y-px disabled:opacity-60"
+        >
+          {{ isPending ? 'Đang xử lý...' : 'Đăng Nhập' }}
         </button>
       </form>
 
-      <div class="mt-8 text-center text-sm">
-        <p>Chưa có tài khoản? <NuxtLink to="/register" class="text-amber-500 hover:underline">Đăng ký</NuxtLink></p>
+      <div class="mt-8 text-center text-[0.85rem] text-mid">
+        Chưa có tài khoản?
+        <NuxtLink to="/register" class="text-accent hover:underline">Đăng ký</NuxtLink>
       </div>
     </div>
   </div>

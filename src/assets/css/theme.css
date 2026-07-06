@@ -53,6 +53,7 @@
   --font-display:   'Cormorant Garamond', 'Playfair Display', Georgia, serif;
   --font-body:      'Barlow', sans-serif;
   --font-condensed: 'Barlow Condensed', sans-serif;
+  --font-headline:  'Bebas Neue', 'Barlow Condensed', sans-serif;
 
   /* Effects */
   --noise-opacity: 0.04;
@@ -93,20 +94,21 @@
   --font-display:   'Cormorant Garamond', 'Playfair Display', Georgia, serif;
   --font-body:      'Barlow', sans-serif;
   --font-condensed: 'Barlow Condensed', sans-serif;
+  --font-headline:  'Bebas Neue', 'Barlow Condensed', sans-serif;
 
   --noise-opacity: 0.06;
 }
 
 /* ── Spacing rhythm ────────────────────────────────────── */
 :root {
-  --sp-xl: 120px;
-  --sp-lg: 80px;
+  --sp-xl: 140px;
+  --sp-lg: 100px;
   --sp-md: 60px;
   --sp-sm: 32px;
   --gutter: 56px;
 }
 @media (max-width: 900px) {
-  :root { --sp-xl: 80px; --sp-lg: 60px; --sp-md: 48px; --gutter: 24px; }
+  :root { --sp-xl: 90px; --sp-lg: 70px; --sp-md: 48px; --gutter: 24px; }
 }
 
 /* ── Body baseline ─────────────────────────────────────── */
@@ -207,4 +209,39 @@ body {
 @keyframes ironman-pdp-scroll-line {
   0%, 100% { transform: scaleY(0.4); opacity: 0.4; }
   50%      { transform: scaleY(1); opacity: 1; }
+}
+
+/* ── Editorial / High-fashion keyframes ───────────────── */
+@keyframes ironman-clip-reveal {
+  from { clip-path: inset(100% 0 0 0); opacity: 0; }
+  to   { clip-path: inset(0 0 0 0); opacity: 1; }
+}
+@keyframes ironman-clip-reveal-right {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+@keyframes ironman-text-reveal {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+@keyframes ironman-underline-grow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@keyframes ironman-countdown-flip {
+  0%   { transform: rotateX(0deg); }
+  50%  { transform: rotateX(-90deg); }
+  100% { transform: rotateX(0deg); }
+}
+@keyframes ironman-slow-zoom {
+  from { transform: scale(1); }
+  to   { transform: scale(1.08); }
+}
+@keyframes ironman-glow-pulse {
+  0%, 100% { text-shadow: 0 0 20px color-mix(in srgb, var(--accent) 40%, transparent); }
+  50%      { text-shadow: 0 0 40px color-mix(in srgb, var(--accent) 70%, transparent), 0 0 80px color-mix(in srgb, var(--accent) 20%, transparent); }
+}
+@keyframes ironman-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
 }

@@ -1,6 +1,13 @@
 import type { CheckoutForm, OrderConfirmation } from '../types';
 import type { CartItem } from '../../cart/types';
 
+/** Shape đơn hàng trả về từ BE (rút gọn phần dùng ở đây). */
+interface ApiOrder {
+  id: string;
+  totalPrice: number;
+  items: { quantity: number }[];
+}
+
 export const checkoutService = {
   validate(form: CheckoutForm): string[] {
     const errors: string[] = [];
@@ -14,17 +21,36 @@ export const checkoutService = {
     return errors;
   },
 
+  /**
+   * Tạo đơn hàng thật qua BE (POST /orders).
+   * BE tự tính lại tổng tiền từ DB và trừ tồn kho trong transaction,
+   * nên client chỉ gửi productId + quantity.
+   */
   async placeOrder(
-    _form: CheckoutForm,
+    form: CheckoutForm,
     items: CartItem[],
-    total: number,
+    authHeaders: HeadersInit,
+    couponCode?: string,
   ): Promise<OrderConfirmation> {
-    await new Promise((r) => setTimeout(r, 1200));
+    const shippingAddress = `${form.address}, ${form.city}`.trim();
+
+    const order = (await $anErcom('/orders', {
+      method: 'POST',
+      headers: authHeaders,
+      body: {
+        items: items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
+        shippingAddress,
+        phone: form.phone.replace(/\s/g, ''),
+        note: form.note || undefined,
+        paymentMethod: form.paymentMethod,
+        couponCode: couponCode || undefined,
+      },
+    })) as unknown as ApiOrder;
 
     return {
-      orderId: 'IM-' + Date.now().toString(36).toUpperCase(),
-      total,
-      itemCount: items.reduce((s, i) => s + i.quantity, 0),
+      orderId: order.id,
+      total: order.totalPrice,
+      itemCount: order.items.reduce((s, i) => s + i.quantity, 0),
       estimatedDelivery: '2-3 ngày làm việc',
     };
   },
