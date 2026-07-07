@@ -20,8 +20,11 @@ export interface WishlistEntry {
   product: WishlistProduct;
 }
 
+import type { MaybeRefOrGetter } from 'vue';
+import { toValue } from 'vue';
+
 /** Danh sách yêu thích của tôi — GET /wishlist */
-export const useWishlistQuery = () => {
+export const useWishlistQuery = (enabled?: MaybeRefOrGetter<boolean>) => {
   const { isAuthenticated, getAuthHeaders } = useAuth();
   return useQuery({
     queryKey: ['wishlist'],
@@ -29,7 +32,11 @@ export const useWishlistQuery = () => {
       const res = await $anErcom('/wishlist', { headers: getAuthHeaders() });
       return res as unknown as WishlistEntry[];
     },
-    enabled: isAuthenticated,
+    enabled: computed(() => {
+      const isAuth = toValue(isAuthenticated);
+      const isEnabled = enabled !== undefined ? toValue(enabled) : true;
+      return isAuth && isEnabled;
+    }),
   });
 };
 

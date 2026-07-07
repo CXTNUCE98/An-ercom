@@ -1,11 +1,11 @@
-export interface CheckoutForm {
-  fullName: string;
+export type PaymentMethod = 'COD' | 'BANK_TRANSFER' | 'MOMO';
+
+/** Thông tin giao hàng đã chọn (dựng từ sổ địa chỉ). */
+export interface ShippingDetails {
+  shippingAddress: string;
   phone: string;
-  email: string;
-  address: string;
-  city: string;
   note: string;
-  paymentMethod: 'COD' | 'BANK_TRANSFER' | 'MOMO';
+  paymentMethod: PaymentMethod;
 }
 
 export interface OrderConfirmation {

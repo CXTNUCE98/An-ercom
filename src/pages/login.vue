@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { useLoginMutation } from '~/composables/useAuthMutation';
+import { useNotifications } from '~/composables/notifications';
 
 definePageMeta({
   layout: 'default',
@@ -11,21 +12,30 @@ const loginData = reactive({
   password: '',
 });
 
+const showPassword = ref(false);
+
 const router = useRouter();
 const route = useRoute();
-const { mutate: login, isPending, error } = useLoginMutation();
+const { notify } = useNotifications();
+const { mutate: login, isPending } = useLoginMutation();
 
-const errorMessage = computed(
-  () => (error.value as any)?.data?.message || 'Đăng nhập thất bại',
-);
+const getErrorMessage = (err: unknown) =>
+  (err as any)?.data?.message ||
+  (err as any)?.response?._data?.message ||
+  (err as any)?.message ||
+  'Đăng nhập thất bại';
 
 const handleLogin = () => {
   login(
     { email: loginData.email, password: loginData.password },
     {
       onSuccess: () => {
+        notify('success', 'Đăng nhập thành công');
         const redirect = (route.query.redirect as string) || '/';
         router.push(redirect);
+      },
+      onError: (err) => {
+        notify('error', getErrorMessage(err));
       },
     }
   );
@@ -55,18 +65,23 @@ const handleLogin = () => {
         </div>
         <div>
           <label class="block font-condensed text-[0.7rem] font-semibold tracking-[2px] uppercase text-smoke mb-1.5">Mật khẩu</label>
-          <input
-            v-model="loginData.password"
-            type="password"
-            required
-            class="w-full bg-surface border border-rule text-text font-body text-[0.88rem] py-2.5 px-3.5 transition-colors duration-250 box-border focus:outline-none focus:border-accent"
-            placeholder="••••••••"
-          />
+          <div class="relative">
+            <input
+              v-model="loginData.password"
+              :type="showPassword ? 'text' : 'password'"
+              required
+              class="w-full bg-surface border border-rule text-text font-body text-[0.88rem] py-2.5 px-3.5 pr-10 transition-colors duration-250 box-border focus:outline-none focus:border-accent"
+              placeholder="••••••••"
+            />
+            <button
+              type="button"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-smoke hover:text-accent cursor-pointer flex items-center justify-center"
+              @click="showPassword = !showPassword"
+            >
+              <i class="bx text-[1.1rem]" :class="showPassword ? 'bx-show' : 'bx-hide'" />
+            </button>
+          </div>
         </div>
-
-        <p v-if="error" class="text-[0.82rem] text-oxblood">
-          {{ errorMessage }}
-        </p>
 
         <div class="text-right">
           <NuxtLink to="/forgot-password" class="text-[0.8rem] text-accent hover:underline">Quên mật khẩu?</NuxtLink>

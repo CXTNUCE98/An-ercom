@@ -89,8 +89,7 @@ function salePercent(p: CatalogProduct) {
 }
 
 const pillBase =
-  'inline-flex items-center gap-2 py-2 px-4 border border-rule bg-surface text-mid no-underline font-condensed text-[0.78rem] font-semibold tracking-[2px] uppercase transition-all duration-300 cursor-pointer hover:border-accent hover:text-accent hover:-translate-y-px';
-const pillActive = 'bg-accent border-accent text-on-accent';
+  'inline-flex items-center gap-2 py-2 px-4 border no-underline font-condensed text-[0.78rem] font-semibold tracking-[2px] uppercase transition-all duration-300 cursor-pointer hover:-translate-y-px';
 const badgeBase =
   'absolute top-3 right-3 font-condensed text-[0.65rem] font-bold tracking-[2px] uppercase py-1 px-2.5 z-[3]';
 </script>
@@ -131,18 +130,18 @@ const badgeBase =
       ]" aria-label="Chọn nhóm sản phẩm">
         <a v-for="g in GROUPS" :key="g.slug" :href="`#cat-${g.slug}`" :class="[
           pillBase,
-          activeSlug === g.slug && pillActive,
+          activeSlug === g.slug 
+            ? 'bg-accent border-accent text-on-accent shadow-md [&_.icon-line]:text-[var(--on-accent)]' 
+            : 'bg-surface border-rule text-mid hover:border-accent hover:text-accent',
           'max-[500px]:flex-shrink-0 max-[500px]:py-1.5 max-[500px]:px-2.5 max-[500px]:gap-1.5 max-[500px]:text-[0.65rem] max-[500px]:tracking-[1.5px] max-[500px]:rounded-sm'
         ]" :aria-label="g.name" @click="selectGroup(g.slug)">
           <CommonIconLine :name="g.icon" :size="18" />
           <span class="max-[500px]:hidden">{{ g.name }}</span>
           <span
-            class="font-display font-bold text-[0.72rem] py-0.5 px-1.5 rounded-full max-[500px]:hidden"
+            class="font-display font-bold text-[0.72rem] py-0.5 px-1.5 rounded-full max-[500px]:hidden transition-colors duration-300"
             :style="{
-              background: activeSlug === g.slug
-                ? 'color-mix(in srgb, #fff 25%, transparent)'
-                : 'color-mix(in srgb, var(--accent) 20%, transparent)',
-              color: activeSlug === g.slug ? '#fff' : 'var(--accent)'
+              background: activeSlug === g.slug ? 'var(--on-accent)' : 'color-mix(in srgb, var(--accent) 15%, transparent)',
+              color: activeSlug === g.slug ? 'var(--accent)' : 'var(--accent)'
             }">{{ productsByGroup[g.slug].length }}</span>
         </a>
       </nav>

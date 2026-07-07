@@ -2,6 +2,9 @@
 import { useScrolled } from '~/composables/useScrolled';
 import { useCartStore } from '~/features/cart/stores/useCartStore';
 import { useAuth } from '~/composables/useAuth';
+import { catalogService } from '~/features/catalog/services/catalogService';
+import { formatPrice } from '~/shared/utils/format';
+import type { CatalogProduct } from '~/types/landing';
 
 const { isScrolled } = useScrolled(20);
 const cart = useCartStore();
@@ -9,6 +12,45 @@ const { isAuthenticated } = useAuth();
 const drawerOpen = ref(false);
 const router = useRouter();
 const route = useRoute();
+
+const searchOpen = ref(false);
+const searchQuery = ref('');
+const searchLoading = ref(false);
+const searchResults = ref<CatalogProduct[]>([]);
+let searchTimeout: ReturnType<typeof setTimeout> | null = null;
+
+function toggleSearch() {
+  searchOpen.value = !searchOpen.value;
+  if (!searchOpen.value) {
+    searchQuery.value = '';
+    searchResults.value = [];
+  }
+}
+
+function closeSearch() {
+  searchOpen.value = false;
+  searchQuery.value = '';
+  searchResults.value = [];
+}
+
+watch(searchQuery, (newVal) => {
+  if (searchTimeout) clearTimeout(searchTimeout);
+  if (!newVal.trim()) {
+    searchResults.value = [];
+    return;
+  }
+  searchTimeout = setTimeout(async () => {
+    searchLoading.value = true;
+    try {
+      const res = await catalogService.listProducts({ search: newVal.trim() }, 'newest', 1, 5);
+      searchResults.value = res.items;
+    } catch (e) {
+      console.error(e);
+    } finally {
+      searchLoading.value = false;
+    }
+  }, 300);
+});
 
 const QUICK_LINKS = [
   { label: 'Trang Chủ',     hash: '#top',      icon: 'bx-home-alt' },
@@ -44,7 +86,7 @@ const drawerLink =
 
 <template>
   <header
-    class="fixed top-0 left-0 right-0 z-[100] flex items-center justify-between gap-2 sm:gap-3 lg:gap-4 px-gutter max-w-screen overflow-hidden box-border border-b border-transparent transition-[padding,border-color,background] duration-300 backdrop-blur-[14px] backdrop-saturate-150"
+    class="fixed top-0 left-0 right-0 z-[100] flex items-center justify-between gap-2 sm:gap-3 lg:gap-4 px-gutter max-w-screen box-border border-b border-transparent transition-[padding,border-color,background] duration-300 backdrop-blur-[14px] backdrop-saturate-150"
     :style="{
       background: isScrolled
         ? 'color-mix(in srgb, var(--bg) 94%, transparent)'
@@ -61,16 +103,16 @@ const drawerLink =
     </a>
 
     <div class="flex items-center gap-0.5 sm:gap-1 lg:gap-1.5 flex-shrink-0">
-      <NuxtLink to="/search" :class="iconBtn" aria-label="Tìm sản phẩm">
-        <i class="bx bx-search-alt" />
-      </NuxtLink>
-      <NuxtLink to="/cart" :class="iconBtn" aria-label="Giỏ hàng">
+      <button type="button" :class="iconBtn" aria-label="Tìm sản phẩm" @click="toggleSearch">
+        <i class="bx" :class="searchOpen ? 'bx-x' : 'bx-search-alt'" />
+      </button>
+      <button type="button" :class="iconBtn" aria-label="Giỏ hàng" @click="cart.openDrawer()">
         <i class="bx bx-shopping-bag" />
         <span
           v-if="cart.count > 0"
           class="absolute top-0.5 right-0.5 bg-oxblood text-[#fbf6ea] font-condensed text-[0.58rem] font-bold min-w-4 h-4 px-1 rounded-full flex items-center justify-center leading-none border-2 border-bg"
         >{{ cart.count }}</span>
-      </NuxtLink>
+      </button>
       <NuxtLink
         :to="isAuthenticated ? '/account' : '/login'"
         :class="iconBtn"
@@ -91,6 +133,55 @@ const drawerLink =
         :style="{ background: 'color-mix(in srgb, #000 55%, transparent)' }"
         @click="drawerOpen = false"
       />
+    </Transition>
+
+    <div v-if="searchOpen" class="fixed inset-0 z-[101]" @click="closeSearch" />
+
+    <Transition name="fade">
+      <div v-if="searchOpen" class="absolute top-full left-0 right-0 bg-bg border-b border-rule px-gutter py-5 shadow-xl z-[102] flex flex-col items-center">
+        <div class="relative w-full max-w-[600px]">
+          <i class="bx bx-search absolute left-4 top-1/2 -translate-y-1/2 text-[1.2rem] text-smoke" />
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Tìm kiếm sản phẩm..."
+            class="w-full bg-surface border border-rule text-text font-body text-[1rem] py-3 pl-11 pr-4 focus:outline-none focus:border-accent"
+            autofocus
+          />
+        </div>
+        <div v-if="searchQuery" class="w-full max-w-[600px] mt-4 flex flex-col">
+          <div v-if="searchLoading" class="text-center text-smoke text-[0.85rem] py-4">Đang tìm kiếm...</div>
+          <div v-else-if="searchResults.length === 0" class="text-center text-smoke text-[0.85rem] py-4">Không tìm thấy sản phẩm nào.</div>
+          <div v-else class="flex flex-col border border-rule bg-card">
+            <NuxtLink
+              v-for="p in searchResults"
+              :key="p.id"
+              :to="`/products/${p.slug}`"
+              class="flex items-center gap-4 p-3 border-b border-rule last:border-b-0 hover:bg-surface no-underline transition-colors"
+              @click="closeSearch"
+            >
+              <div class="w-12 h-12 flex-shrink-0 border border-rule overflow-hidden bg-surface">
+                <CommonProductMedia 
+                  :src="p.images?.[0]" 
+                  :alt="p.name" 
+                  aspect="1/1" 
+                  :placeholder-icon="(p.icon as any)"
+                  :icon-size="24"
+                />
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="text-[0.95rem] font-display font-medium text-text truncate">{{ p.name }}</div>
+                <div class="text-[0.85rem] font-condensed font-medium text-accent mt-0.5">{{ formatPrice(p.salePrice ?? p.price) }}</div>
+              </div>
+            </NuxtLink>
+            <div class="p-3 bg-surface border-t border-rule text-center">
+              <NuxtLink :to="`/#products`" class="text-[0.8rem] text-mid hover:text-accent font-condensed tracking-[1px] uppercase no-underline" @click="closeSearch">
+                Xem tất cả sản phẩm
+              </NuxtLink>
+            </div>
+          </div>
+        </div>
+      </div>
     </Transition>
 
     <Transition name="slide-right">

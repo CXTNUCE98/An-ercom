@@ -15,7 +15,9 @@ import {
   useAddressesQuery,
   useAddressMutations,
   type Address,
+  type AddressInput,
 } from '~/composables/useAddresses';
+import { useNotifications } from '~/composables/notifications';
 import { formatPrice } from '~/shared/utils/format';
 
 useHead({ title: 'Tài khoản — IRONMAN' });
@@ -32,14 +34,23 @@ onMounted(() => {
   if (isAuthenticated.value && !user.value?.createdAt) fetchUserProfile();
 });
 
+const showLogoutConfirm = ref(false);
+function handleLogout() {
+  showLogoutConfirm.value = true;
+}
+function confirmLogout() {
+  showLogoutConfirm.value = false;
+  logout();
+}
+
 type Tab = 'orders' | 'wishlist' | 'addresses' | 'profile' | 'password';
-const tab = ref<Tab>('orders');
+const tab = ref<Tab>('profile');
 
 const navItems: { key: Tab; label: string; icon: string }[] = [
+  { key: 'profile', label: 'Hồ sơ', icon: 'bx-user' },
+  { key: 'addresses', label: 'Sổ địa chỉ', icon: 'bx-map' },
   { key: 'orders', label: 'Đơn hàng', icon: 'bx-package' },
   { key: 'wishlist', label: 'Yêu thích', icon: 'bx-heart' },
-  { key: 'addresses', label: 'Sổ địa chỉ', icon: 'bx-map' },
-  { key: 'profile', label: 'Hồ sơ', icon: 'bx-user' },
   { key: 'password', label: 'Đổi mật khẩu', icon: 'bx-lock-alt' },
 ];
 
@@ -68,9 +79,9 @@ const orders = computed(() => ordersData.value?.items ?? []);
 const statusBadge: Record<OrderStatus, string> = {
   PENDING: 'text-amber-700 bg-amber-500/10 border-amber-500/30',
   CONFIRMED: 'text-blue-700 bg-blue-500/10 border-blue-500/30',
-  SHIPPING: 'text-accent bg-accent/10 border-accent/30',
-  DELIVERED: 'text-olive bg-olive/10 border-olive/30',
-  CANCELLED: 'text-oxblood bg-oxblood/10 border-oxblood/30',
+  SHIPPING: 'text-accent bg-mix-accent-10 border-accent/30',
+  DELIVERED: 'text-olive bg-mix-olive-10 border-olive/30',
+  CANCELLED: 'text-oxblood bg-mix-oxblood-10 border-oxblood/30',
 };
 
 function formatDate(iso: string) {
@@ -83,34 +94,31 @@ function shortId(id: string) {
 }
 
 // ─── Sổ địa chỉ ─────────────────────────────────────────────────────────────
-const { data: addressData, isPending: addressLoading } = useAddressesQuery();
+const { data: addressData, isPending: addressLoading } = useAddressesQuery(computed(() => tab.value === 'addresses'));
 const addresses = computed(() => addressData.value ?? []);
 const { create: createAddr, update: updateAddr, remove: removeAddr } = useAddressMutations();
 
-const emptyAddr = () => ({
-  fullName: '', phone: '', line: '', ward: '', district: '', province: '', isDefault: false,
+const { notify } = useNotifications();
+
+const emptyAddr = (): AddressInput => ({
+  fullName: '', phone: '', line: '', provinceCode: '', wardCode: '', isDefault: false,
 });
-const addrForm = reactive(emptyAddr());
+const addrForm = ref<AddressInput>(emptyAddr());
 const editingId = ref<string | null>(null);
 const showAddrForm = ref(false);
-const addrMsg = ref('');
-const addrError = ref(false);
 const savingAddr = computed(() => createAddr.isPending.value || updateAddr.isPending.value);
 
 function openAddrCreate() {
-  Object.assign(addrForm, emptyAddr());
+  addrForm.value = emptyAddr();
   editingId.value = null;
-  addrMsg.value = '';
   showAddrForm.value = true;
 }
 function openAddrEdit(a: Address) {
-  Object.assign(addrForm, {
+  addrForm.value = {
     fullName: a.fullName, phone: a.phone, line: a.line,
-    ward: a.ward ?? '', district: a.district ?? '', province: a.province,
-    isDefault: a.isDefault,
-  });
+    provinceCode: a.provinceCode, wardCode: a.wardCode, isDefault: a.isDefault,
+  };
   editingId.value = a.id;
-  addrMsg.value = '';
   showAddrForm.value = true;
 }
 function cancelAddr() {
@@ -118,31 +126,40 @@ function cancelAddr() {
   editingId.value = null;
 }
 function saveAddress() {
-  addrMsg.value = '';
-  addrError.value = false;
-  if (!addrForm.fullName || !addrForm.phone || !addrForm.line || !addrForm.province) {
-    addrError.value = true;
-    addrMsg.value = 'Vui lòng nhập họ tên, số điện thoại, địa chỉ và tỉnh/thành';
+  const f = addrForm.value;
+  if (!f.fullName || !f.phone || !f.line || !f.provinceCode || !f.wardCode) {
+    notify('warning', 'Vui lòng nhập đủ họ tên, SĐT, địa chỉ, tỉnh/thành và phường/xã');
     return;
   }
-  const body = { ...addrForm };
+  const isEditing = !!editingId.value;
+  const body = { ...f };
   const opts = {
-    onSuccess: () => { showAddrForm.value = false; editingId.value = null; },
-    onError: (e: any) => { addrError.value = true; addrMsg.value = e?.data?.message || 'Lưu địa chỉ thất bại'; },
+    onSuccess: () => {
+      showAddrForm.value = false;
+      editingId.value = null;
+      notify('success', isEditing ? 'Đã cập nhật địa chỉ' : 'Đã thêm địa chỉ');
+    },
+    onError: (e: any) => notify('error', e?.data?.message || 'Lưu địa chỉ thất bại'),
   };
   if (editingId.value) updateAddr.mutate({ id: editingId.value, body }, opts);
   else createAddr.mutate(body, opts);
 }
 function setDefaultAddr(a: Address) {
   if (a.isDefault) return;
-  updateAddr.mutate({ id: a.id, body: { isDefault: true } });
+  updateAddr.mutate(
+    { id: a.id, body: { isDefault: true } },
+    { onSuccess: () => notify('success', 'Đã đặt địa chỉ mặc định') },
+  );
 }
 function deleteAddr(a: Address) {
   if (import.meta.client && !window.confirm('Xoá địa chỉ này?')) return;
-  removeAddr.mutate(a.id);
+  removeAddr.mutate(a.id, {
+    onSuccess: () => notify('success', 'Đã xoá địa chỉ'),
+    onError: (e: any) => notify('error', e?.data?.message || 'Xoá địa chỉ thất bại'),
+  });
 }
 function fullAddress(a: Address) {
-  return [a.line, a.ward, a.district, a.province].filter(Boolean).join(', ');
+  return [a.line, a.wardName, a.provinceName].filter(Boolean).join(', ');
 }
 
 // ─── Hồ sơ ────────────────────────────────────────────────────────────────
@@ -173,6 +190,7 @@ function saveProfile() {
 
 // ─── Đổi mật khẩu ───────────────────────────────────────────────────────────
 const pwForm = reactive({ oldPassword: '', newPassword: '', confirm: '' });
+const showPw = reactive({ old: false, new: false, confirm: false });
 const pwMsg = ref('');
 const pwError = ref(false);
 const { mutate: changePassword, isPending: savingPw } = useChangePasswordMutation();
@@ -255,7 +273,7 @@ const fieldInput = 'w-full bg-surface border border-rule text-text font-body tex
               :key="item.key"
               class="w-full flex items-center gap-3 px-4 py-3 font-condensed text-[0.82rem] tracking-[1.5px] uppercase cursor-pointer border-l-2 transition-all duration-250 text-left max-[980px]:w-auto max-[980px]:whitespace-nowrap max-[980px]:border-l-0 max-[980px]:border-b-2"
               :class="tab === item.key
-                ? 'border-accent text-accent bg-accent/8'
+                ? 'border-accent text-accent bg-mix-accent-8'
                 : 'border-transparent text-mid hover:text-text hover:bg-card-alt/50'"
               @click="tab = item.key"
             >
@@ -266,8 +284,8 @@ const fieldInput = 'w-full bg-surface border border-rule text-text font-body tex
 
           <div class="p-2 border-t border-rule max-[980px]:hidden">
             <button
-              class="w-full flex items-center gap-3 px-4 py-3 font-condensed text-[0.82rem] tracking-[1.5px] uppercase cursor-pointer text-oxblood hover:bg-oxblood/8 transition-colors"
-              @click="logout"
+              class="w-full flex items-center gap-3 px-4 py-3 font-condensed text-[0.82rem] font-bold tracking-[1.5px] uppercase cursor-pointer text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors"
+              @click="handleLogout"
             >
               <i class="bx bx-log-out text-[1.1rem]" />
               <span>Đăng xuất</span>
@@ -293,8 +311,8 @@ const fieldInput = 'w-full bg-surface border border-rule text-text font-body tex
 
         <!-- Mobile logout -->
         <button
-          class="hidden max-[980px]:flex max-[980px]:order-3 items-center justify-center gap-2 btn-outline !text-oxblood !border-oxblood/50 hover:!bg-oxblood hover:!text-white"
-          @click="logout"
+          class="hidden max-[980px]:flex max-[980px]:order-3 items-center justify-center gap-2 btn-outline !text-red-600 !border-red-600/50 hover:!bg-red-600 hover:!text-white"
+          @click="handleLogout"
         >
           <i class="bx bx-log-out text-[1.1rem]" />
           Đăng xuất
@@ -421,39 +439,7 @@ const fieldInput = 'w-full bg-surface border border-rule text-text font-body tex
             <h3 class="font-display text-[1.1rem] font-bold m-0 mb-4">
               {{ editingId ? 'Sửa địa chỉ' : 'Thêm địa chỉ mới' }}
             </h3>
-            <div class="grid grid-cols-2 gap-4 max-[560px]:grid-cols-1">
-              <div>
-                <label :class="fieldLabel">Họ và tên *</label>
-                <input v-model="addrForm.fullName" type="text" :class="fieldInput" />
-              </div>
-              <div>
-                <label :class="fieldLabel">Số điện thoại *</label>
-                <input v-model="addrForm.phone" type="tel" :class="fieldInput" />
-              </div>
-              <div class="col-span-2 max-[560px]:col-span-1">
-                <label :class="fieldLabel">Địa chỉ (số nhà, đường) *</label>
-                <input v-model="addrForm.line" type="text" :class="fieldInput" />
-              </div>
-              <div>
-                <label :class="fieldLabel">Phường / xã</label>
-                <input v-model="addrForm.ward" type="text" :class="fieldInput" />
-              </div>
-              <div>
-                <label :class="fieldLabel">Quận / huyện</label>
-                <input v-model="addrForm.district" type="text" :class="fieldInput" />
-              </div>
-              <div>
-                <label :class="fieldLabel">Tỉnh / thành *</label>
-                <input v-model="addrForm.province" type="text" :class="fieldInput" />
-              </div>
-              <div class="flex items-end pb-1">
-                <label class="flex items-center gap-2 cursor-pointer text-[0.85rem] text-mid select-none">
-                  <input v-model="addrForm.isDefault" type="checkbox" class="w-4 h-4 accent-[var(--accent)]" />
-                  Đặt làm địa chỉ mặc định
-                </label>
-              </div>
-            </div>
-            <p v-if="addrMsg" class="text-[0.82rem] mt-3" :class="addrError ? 'text-oxblood' : 'text-olive'">{{ addrMsg }}</p>
+            <CommonAddressForm v-model="addrForm" />
             <div class="flex gap-3 mt-5">
               <button :disabled="savingAddr" class="btn-gold disabled:opacity-60" @click="saveAddress">
                 {{ savingAddr ? 'Đang lưu...' : 'Lưu địa chỉ' }}
@@ -547,15 +533,30 @@ const fieldInput = 'w-full bg-surface border border-rule text-text font-body tex
           <div class="card-luxury bg-card max-w-[560px]">
             <div class="mb-4">
               <label :class="fieldLabel">Mật khẩu hiện tại</label>
-              <input v-model="pwForm.oldPassword" type="password" :class="fieldInput" />
+              <div class="relative">
+                <input v-model="pwForm.oldPassword" :type="showPw.old ? 'text' : 'password'" :class="[fieldInput, 'pr-10']" />
+                <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-smoke hover:text-accent cursor-pointer flex items-center justify-center" @click="showPw.old = !showPw.old">
+                  <i class="bx text-[1.1rem]" :class="showPw.old ? 'bx-show' : 'bx-hide'" />
+                </button>
+              </div>
             </div>
             <div class="mb-4">
               <label :class="fieldLabel">Mật khẩu mới</label>
-              <input v-model="pwForm.newPassword" type="password" :class="fieldInput" />
+              <div class="relative">
+                <input v-model="pwForm.newPassword" :type="showPw.new ? 'text' : 'password'" :class="[fieldInput, 'pr-10']" />
+                <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-smoke hover:text-accent cursor-pointer flex items-center justify-center" @click="showPw.new = !showPw.new">
+                  <i class="bx text-[1.1rem]" :class="showPw.new ? 'bx-show' : 'bx-hide'" />
+                </button>
+              </div>
             </div>
             <div class="mb-4">
               <label :class="fieldLabel">Xác nhận mật khẩu mới</label>
-              <input v-model="pwForm.confirm" type="password" :class="fieldInput" />
+              <div class="relative">
+                <input v-model="pwForm.confirm" :type="showPw.confirm ? 'text' : 'password'" :class="[fieldInput, 'pr-10']" />
+                <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-smoke hover:text-accent cursor-pointer flex items-center justify-center" @click="showPw.confirm = !showPw.confirm">
+                  <i class="bx text-[1.1rem]" :class="showPw.confirm ? 'bx-show' : 'bx-hide'" />
+                </button>
+              </div>
             </div>
             <p v-if="pwMsg" class="text-[0.82rem] mb-3" :class="pwError ? 'text-oxblood' : 'text-olive'">{{ pwMsg }}</p>
             <button :disabled="savingPw" class="btn-gold disabled:opacity-60" @click="submitPassword">
@@ -566,5 +567,34 @@ const fieldInput = 'w-full bg-surface border border-rule text-text font-body tex
       </section>
     </div>
   </main>
+
+  <!-- Popup Confirm Logout -->
+  <div v-if="showLogoutConfirm" class="fixed inset-0 z-[200] flex items-center justify-center p-4">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="showLogoutConfirm = false"></div>
+    
+    <!-- Modal content -->
+    <div class="relative bg-surface border border-rule w-full max-w-[400px] p-6 shadow-2xl animate-fade-in animate-duration-200">
+      <h3 class="font-display text-[1.4rem] font-bold text-text mb-3 m-0">Đăng xuất</h3>
+      <p class="font-body text-[0.95rem] text-mid mb-6 m-0 leading-relaxed">
+        Bạn có chắc chắn muốn đăng xuất khỏi tài khoản của mình?
+      </p>
+      
+      <div class="flex items-center gap-3 justify-end">
+        <button
+          class="btn-outline flex-1 sm:flex-none text-[0.8rem] py-2 px-6"
+          @click="showLogoutConfirm = false"
+        >
+          Hủy
+        </button>
+        <button
+          class="btn-primary bg-red-600 hover:bg-red-700 flex-1 sm:flex-none text-[0.8rem] py-2 px-6"
+          @click="confirmLogout"
+        >
+          Đăng xuất
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
 

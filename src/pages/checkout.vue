@@ -1,37 +1,89 @@
 <script setup lang="ts">
 import { useCartStore } from '~/features/cart/stores/useCartStore';
 import { checkoutService } from '~/features/checkout/services/checkoutService';
-import type { CheckoutForm } from '~/features/checkout/types';
+import type { PaymentMethod } from '~/features/checkout/types';
+import {
+  useAddressesQuery,
+  useAddressMutations,
+  type Address,
+  type AddressInput,
+} from '~/composables/useAddresses';
+import { useNotifications } from '~/composables/notifications';
 import { formatPrice } from '~/shared/utils/format';
 
 useHead({ title: 'Thanh Toán — IRONMAN' });
 
 const cart = useCartStore();
 const router = useRouter();
-const { isAuthenticated, getAuthHeaders, user } = useAuth();
+const { isAuthenticated, getAuthHeaders } = useAuth();
+const { notify } = useNotifications();
 
-const form = reactive<CheckoutForm>({
-  fullName: '',
-  phone: '',
-  email: '',
-  address: '',
-  city: '',
-  note: '',
-  paymentMethod: 'COD',
-});
+// ─── Sổ địa chỉ ───────────────────────────────────────────────────────────
+const { data: addressData, isPending: addrLoading } = useAddressesQuery();
+const addresses = computed(() => addressData.value ?? []);
+const { create: createAddr } = useAddressMutations();
 
-// Prefill từ profile user đã đăng nhập (giảm ma sát khi mua).
+const selectedId = ref<string | null>(null);
+
+// Tự chọn địa chỉ mặc định của user khi danh sách tải xong (fallback: địa chỉ đầu).
 watchEffect(() => {
-  if (user.value) {
-    if (!form.fullName) form.fullName = user.value.fullName ?? '';
-    if (!form.phone) form.phone = (user.value as any).phone ?? '';
-    if (!form.email) form.email = user.value.email ?? '';
-    if (!form.address) form.address = (user.value as any).address ?? '';
+  const list = addresses.value;
+  if (!list.length) {
+    selectedId.value = null;
+    return;
+  }
+  // Nếu lựa chọn hiện tại không còn hợp lệ thì chọn lại.
+  if (!selectedId.value || !list.some((a) => a.id === selectedId.value)) {
+    selectedId.value = (list.find((a) => a.isDefault) ?? list[0]).id;
   }
 });
 
-const errors = ref<string[]>([]);
+const selectedAddress = computed(() =>
+  addresses.value.find((a) => a.id === selectedId.value) ?? null,
+);
+
+function fullAddress(a: Address) {
+  return [a.line, a.wardName, a.provinceName].filter(Boolean).join(', ');
+}
+
+// ─── Form thêm địa chỉ mới (ngay tại checkout) ───────────────────────────────
+const showNewForm = ref(false);
+const newAddr = ref<AddressInput>({
+  fullName: '', phone: '', line: '', provinceCode: '', wardCode: '', isDefault: false,
+});
+function openNewForm() {
+  newAddr.value = {
+    fullName: '', phone: '', line: '', provinceCode: '', wardCode: '',
+    isDefault: addresses.value.length === 0,
+  };
+  showNewForm.value = true;
+}
+function saveNewAddress() {
+  const f = newAddr.value;
+  if (!f.fullName || !f.phone || !f.line || !f.provinceCode || !f.wardCode) {
+    notify('warning', 'Vui lòng nhập đủ thông tin địa chỉ');
+    return;
+  }
+  createAddr.mutate(f, {
+    onSuccess: (created: any) => {
+      showNewForm.value = false;
+      if (created?.id) selectedId.value = created.id; // chọn luôn địa chỉ vừa thêm
+      notify('success', 'Đã thêm địa chỉ');
+    },
+    onError: (e: any) => notify('error', e?.data?.message || 'Thêm địa chỉ thất bại'),
+  });
+}
+
+// ─── Thanh toán ─────────────────────────────────────────────────────────────
+const paymentMethod = ref<PaymentMethod>('COD');
+const note = ref('');
 const submitting = ref(false);
+
+const paymentMethods = [
+  { value: 'COD', label: 'Thanh toán khi nhận hàng (COD)', icon: 'bx-money' },
+  { value: 'BANK_TRANSFER', label: 'Chuyển khoản ngân hàng', icon: 'bx-building' },
+  { value: 'MOMO', label: 'Ví MoMo', icon: 'bx-wallet' },
+] as const;
 
 async function submit() {
   // Đặt hàng yêu cầu đăng nhập (BE gắn đơn với userId).
@@ -39,18 +91,25 @@ async function submit() {
     await router.push({ path: '/login', query: { redirect: '/checkout' } });
     return;
   }
-
-  errors.value = checkoutService.validate(form);
-  if (errors.value.length) return;
   if (cart.items.length === 0) {
-    errors.value = ['Giỏ hàng trống'];
+    notify('warning', 'Giỏ hàng trống');
+    return;
+  }
+  const addr = selectedAddress.value;
+  if (!addr) {
+    notify('warning', 'Vui lòng chọn hoặc thêm địa chỉ giao hàng');
     return;
   }
 
   submitting.value = true;
   try {
     const confirmation = await checkoutService.placeOrder(
-      form,
+      {
+        shippingAddress: `${addr.fullName} | ${fullAddress(addr)}`,
+        phone: addr.phone,
+        note: note.value,
+        paymentMethod: paymentMethod.value,
+      },
       cart.items,
       getAuthHeaders(),
       cart.appliedPromo?.code,
@@ -66,24 +125,17 @@ async function submit() {
       },
     });
   } catch (e: any) {
-    errors.value = [e?.data?.message || 'Đặt hàng thất bại, vui lòng thử lại'];
+    notify('error', e?.data?.message || 'Đặt hàng thất bại, vui lòng thử lại');
   } finally {
     submitting.value = false;
   }
 }
-
-const paymentMethods = [
-  { value: 'COD', label: 'Thanh toán khi nhận hàng (COD)', icon: 'bx-money' },
-  { value: 'BANK_TRANSFER', label: 'Chuyển khoản ngân hàng', icon: 'bx-building' },
-  { value: 'MOMO', label: 'Ví MoMo', icon: 'bx-wallet' },
-] as const;
 
 // Shared class strings
 const fieldLabel = 'block font-condensed text-[0.7rem] font-semibold tracking-[2px] uppercase text-smoke mb-1.5';
 const fieldInput = 'w-full bg-surface border border-rule text-text font-body text-[0.88rem] py-2.5 px-3.5 transition-colors duration-250 box-border focus:outline-none focus:border-accent';
 const summaryLineBase = 'flex justify-between text-[0.85rem] text-mid py-1';
 </script>
-
 <template>
   <main class="min-h-screen pt-[100px] px-gutter pb-lg max-[900px]:pt-[90px] max-[900px]:px-6 max-[900px]:pb-[60px]">
     <h1 class="font-display text-[2.4rem] font-bold text-text m-0 mb-10">Thanh Toán</h1>
@@ -98,43 +150,87 @@ const summaryLineBase = 'flex justify-between text-[0.85rem] text-mid py-1';
 
     <div v-else class="grid grid-cols-[1fr_380px] gap-12 max-[900px]:grid-cols-1">
       <form class="max-[900px]:order-2" @submit.prevent="submit">
-        <div
-          v-if="errors.length"
-          class="border border-oxblood py-3 px-4 mb-5 bg-[color-mix(in_srgb,var(--oxblood)_12%,transparent)]"
-        >
-          <p v-for="e in errors" :key="e" class="text-[0.82rem] text-oxblood my-1">{{ e }}</p>
-        </div>
-
+        <!-- ─── Địa chỉ giao hàng ─── -->
         <fieldset class="border-0 p-0 m-0 mb-8">
-          <legend class="font-display text-[1.2rem] font-bold text-text mb-5">Thông tin giao hàng</legend>
-          <div class="mb-4">
-            <label :class="fieldLabel">Họ và tên *</label>
-            <input v-model="form.fullName" type="text" placeholder="Nguyễn Văn A" :class="fieldInput" />
+          <legend class="font-display text-[1.2rem] font-bold text-text mb-5">Địa chỉ giao hàng</legend>
+
+          <div v-if="addrLoading" class="flex flex-col gap-3">
+            <div v-for="i in 2" :key="i" class="h-24 border border-rule bg-card/50 animate-pulse" />
           </div>
-          <div class="grid grid-cols-2 gap-4 max-[900px]:grid-cols-1">
-            <div class="mb-4">
-              <label :class="fieldLabel">Số điện thoại *</label>
-              <input v-model="form.phone" type="tel" placeholder="0987 654 321" :class="fieldInput" />
+
+          <!-- Chưa có địa chỉ nào -->
+          <div
+            v-else-if="!addresses.length && !showNewForm"
+            class="border border-rule bg-card p-6 text-center"
+          >
+            <i class="bx bx-map text-[2.4rem] text-accent/40" />
+            <p class="text-mid mt-2 mb-4">Bạn chưa có địa chỉ giao hàng nào.</p>
+            <button type="button" class="btn-gold" @click="openNewForm">Thêm địa chỉ</button>
+          </div>
+
+          <!-- Danh sách địa chỉ để chọn -->
+          <div v-else-if="!showNewForm" class="flex flex-col gap-3">
+            <label
+              v-for="a in addresses"
+              :key="a.id"
+              class="flex items-start gap-3 p-4 border cursor-pointer transition-all duration-250"
+              :class="selectedId === a.id ? 'border-accent bg-mix-accent-8' : 'border-rule hover:border-accent'"
+            >
+              <input v-model="selectedId" type="radio" :value="a.id" name="addr" class="mt-1 accent-[var(--accent)]" />
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="font-display text-[1rem] font-bold text-text">{{ a.fullName }}</span>
+                  <span class="text-[0.82rem] text-mid">{{ a.phone }}</span>
+                  <span
+                    v-if="a.isDefault"
+                    class="font-condensed text-[0.58rem] tracking-[1.5px] uppercase text-on-accent bg-accent rounded-full px-2 py-0.5"
+                  >Mặc định</span>
+                </div>
+                <p class="text-[0.85rem] text-smoke m-0 mt-1 leading-relaxed">{{ fullAddress(a) }}</p>
+              </div>
+            </label>
+
+            <button
+              type="button"
+              class="self-start mt-1 font-condensed text-[0.75rem] tracking-[1.5px] uppercase text-accent hover:underline cursor-pointer flex items-center gap-1"
+              @click="openNewForm"
+            >
+              <i class="bx bx-plus" /> Thêm địa chỉ mới
+            </button>
+          </div>
+
+          <!-- Form thêm địa chỉ mới -->
+          <div v-else class="border border-rule bg-card p-5">
+            <h3 class="font-display text-[1.05rem] font-bold m-0 mb-4">Thêm địa chỉ mới</h3>
+            <CommonAddressForm v-model="newAddr" />
+            <div class="flex gap-3 mt-5">
+              <button
+                type="button"
+                :disabled="createAddr.isPending.value"
+                class="btn-gold disabled:opacity-60"
+                @click="saveNewAddress"
+              >
+                {{ createAddr.isPending.value ? 'Đang lưu...' : 'Lưu địa chỉ' }}
+              </button>
+              <button
+                v-if="addresses.length"
+                type="button"
+                class="btn-outline"
+                @click="showNewForm = false"
+              >Huỷ</button>
             </div>
-            <div class="mb-4">
-              <label :class="fieldLabel">Email</label>
-              <input v-model="form.email" type="email" placeholder="email@example.com" :class="fieldInput" />
-            </div>
-          </div>
-          <div class="mb-4">
-            <label :class="fieldLabel">Địa chỉ *</label>
-            <input v-model="form.address" type="text" placeholder="Số nhà, đường, phường/xã" :class="fieldInput" />
-          </div>
-          <div class="mb-4">
-            <label :class="fieldLabel">Tỉnh/Thành phố *</label>
-            <input v-model="form.city" type="text" placeholder="Hà Nội / TP.HCM / ..." :class="fieldInput" />
-          </div>
-          <div class="mb-4">
-            <label :class="fieldLabel">Ghi chú</label>
-            <textarea v-model="form.note" rows="3" placeholder="Ghi chú cho đơn hàng (tuỳ chọn)" :class="fieldInput" />
           </div>
         </fieldset>
 
+        <!-- ─── Ghi chú ─── -->
+        <fieldset class="border-0 p-0 m-0 mb-8">
+          <div class="mb-4">
+            <label :class="fieldLabel">Ghi chú</label>
+            <textarea v-model="note" rows="3" placeholder="Ghi chú cho đơn hàng (tuỳ chọn)" :class="fieldInput" />
+          </div>
+        </fieldset>
+
+        <!-- ─── Thanh toán ─── -->
         <fieldset class="border-0 p-0 m-0 mb-8">
           <legend class="font-display text-[1.2rem] font-bold text-text mb-5">Phương thức thanh toán</legend>
           <div class="flex flex-col gap-2">
@@ -143,13 +239,13 @@ const summaryLineBase = 'flex justify-between text-[0.85rem] text-mid py-1';
               :key="pm.value"
               :class="[
                 'flex items-center gap-3 py-3.5 px-4 border cursor-pointer text-[0.88rem] transition-all duration-250',
-                form.paymentMethod === pm.value
+                paymentMethod === pm.value
                   ? 'border-accent text-text bg-mix-accent-8'
                   : 'border-rule text-mid hover:border-accent',
                 '[&_input]:hidden [&_i]:text-accent [&_i]:text-[1.2rem]',
               ]"
             >
-              <input v-model="form.paymentMethod" type="radio" :value="pm.value" name="payment" />
+              <input v-model="paymentMethod" type="radio" :value="pm.value" name="payment" />
               <i class="bx" :class="pm.icon" />
               {{ pm.label }}
             </label>

@@ -31,8 +31,11 @@ export interface MyOrdersResponse {
   totalPages: number;
 }
 
+import type { MaybeRefOrGetter } from 'vue';
+import { toValue } from 'vue';
+
 /** Đơn hàng của tôi — GET /orders/my */
-export const useMyOrdersQuery = () => {
+export const useMyOrdersQuery = (enabled?: MaybeRefOrGetter<boolean>) => {
   const { isAuthenticated, getAuthHeaders } = useAuth();
 
   return useQuery({
@@ -44,7 +47,11 @@ export const useMyOrdersQuery = () => {
       });
       return res as unknown as MyOrdersResponse;
     },
-    enabled: isAuthenticated,
+    enabled: computed(() => {
+      const isAuth = toValue(isAuthenticated);
+      const isEnabled = enabled !== undefined ? toValue(enabled) : true;
+      return isAuth && isEnabled;
+    }),
   });
 };
 

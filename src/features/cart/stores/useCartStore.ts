@@ -9,6 +9,11 @@ export const useCartStore = defineStore(
   () => {
     const items = ref<CartItem[]>([]);
     const appliedPromo = ref<PromoCode | null>(null);
+    const isDrawerOpen = ref(false);
+
+    function toggleDrawer() { isDrawerOpen.value = !isDrawerOpen.value; }
+    function openDrawer() { isDrawerOpen.value = true; }
+    function closeDrawer() { isDrawerOpen.value = false; }
 
     const count = computed(() => items.value.reduce((s, i) => s + i.quantity, 0));
     const subtotal = computed(() => cartService.calcSubtotal(items.value));
@@ -67,8 +72,9 @@ export const useCartStore = defineStore(
     }
 
     return {
-      items, appliedPromo, count, subtotal, discount, total,
+      items, appliedPromo, isDrawerOpen, count, subtotal, discount, total,
       addItem, removeItem, updateQuantity, applyPromo, clearPromo, clearCart,
+      toggleDrawer, openDrawer, closeDrawer,
     };
   },
   {

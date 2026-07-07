@@ -11,6 +11,7 @@ const newPassword = ref('');
 const confirm = ref('');
 const error = ref('');
 const done = ref(false);
+const showPw = reactive({ new: false, confirm: false });
 const { mutate: reset, isPending } = useResetPasswordMutation();
 
 function submit() {
@@ -52,11 +53,21 @@ function submit() {
       <form v-else class="space-y-5" @submit.prevent="submit">
         <div>
           <label class="block font-condensed text-[0.7rem] font-semibold tracking-[2px] uppercase text-smoke mb-1.5">Mật khẩu mới</label>
-          <input v-model="newPassword" type="password" required class="w-full bg-surface border border-rule text-text font-body text-[0.88rem] py-2.5 px-3.5 box-border focus:outline-none focus:border-accent" />
+          <div class="relative">
+            <input v-model="newPassword" :type="showPw.new ? 'text' : 'password'" required class="w-full bg-surface border border-rule text-text font-body text-[0.88rem] py-2.5 px-3.5 pr-10 box-border focus:outline-none focus:border-accent" />
+            <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-smoke hover:text-accent cursor-pointer flex items-center justify-center" @click="showPw.new = !showPw.new">
+              <i class="bx text-[1.1rem]" :class="showPw.new ? 'bx-show' : 'bx-hide'" />
+            </button>
+          </div>
         </div>
         <div>
           <label class="block font-condensed text-[0.7rem] font-semibold tracking-[2px] uppercase text-smoke mb-1.5">Xác nhận mật khẩu</label>
-          <input v-model="confirm" type="password" required class="w-full bg-surface border border-rule text-text font-body text-[0.88rem] py-2.5 px-3.5 box-border focus:outline-none focus:border-accent" />
+          <div class="relative">
+            <input v-model="confirm" :type="showPw.confirm ? 'text' : 'password'" required class="w-full bg-surface border border-rule text-text font-body text-[0.88rem] py-2.5 px-3.5 pr-10 box-border focus:outline-none focus:border-accent" />
+            <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-smoke hover:text-accent cursor-pointer flex items-center justify-center" @click="showPw.confirm = !showPw.confirm">
+              <i class="bx text-[1.1rem]" :class="showPw.confirm ? 'bx-show' : 'bx-hide'" />
+            </button>
+          </div>
         </div>
         <p v-if="error" class="text-[0.82rem] text-oxblood">{{ error }}</p>
         <button

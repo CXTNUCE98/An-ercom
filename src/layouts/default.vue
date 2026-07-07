@@ -6,4 +6,5 @@
   <LayoutTheFooter />
   <LayoutNoiseOverlay />
   <LayoutFloatingContactWidget />
+  <CartDrawer />
 </template>
