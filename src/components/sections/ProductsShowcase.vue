@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { catalogService } from '~/features/catalog/services/catalogService';
+import { useCartStore } from '~/features/cart/stores/useCartStore';
+import { useWishlistToggle } from '~/composables/useWishlistToggle';
+import { useNotifications } from '~/composables/notifications';
 import { formatPrice } from '~/shared/utils/format';
 import type { CatalogProduct, CategorySlug, IconName } from '~/types/landing';
 
@@ -86,6 +89,32 @@ const productsByGroup = computed(() => {
 function salePercent(p: CatalogProduct) {
   if (!p.salePrice) return 0;
   return Math.round((1 - p.salePrice / p.price) * 100);
+}
+
+// ─── Thêm giỏ / yêu thích ngay tại card ─────────────────────────────────────
+const cart = useCartStore();
+const { notify } = useNotifications();
+const { isInWishlist, toggle: toggleWishlist } = useWishlistToggle();
+
+const router = useRouter();
+
+function addToCart(p: CatalogProduct) {
+  if (p.stock <= 0) {
+    notify('warning', 'Sản phẩm tạm hết hàng');
+    return;
+  }
+  cart.addItem(p, 1);
+  cart.openDrawer();
+  notify('success', `Đã thêm "${p.name}" vào giỏ`);
+}
+
+function buyNow(p: CatalogProduct) {
+  if (p.stock <= 0) {
+    notify('warning', 'Sản phẩm tạm hết hàng');
+    return;
+  }
+  cart.addItem(p, 1);
+  router.push('/checkout');
 }
 
 const pillBase =
@@ -184,13 +213,41 @@ const badgeBase =
               <span v-else-if="p.isBestSeller" :class="[badgeBase, 'bg-accent text-on-accent']">Bán Chạy</span>
               <span v-else-if="p.isLuxury"
                 :class="[badgeBase, 'text-ink bg-gradient-to-br from-accent to-[var(--accent-2)]']">Luxury</span>
+              <!-- Nút yêu thích (góc trên phải) -->
+              <button
+                type="button"
+                :aria-label="isInWishlist(p.id) ? 'Bỏ yêu thích' : 'Thêm vào yêu thích'"
+                class="absolute top-3 right-3 z-[4] w-9 h-9 rounded-full flex items-center justify-center border backdrop-blur-md transition-all duration-300 cursor-pointer"
+                :class="isInWishlist(p.id)
+                  ? 'bg-oxblood/90 border-oxblood text-white'
+                  : 'bg-black/35 border-white/40 text-white opacity-0 group-hover:opacity-100 hover:bg-oxblood hover:border-oxblood'"
+                @click.prevent.stop="toggleWishlist(p.id)"
+              >
+                <i class="bx text-[1.05rem]" :class="isInWishlist(p.id) ? 'bxs-heart' : 'bx-heart'" />
+              </button>
+
+              <!-- Overlay CTA — 2 nút ngang hàng -->
               <div
-                class="absolute inset-0 flex items-end justify-center pb-6 opacity-0 transition-opacity duration-400 z-[2] group-hover:opacity-100"
-                :style="{ background: 'linear-gradient(180deg, transparent 50%, rgba(7, 7, 10, 0.6))' }">
-                <span
-                  class="font-condensed text-[0.72rem] font-semibold tracking-[3px] uppercase text-[#f8f5ef] border border-[rgba(241,236,224,0.7)] py-2.5 px-5 translate-y-2 transition-transform duration-400 group-hover:translate-y-0">
-                  Xem Chi Tiết →
-                </span>
+                class="absolute inset-0 flex items-end justify-center gap-2 px-3 pb-5 opacity-0 transition-opacity duration-400 z-[2] group-hover:opacity-100"
+                :style="{ background: 'linear-gradient(180deg, transparent 45%, rgba(7, 7, 10, 0.68))' }">
+                <button
+                  type="button"
+                  class="flex-1 flex items-center justify-center gap-1.5 bg-transparent text-[#f8f5ef] border border-[rgba(241,236,224,0.7)] font-condensed text-[0.68rem] font-bold tracking-[1.5px] uppercase py-2.5 px-2 translate-y-2 transition-all duration-400 group-hover:translate-y-0 cursor-pointer hover:bg-[#f8f5ef] hover:text-ink disabled:opacity-50 disabled:cursor-not-allowed"
+                  :disabled="p.stock <= 0"
+                  @click.prevent.stop="addToCart(p)"
+                >
+                  <i class="bx bx-shopping-bag text-[0.95rem]" />
+                  {{ p.stock <= 0 ? 'Hết hàng' : 'Thêm giỏ' }}
+                </button>
+                <button
+                  type="button"
+                  class="flex-1 flex items-center justify-center gap-1.5 bg-accent text-on-accent border border-accent font-condensed text-[0.68rem] font-bold tracking-[1.5px] uppercase py-2.5 px-2 translate-y-2 transition-all duration-400 delay-75 group-hover:translate-y-0 cursor-pointer hover:bg-[var(--accent-2)] hover:border-[var(--accent-2)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  :disabled="p.stock <= 0"
+                  @click.prevent.stop="buyNow(p)"
+                >
+                  <i class="bx bx-bolt-circle text-[0.95rem]" />
+                  Mua ngay
+                </button>
               </div>
             </div>
             <div class="pt-3.5 px-0.5 pb-1">

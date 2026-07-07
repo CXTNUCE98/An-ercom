@@ -2,16 +2,67 @@
 import { useScrolled } from '~/composables/useScrolled';
 import { useCartStore } from '~/features/cart/stores/useCartStore';
 import { useAuth } from '~/composables/useAuth';
+import { useWishlistQuery } from '~/composables/useWishlist';
 import { catalogService } from '~/features/catalog/services/catalogService';
 import { formatPrice } from '~/shared/utils/format';
 import type { CatalogProduct } from '~/types/landing';
 
 const { isScrolled } = useScrolled(20);
 const cart = useCartStore();
-const { isAuthenticated } = useAuth();
+const { isAuthenticated, user, logout } = useAuth();
 const drawerOpen = ref(false);
 const router = useRouter();
 const route = useRoute();
+
+// Số sản phẩm yêu thích — hiện badge cạnh mục "Yêu thích" trong dropdown.
+const { data: wishlistData } = useWishlistQuery();
+const wishlistCount = computed(() => wishlistData.value?.length ?? 0);
+
+// ─── User dropdown ──────────────────────────────────────────────────────────
+const userMenuOpen = ref(false);
+let userMenuTimer: ReturnType<typeof setTimeout> | null = null;
+
+// Tên hiển thị ngắn gọn + chữ cái đầu cho avatar
+const displayName = computed(() => user.value?.fullName || user.value?.email?.split('@')[0] || 'Tài khoản');
+const userInitial = computed(() => {
+  const s = user.value?.fullName || user.value?.email || '?';
+  return s.trim().charAt(0).toUpperCase();
+});
+
+const accountMenu = [
+  { label: 'Hồ sơ',      icon: 'bx-user',    to: '/account?tab=profile',   key: 'profile' },
+  { label: 'Sổ địa chỉ', icon: 'bx-map',     to: '/account?tab=addresses', key: 'addresses' },
+  { label: 'Đơn hàng',   icon: 'bx-package', to: '/account?tab=orders',    key: 'orders' },
+  { label: 'Yêu thích',  icon: 'bx-heart',   to: '/account?tab=wishlist',  key: 'wishlist' },
+];
+
+function openUserMenu() {
+  if (userMenuTimer) { clearTimeout(userMenuTimer); userMenuTimer = null; }
+  userMenuOpen.value = true;
+}
+function scheduleCloseUserMenu() {
+  if (userMenuTimer) clearTimeout(userMenuTimer);
+  userMenuTimer = setTimeout(() => { userMenuOpen.value = false; }, 160);
+}
+function closeUserMenu() {
+  if (userMenuTimer) { clearTimeout(userMenuTimer); userMenuTimer = null; }
+  userMenuOpen.value = false;
+}
+function goAccount(to: string) {
+  closeUserMenu();
+  router.push(to);
+}
+
+const showLogoutConfirm = ref(false);
+function handleLogout() {
+  closeUserMenu();
+  showLogoutConfirm.value = true;
+}
+async function confirmLogout() {
+  showLogoutConfirm.value = false;
+  logout();
+  await router.push('/');
+}
 
 const searchOpen = ref(false);
 const searchQuery = ref('');
@@ -92,11 +143,14 @@ const drawerLink =
         ? 'color-mix(in srgb, var(--bg) 94%, transparent)'
         : 'color-mix(in srgb, var(--bg) 85%, transparent)'
     }"
-    :class="[isScrolled ? 'border-b-rule py-2' : 'py-3']"
+    :class="[isScrolled ? 'border-b-rule py-1.5 sm:py-2' : 'py-3.5 sm:py-5']"
   >
     <a
       href="#top"
-      class="font-display font-extrabold text-accent no-underline leading-none min-w-0 flex-shrink whitespace-nowrap text-[1.15rem] tracking-[2.5px] sm:text-[1.3rem] sm:tracking-[3.5px] lg:text-[1.6rem] lg:tracking-[6px]"
+      class="font-display font-extrabold text-accent no-underline leading-none min-w-0 flex-shrink whitespace-nowrap tracking-[2.5px] sm:tracking-[3.5px] transition-[font-size,letter-spacing] duration-300"
+      :class="isScrolled
+        ? 'text-[1.05rem] sm:text-[1.15rem] lg:text-[1.3rem] lg:tracking-[4px]'
+        : 'text-[1.15rem] sm:text-[1.3rem] lg:text-[1.6rem] lg:tracking-[6px]'"
       @click.prevent="goTo('#top')"
     >
       IRON<span class="text-text">MAN</span>
@@ -113,13 +167,81 @@ const drawerLink =
           class="absolute top-0.5 right-0.5 bg-oxblood text-[#fbf6ea] font-condensed text-[0.58rem] font-bold min-w-4 h-4 px-1 rounded-full flex items-center justify-center leading-none border-2 border-bg"
         >{{ cart.count }}</span>
       </button>
+      <!-- Chưa đăng nhập → link tới trang đăng nhập -->
       <NuxtLink
-        :to="isAuthenticated ? '/account' : '/login'"
+        v-if="!isAuthenticated"
+        to="/login"
         :class="iconBtn"
-        :aria-label="isAuthenticated ? 'Tài khoản' : 'Đăng nhập'"
+        aria-label="Đăng nhập"
       >
-        <i class="bx" :class="isAuthenticated ? 'bxs-user-circle' : 'bx-user'" />
+        <i class="bx bx-user" />
       </NuxtLink>
+
+      <!-- Đã đăng nhập → tên user + dropdown khi hover -->
+      <div
+        v-else
+        class="relative"
+        @mouseenter="openUserMenu"
+        @mouseleave="scheduleCloseUserMenu"
+      >
+        <NuxtLink
+          to="/account?tab=profile"
+          class="flex items-center gap-2 h-9 sm:h-10 lg:h-11 pl-1.5 pr-1.5 sm:pr-3 rounded-full border border-transparent no-underline text-mid cursor-pointer transition-all duration-250 hover:text-accent hover:border-rule hover:bg-mix-accent-8"
+          :class="userMenuOpen ? 'text-accent border-rule bg-mix-accent-8' : ''"
+          aria-label="Tài khoản"
+          :aria-expanded="userMenuOpen"
+        >
+          <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex-center font-display text-[0.85rem] font-bold text-on-accent bg-accent flex-shrink-0">
+            {{ userInitial }}
+          </span>
+          <span class="hidden sm:block max-w-[130px] truncate font-condensed text-[0.82rem] font-semibold tracking-[0.5px]">
+            {{ displayName }}
+          </span>
+          <i class="bx bx-chevron-down hidden sm:block text-[1rem] transition-transform duration-250" :class="userMenuOpen ? 'rotate-180' : ''" />
+        </NuxtLink>
+
+        <Transition name="fade">
+          <div
+            v-if="userMenuOpen"
+            class="absolute top-full right-0 mt-2 w-60 bg-bg border border-rule rounded-lg overflow-hidden z-[105]"
+            :style="{ boxShadow: '0 18px 45px color-mix(in srgb, #000 22%, transparent)' }"
+            @mouseenter="openUserMenu"
+            @mouseleave="scheduleCloseUserMenu"
+          >
+            <div class="px-4 py-3.5 border-b border-rule bg-mix-accent-6">
+              <p class="font-display text-[0.95rem] font-bold text-text m-0 truncate">{{ user?.fullName || 'Khách hàng' }}</p>
+              <p class="font-body text-[0.75rem] text-smoke m-0 mt-0.5 truncate">{{ user?.email }}</p>
+            </div>
+            <nav class="py-1.5">
+              <button
+                v-for="item in accountMenu"
+                :key="item.to"
+                type="button"
+                class="w-full flex items-center gap-3 px-4 py-2.5 font-condensed text-[0.82rem] tracking-[1px] text-mid bg-transparent border-0 cursor-pointer text-left transition-colors duration-200 hover:bg-mix-accent-8 hover:text-accent"
+                @click="goAccount(item.to)"
+              >
+                <i class="bx text-[1.1rem] text-accent" :class="item.icon" />
+                <span>{{ item.label }}</span>
+                <span
+                  v-if="item.key === 'wishlist' && wishlistCount > 0"
+                  class="ml-auto min-w-5 h-5 px-1.5 rounded-full bg-accent text-on-accent font-condensed text-[0.65rem] font-bold flex items-center justify-center leading-none"
+                >{{ wishlistCount }}</span>
+              </button>
+            </nav>
+            <div class="border-t border-rule py-1.5">
+              <button
+                type="button"
+                class="w-full flex items-center gap-3 px-4 py-2.5 font-condensed text-[0.82rem] font-bold tracking-[1px] text-oxblood bg-transparent border-0 cursor-pointer text-left transition-colors duration-200 hover:bg-mix-oxblood-10"
+                @click="handleLogout"
+              >
+                <i class="bx bx-log-out text-[1.1rem]" />
+                <span>Đăng xuất</span>
+              </button>
+            </div>
+          </div>
+        </Transition>
+      </div>
+
       <CommonThemeToggle />
       <button :class="iconBtn" aria-label="Mở menu" @click="drawerOpen = true">
         <i class="bx bx-menu" />
@@ -129,8 +251,7 @@ const drawerLink =
     <Transition name="fade">
       <div
         v-if="drawerOpen"
-        class="fixed inset-0 z-[100] backdrop-blur-md"
-        :style="{ background: 'color-mix(in srgb, #000 55%, transparent)' }"
+        class="fixed inset-0 z-[100]"
         @click="drawerOpen = false"
       />
     </Transition>
@@ -239,6 +360,23 @@ const drawerLink =
           </div>
         </div>
       </aside>
+    </Transition>
+
+    <!-- Popup xác nhận Đăng xuất -->
+    <Transition name="fade">
+      <div v-if="showLogoutConfirm" class="fixed inset-0 z-[200] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="showLogoutConfirm = false" />
+        <div class="relative bg-surface border border-rule w-full max-w-[400px] p-6 shadow-2xl">
+          <h3 class="font-display text-[1.4rem] font-bold text-text mb-3 m-0">Đăng xuất</h3>
+          <p class="font-body text-[0.95rem] text-mid mb-6 m-0 leading-relaxed">
+            Bạn có chắc chắn muốn đăng xuất khỏi tài khoản của mình?
+          </p>
+          <div class="flex items-center gap-3 justify-end">
+            <button class="btn-outline text-[0.8rem] py-2 px-6" @click="showLogoutConfirm = false">Hủy</button>
+            <button class="btn-primary bg-red-600 hover:bg-red-700 text-[0.8rem] py-2 px-6" @click="confirmLogout">Đăng xuất</button>
+          </div>
+        </div>
+      </div>
     </Transition>
   </header>
 </template>

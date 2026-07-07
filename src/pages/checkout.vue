@@ -85,6 +85,30 @@ const paymentMethods = [
   { value: 'MOMO', label: 'Ví MoMo', icon: 'bx-wallet' },
 ] as const;
 
+// ─── Mã giảm giá (dùng lại logic ở cart store — BE tính lại khi đặt hàng) ─────
+const promoInput = ref('');
+const applyingPromo = ref(false);
+async function applyPromo() {
+  const code = promoInput.value.trim();
+  if (!code) return;
+  applyingPromo.value = true;
+  try {
+    const ok = await cart.applyPromo(code);
+    if (ok) {
+      promoInput.value = '';
+      notify('success', 'Đã áp dụng mã giảm giá');
+    } else {
+      notify('error', 'Mã giảm giá không hợp lệ hoặc đã hết hạn');
+    }
+  } finally {
+    applyingPromo.value = false;
+  }
+}
+function removePromo() {
+  cart.clearPromo();
+  notify('info', 'Đã gỡ mã giảm giá');
+}
+
 async function submit() {
   // Đặt hàng yêu cầu đăng nhập (BE gắn đơn với userId).
   if (!isAuthenticated.value) {
@@ -276,10 +300,40 @@ const summaryLineBase = 'flex justify-between text-[0.85rem] text-mid py-1';
           <span>Tạm tính</span>
           <span>{{ formatPrice(cart.subtotal) }}</span>
         </div>
-        <div v-if="cart.appliedPromo" :class="[summaryLineBase, '!text-olive']">
-          <span>{{ cart.appliedPromo.label }}</span>
-          <span>-{{ formatPrice(cart.discount) }}</span>
+
+        <!-- Mã giảm giá -->
+        <div class="my-3">
+          <div v-if="cart.appliedPromo" class="flex items-center justify-between gap-2 border border-olive/40 bg-mix-olive-10 py-2 px-3">
+            <span class="flex items-center gap-2 text-[0.82rem] text-olive font-semibold">
+              <i class="bx bx-purchase-tag" /> {{ cart.appliedPromo.label }}
+            </span>
+            <div class="flex items-center gap-2">
+              <span class="text-[0.82rem] text-olive font-semibold whitespace-nowrap">-{{ formatPrice(cart.discount) }}</span>
+              <button
+                type="button"
+                class="text-smoke hover:text-oxblood cursor-pointer text-[1.1rem] leading-none"
+                aria-label="Gỡ mã"
+                @click="removePromo"
+              >×</button>
+            </div>
+          </div>
+          <div v-else class="flex gap-2">
+            <input
+              v-model="promoInput"
+              type="text"
+              placeholder="Nhập mã giảm giá"
+              class="flex-1 bg-surface border border-rule text-text text-[0.82rem] py-2 px-3 placeholder:text-smoke focus:outline-none focus:border-accent"
+              @keyup.enter="applyPromo"
+            />
+            <button
+              type="button"
+              :disabled="applyingPromo || !promoInput.trim()"
+              class="bg-transparent border border-rule text-mid font-condensed text-[0.65rem] tracking-[2px] uppercase py-2 px-3 cursor-pointer transition-all duration-300 hover:border-accent hover:text-accent disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+              @click="applyPromo"
+            >{{ applyingPromo ? '...' : 'Áp dụng' }}</button>
+          </div>
         </div>
+
         <div :class="summaryLineBase">
           <span>Vận chuyển</span>
           <span class="text-olive">Miễn phí</span>

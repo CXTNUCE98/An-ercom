@@ -23,6 +23,7 @@ import { formatPrice } from '~/shared/utils/format';
 useHead({ title: 'Tài khoản — IRONMAN' });
 
 const router = useRouter();
+const route = useRoute();
 const { isAuthenticated, user, logout, fetchUserProfile, updateUserLocal } = useAuth();
 
 // Guard: chưa đăng nhập → về login
@@ -43,7 +44,8 @@ function confirmLogout() {
   logout();
 }
 
-type Tab = 'orders' | 'wishlist' | 'addresses' | 'profile' | 'password';
+type Tab = 'orders' | 'wishlist' | 'addresses' | 'profile';
+const VALID_TABS: Tab[] = ['orders', 'wishlist', 'addresses', 'profile'];
 const tab = ref<Tab>('profile');
 
 const navItems: { key: Tab; label: string; icon: string }[] = [
@@ -51,8 +53,29 @@ const navItems: { key: Tab; label: string; icon: string }[] = [
   { key: 'addresses', label: 'Sổ địa chỉ', icon: 'bx-map' },
   { key: 'orders', label: 'Đơn hàng', icon: 'bx-package' },
   { key: 'wishlist', label: 'Yêu thích', icon: 'bx-heart' },
-  { key: 'password', label: 'Đổi mật khẩu', icon: 'bx-lock-alt' },
 ];
+
+// Neo tới form đổi mật khẩu (nằm trong tab Hồ sơ)
+const passwordSection = ref<HTMLElement | null>(null);
+function scrollToPassword() {
+  nextTick(() => {
+    passwordSection.value?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+}
+
+// Đồng bộ tab + section từ query (?tab=profile&section=password)
+watch(
+  () => route.query,
+  (q) => {
+    const qt = q.tab as string | undefined;
+    if (qt && VALID_TABS.includes(qt as Tab)) tab.value = qt as Tab;
+    if (q.section === 'password') {
+      tab.value = 'profile';
+      scrollToPassword();
+    }
+  },
+  { immediate: true },
+);
 
 // Chữ cái đầu cho avatar
 const initial = computed(() => {
@@ -494,43 +517,46 @@ const fieldInput = 'w-full bg-surface border border-rule text-text font-body tex
           </div>
         </div>
 
-        <!-- ─── PROFILE ─── -->
-        <div v-else-if="tab === 'profile'">
-          <div class="flex items-center gap-3 mb-6">
-            <h2 class="font-display text-[1.5rem] font-bold m-0">Thông tin cá nhân</h2>
-            <span class="hairline flex-1" />
+        <!-- ─── PROFILE (gồm cả Đổi mật khẩu) ─── -->
+        <div v-else-if="tab === 'profile'" class="grid grid-cols-2 gap-6 items-start max-[820px]:grid-cols-1">
+          <!-- Cột trái: Thông tin cá nhân -->
+          <div>
+            <div class="flex items-center gap-3 mb-6">
+              <h2 class="font-display text-[1.5rem] font-bold m-0 whitespace-nowrap">Thông tin cá nhân</h2>
+              <span class="hairline flex-1" />
+            </div>
+            <div class="card-luxury bg-card h-full">
+              <div class="mb-4">
+                <label :class="fieldLabel">Email</label>
+                <input :value="user?.email" type="email" disabled :class="[fieldInput, 'opacity-60 cursor-not-allowed']" />
+              </div>
+              <div class="mb-4">
+                <label :class="fieldLabel">Họ và tên</label>
+                <input v-model="profileForm.fullName" type="text" :class="fieldInput" />
+              </div>
+              <div class="mb-4">
+                <label :class="fieldLabel">Số điện thoại</label>
+                <input v-model="profileForm.phone" type="tel" :class="fieldInput" />
+              </div>
+              <div class="mb-4">
+                <label :class="fieldLabel">Địa chỉ</label>
+                <input v-model="profileForm.address" type="text" :class="fieldInput" />
+              </div>
+              <p v-if="profileMsg" class="text-[0.82rem] text-olive mb-3">{{ profileMsg }}</p>
+              <button :disabled="savingProfile" class="btn-gold disabled:opacity-60" @click="saveProfile">
+                {{ savingProfile ? 'Đang lưu...' : 'Lưu thay đổi' }}
+              </button>
+            </div>
           </div>
-          <div class="card-luxury bg-card max-w-[560px]">
-            <div class="mb-4">
-              <label :class="fieldLabel">Email</label>
-              <input :value="user?.email" type="email" disabled :class="[fieldInput, 'opacity-60 cursor-not-allowed']" />
-            </div>
-            <div class="mb-4">
-              <label :class="fieldLabel">Họ và tên</label>
-              <input v-model="profileForm.fullName" type="text" :class="fieldInput" />
-            </div>
-            <div class="mb-4">
-              <label :class="fieldLabel">Số điện thoại</label>
-              <input v-model="profileForm.phone" type="tel" :class="fieldInput" />
-            </div>
-            <div class="mb-4">
-              <label :class="fieldLabel">Địa chỉ</label>
-              <input v-model="profileForm.address" type="text" :class="fieldInput" />
-            </div>
-            <p v-if="profileMsg" class="text-[0.82rem] text-olive mb-3">{{ profileMsg }}</p>
-            <button :disabled="savingProfile" class="btn-gold disabled:opacity-60" @click="saveProfile">
-              {{ savingProfile ? 'Đang lưu...' : 'Lưu thay đổi' }}
-            </button>
-          </div>
-        </div>
 
-        <!-- ─── PASSWORD ─── -->
-        <div v-else>
-          <div class="flex items-center gap-3 mb-6">
-            <h2 class="font-display text-[1.5rem] font-bold m-0">Đổi mật khẩu</h2>
-            <span class="hairline flex-1" />
-          </div>
-          <div class="card-luxury bg-card max-w-[560px]">
+          <!-- Cột phải: Đổi mật khẩu -->
+          <div ref="passwordSection" class="scroll-mt-[120px]">
+            <div class="flex items-center gap-3 mb-6">
+              <i class="bx bx-lock-alt text-[1.3rem] text-accent" />
+              <h2 class="font-display text-[1.5rem] font-bold m-0 whitespace-nowrap">Đổi mật khẩu</h2>
+              <span class="hairline flex-1" />
+            </div>
+            <div class="card-luxury bg-card h-full">
             <div class="mb-4">
               <label :class="fieldLabel">Mật khẩu hiện tại</label>
               <div class="relative">
@@ -562,6 +588,7 @@ const fieldInput = 'w-full bg-surface border border-rule text-text font-body tex
             <button :disabled="savingPw" class="btn-gold disabled:opacity-60" @click="submitPassword">
               {{ savingPw ? 'Đang xử lý...' : 'Đổi mật khẩu' }}
             </button>
+            </div>
           </div>
         </div>
       </section>
