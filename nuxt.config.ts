@@ -111,6 +111,17 @@ export default defineNuxtConfig({
     },
   },
 
+  experimental: {
+    defaults: {
+      // Prefetch _payload.json chỉ khi user hover/focus link (interaction),
+      // KHÔNG prefetch hàng loạt lúc link hiện ra (visibility). Tránh "bão"
+      // 47+ request _payload.json cùng lúc trên trang chủ.
+      nuxtLink: {
+        prefetchOn: { visibility: false, interaction: true },
+      },
+    },
+  },
+
   image: {
     domains: ["images.unsplash.com", "picsum.photos", "i.pinimg.com"],
   },
