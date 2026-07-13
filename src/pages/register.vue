@@ -5,6 +5,11 @@ definePageMeta({
   layout: 'default',
 });
 
+useHead({
+  title: 'Đăng ký — IRONMAN',
+  meta: [{ name: 'robots', content: 'noindex, nofollow' }],
+});
+
 const registerData = reactive({
   email: '',
   password: '',

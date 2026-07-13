@@ -11,7 +11,10 @@ import {
 import { useNotifications } from '~/composables/notifications';
 import { formatPrice } from '~/shared/utils/format';
 
-useHead({ title: 'Thanh Toán — IRONMAN' });
+useHead({
+  title: 'Thanh Toán — IRONMAN',
+  meta: [{ name: 'robots', content: 'noindex, nofollow' }],
+});
 
 const cart = useCartStore();
 const router = useRouter();

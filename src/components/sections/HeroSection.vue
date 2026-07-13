@@ -45,7 +45,8 @@
 
       <div
         class="relative w-full max-w-[460px] z-[2] border border-rule-strong p-[14px] bg-surface animate-fade-up [animation-delay:0.55s] lg:shadow-[-22px_22px_0_-1px_var(--card-alt),-22px_22px_0_0_var(--rule-strong)]">
-        <CommonProductMedia aspect="3/4" placeholder-icon="watch"
+        <CommonProductMedia aspect="3/4" placeholder-icon="watch" priority
+          sizes="md:50vw lg:460px"
           src="https://i.pinimg.com/1200x/26/ea/3c/26ea3ced6503ce21d58cf458526b58f4.jpg" :icon-size="240">
           <span
             class="absolute top-[22px] right-[22px] font-condensed text-[0.7rem] font-semibold tracking-[3px] text-accent z-[3]">

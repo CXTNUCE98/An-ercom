@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { useResetPasswordMutation } from '~/composables/useAuthMutation';
 
-useHead({ title: 'Đặt lại mật khẩu — IRONMAN' });
+useHead({
+  title: 'Đặt lại mật khẩu — IRONMAN',
+  meta: [{ name: 'robots', content: 'noindex, nofollow' }],
+});
 
 const route = useRoute();
 const router = useRouter();

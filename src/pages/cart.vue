@@ -2,7 +2,10 @@
 import { useCartStore } from '~/features/cart/stores/useCartStore';
 import { formatPrice } from '~/shared/utils/format';
 
-useHead({ title: 'Giỏ Hàng — IRONMAN' });
+useHead({
+  title: 'Giỏ Hàng — IRONMAN',
+  meta: [{ name: 'robots', content: 'noindex, nofollow' }],
+});
 
 const cart = useCartStore();
 const promoInput = ref('');

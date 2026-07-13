@@ -20,7 +20,10 @@ import {
 import { useNotifications } from '~/composables/notifications';
 import { formatPrice } from '~/shared/utils/format';
 
-useHead({ title: 'Tài khoản — IRONMAN' });
+useHead({
+  title: 'Tài khoản — IRONMAN',
+  meta: [{ name: 'robots', content: 'noindex, nofollow' }],
+});
 
 const router = useRouter();
 const route = useRoute();

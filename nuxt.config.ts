@@ -51,7 +51,29 @@ export default defineNuxtConfig({
     "@nuxtjs/color-mode",
     "@pinia/nuxt",
     "nuxt-api-party",
+    "@nuxtjs/sitemap",
   ],
+
+  // URL gốc cho sitemap/robots (module @nuxtjs/sitemap đọc từ đây).
+  site: {
+    url: process.env.NUXT_PUBLIC_SITE_URL || "https://accessories-ercom.vercel.app",
+    name: "IRONMAN",
+  },
+
+  sitemap: {
+    // Không đưa các trang riêng tư/tiện ích vào sitemap.
+    exclude: [
+      "/cart",
+      "/checkout",
+      "/account",
+      "/order-success",
+      "/login",
+      "/register",
+      "/forgot-password",
+      "/reset-password",
+      "/search",
+    ],
+  },
   colorMode: {
     classSuffix: "",
     preference: "light",
@@ -64,7 +86,7 @@ export default defineNuxtConfig({
   },
 
   image: {
-    domains: ["images.unsplash.com", "picsum.photos"],
+    domains: ["images.unsplash.com", "picsum.photos", "i.pinimg.com"],
   },
 
   css: [
@@ -88,6 +110,8 @@ export default defineNuxtConfig({
     public: {
       apiBase:
         process.env.NUXT_PUBLIC_API_BASE || "http://localhost:9001/",
+      siteUrl:
+        process.env.NUXT_PUBLIC_SITE_URL || "https://accessories-ercom.vercel.app",
     },
   },
 });

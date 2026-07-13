@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { formatPrice } from '~/shared/utils/format';
 
-useHead({ title: 'Đặt Hàng Thành Công — IRONMAN' });
+useHead({
+  title: 'Đặt Hàng Thành Công — IRONMAN',
+  meta: [{ name: 'robots', content: 'noindex, nofollow' }],
+});
 
 const route = useRoute();
 const orderId = route.query.id as string || 'IM-XXXXX';

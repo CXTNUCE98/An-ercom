@@ -28,6 +28,7 @@
     "@nuxt/image": "^1.11.0",
     "@nuxt/kit": "^3.11.1",
     "@nuxtjs/color-mode": "^4.0.0",
+    "@nuxtjs/sitemap": "5.3.5",
     "@openapitools/openapi-generator-cli": "^2.6.0",
     "@types/node": "^20.11.0",
     "@unocss/nuxt": "^66.5.9",

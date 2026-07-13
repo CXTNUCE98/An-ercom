@@ -7,6 +7,11 @@ definePageMeta({
   layout: 'default',
 });
 
+useHead({
+  title: 'Đăng nhập — IRONMAN',
+  meta: [{ name: 'robots', content: 'noindex, nofollow' }],
+});
+
 const loginData = reactive({
   email: '',
   password: '',

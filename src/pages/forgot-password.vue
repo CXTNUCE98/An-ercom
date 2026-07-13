@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { useForgotPasswordMutation } from '~/composables/useAuthMutation';
 
-useHead({ title: 'Quên mật khẩu — IRONMAN' });
+useHead({
+  title: 'Quên mật khẩu — IRONMAN',
+  meta: [{ name: 'robots', content: 'noindex, nofollow' }],
+});
 
 const email = ref('');
 const submitted = ref(false);
