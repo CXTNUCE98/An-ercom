@@ -65,9 +65,51 @@ const combo = computed(() => {
 const cart = useCartStore();
 const addedToast = ref(false);
 
+const config = useRuntimeConfig();
+const siteUrl = config.public.siteUrl as string;
+const canonicalUrl = computed(() => `${siteUrl}/combos/${slug}`);
+const comboOgImage = computed(() => combo.value.heroImage || `${siteUrl}/favicon.ico`);
+
 useSeoMeta({
   title: () => `${combo.value.name} — IRONMAN Combo`,
   description: () => combo.value.tagline,
+  ogTitle: () => `${combo.value.name} — IRONMAN Combo`,
+  ogDescription: () => combo.value.tagline,
+  ogImage: () => comboOgImage.value,
+  ogType: 'website',
+  ogUrl: () => canonicalUrl.value,
+  twitterCard: 'summary_large_image',
+  twitterTitle: () => `${combo.value.name} — IRONMAN Combo`,
+  twitterImage: () => comboOgImage.value,
+});
+
+useHead({
+  link: [{ rel: 'canonical', href: () => canonicalUrl.value }],
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: computed(() =>
+        JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'Product',
+          name: combo.value.name,
+          image: combo.value.heroImage ? [combo.value.heroImage] : [comboOgImage.value],
+          description: combo.value.tagline,
+          brand: { '@type': 'Brand', name: 'IRONMAN' },
+          offers: {
+            '@type': 'Offer',
+            url: canonicalUrl.value,
+            priceCurrency: 'VND',
+            price: combo.value.comboPrice,
+            availability:
+              combo.value.stock > 0
+                ? 'https://schema.org/InStock'
+                : 'https://schema.org/OutOfStock',
+          },
+        }),
+      ),
+    },
+  ],
 });
 
 function addComboToCart() {
@@ -92,7 +134,7 @@ function badgeVariantClass(v?: string) {
     <!-- Hero Banner -->
     <section class="relative min-h-[92vh] max-[900px]:min-h-[70vh] flex items-end pt-[100px] px-gutter pb-md overflow-hidden">
       <div class="absolute inset-0 z-0">
-        <img :src="combo.heroImage" :alt="combo.name" class="w-full h-full object-cover saturate-[0.92]" />
+        <NuxtImg :src="combo.heroImage" :alt="combo.name" sizes="100vw" format="webp" preload loading="eager" fetchpriority="high" class="w-full h-full object-cover saturate-[0.92]" />
         <div
           class="absolute inset-0"
           :style="{

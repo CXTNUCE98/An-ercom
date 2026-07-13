@@ -230,29 +230,13 @@ export const unoConfig: UserConfig = {
     }),
     presetUno(),
     presetWebFonts({
-      provider: "google",
+      // provider "none": chỉ đăng ký font-family cho utilities, KHÔNG tự fetch.
+      // Việc tải + self-host do @nuxt/fonts đảm nhiệm (tránh load trùng).
+      provider: "none",
       fonts: {
-        // Editorial display + body — match Google Fonts loaded in nuxt.config.ts head
-        display: {
-          name: "Playfair Display",
-          weights: ["400", "700", "900"],
-        },
-        body: {
-          name: "Barlow",
-          weights: ["300", "400", "500", "600"],
-        },
-        condensed: {
-          name: "Barlow Condensed",
-          weights: ["300", "400", "500", "600", "700"],
-        },
-        sans: {
-          name: "Plus Jakarta Sans",
-          weights: ["300", "400", "500", "600", "700", "800"],
-        },
-        heading: {
-          name: "Outfit",
-          weights: ["400", "500", "600", "700", "800", "900"],
-        },
+        display: { name: "Cormorant Garamond" },
+        body: { name: "Barlow" },
+        condensed: { name: "Barlow Condensed" },
       },
     }),
   ],

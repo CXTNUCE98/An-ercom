@@ -62,13 +62,62 @@ function salePercent(p: { salePrice?: number; price: number }) {
 
 const config = useRuntimeConfig();
 const siteUrl = config.public.siteUrl as string;
+const canonicalUrl = computed(() => `${siteUrl}/categories/${slug.value}`);
+const catDescription = computed(
+  () => category.value?.description || `Bộ sưu tập ${category.value?.name} chính hãng, bảo hành tại IRONMAN.`,
+);
+const catOgImage = computed(() => category.value?.image || `${siteUrl}/favicon.ico`);
+
 useSeoMeta({
   title: () => `${category.value?.name} — IRONMAN`,
-  description: () => category.value?.description || `Bộ sưu tập ${category.value?.name} chính hãng tại IRONMAN.`,
+  description: () => catDescription.value,
   ogTitle: () => `${category.value?.name} — IRONMAN`,
+  ogDescription: () => catDescription.value,
+  ogImage: () => catOgImage.value,
   ogType: 'website',
+  ogUrl: () => canonicalUrl.value,
+  twitterCard: 'summary_large_image',
+  twitterTitle: () => `${category.value?.name} — IRONMAN`,
+  twitterImage: () => catOgImage.value,
 });
-useHead({ link: [{ rel: 'canonical', href: `${siteUrl}/categories/${slug.value}` }] });
+
+useHead({
+  link: [{ rel: 'canonical', href: () => canonicalUrl.value }],
+  script: [
+    // Breadcrumb: Trang chủ › Danh mục
+    {
+      type: 'application/ld+json',
+      innerHTML: computed(() =>
+        JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Trang Chủ', item: siteUrl },
+            { '@type': 'ListItem', position: 2, name: category.value?.name, item: canonicalUrl.value },
+          ],
+        }),
+      ),
+    },
+    // ItemList: các sản phẩm hiển thị trên trang danh mục hiện tại
+    {
+      type: 'application/ld+json',
+      innerHTML: computed(() =>
+        JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'ItemList',
+          name: `Sản phẩm ${category.value?.name}`,
+          numberOfItems: products.value.length,
+          itemListElement: products.value.map((p, i) => ({
+            '@type': 'ListItem',
+            position: (page.value - 1) * pageSize + i + 1,
+            url: `${siteUrl}/products/${p.slug}`,
+            name: p.name,
+          })),
+        }),
+      ),
+    },
+  ],
+});
 
 const sortOptions: { value: SortOption; label: string }[] = [
   { value: 'newest', label: 'Mới nhất' },

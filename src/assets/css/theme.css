@@ -245,3 +245,17 @@ body {
   0%   { background-position: -200% center; }
   100% { background-position: 200% center; }
 }
+
+/* ── Accessibility: tôn trọng prefers-reduced-motion ─────
+   Người dùng bật "giảm chuyển động" (OS) → tắt gần hết animation
+   + marquee/turbulence chạy liên tục. Cũng giảm tải CPU/repaint. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

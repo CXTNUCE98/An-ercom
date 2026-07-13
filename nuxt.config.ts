@@ -26,18 +26,8 @@ export default defineNuxtConfig({
             "IRONMAN — Phụ kiện cao cấp dành cho nam giới: đồng hồ, Zippo, kính mắt, thắt lưng, ví da, mũ. Chính hãng, bảo hành, uy tín.",
         },
       ],
-      link: [
-        { rel: "preconnect", href: "https://fonts.googleapis.com" },
-        {
-          rel: "preconnect",
-          href: "https://fonts.gstatic.com",
-          crossorigin: "",
-        },
-        {
-          rel: "stylesheet",
-          href: "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@300;400;500;600;700&family=Bebas+Neue&display=swap",
-        },
-      ],
+      // Fonts giờ do @nuxt/fonts tự self-host + preload (không còn render-blocking
+      // từ Google Fonts). Xem block `fonts` bên dưới.
     },
     baseURL: "/",
   },
@@ -52,7 +42,19 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "nuxt-api-party",
     "@nuxtjs/sitemap",
+    "@nuxt/fonts",
   ],
+
+  // Self-host + tự preload các font thực sự dùng (4 họ). @nuxt/fonts tự quét
+  // font-family trong CSS/UnoCSS và tải, nên chỉ cần liệt kê để đảm bảo weights.
+  fonts: {
+    families: [
+      { name: "Cormorant Garamond", provider: "google", weights: [400, 500, 600, 700], styles: ["normal", "italic"] },
+      { name: "Playfair Display", provider: "google", weights: [400, 700, 900] },
+      { name: "Barlow", provider: "google", weights: [300, 400, 500, 600] },
+      { name: "Barlow Condensed", provider: "google", weights: [300, 400, 500, 600, 700] },
+    ],
+  },
 
   // URL gốc cho sitemap/robots (module @nuxtjs/sitemap đọc từ đây).
   site: {
@@ -61,6 +63,8 @@ export default defineNuxtConfig({
   },
 
   sitemap: {
+    // Nguồn URL động (products + categories) lấy từ BE lúc runtime.
+    sources: ["/api/_sitemap-urls"],
     // Không đưa các trang riêng tư/tiện ích vào sitemap.
     exclude: [
       "/cart",
@@ -83,6 +87,28 @@ export default defineNuxtConfig({
     defaultLocale: "vi",
     langDir: "locales",
     locales: [{ code: "vi", name: "Tiếng Việt", file: "vi.json" }],
+    // Cần cho hreflang/canonical chuẩn khi build SEO.
+    baseUrl: process.env.NUXT_PUBLIC_SITE_URL || "https://accessories-ercom.vercel.app",
+  },
+
+  nitro: {
+    // Nén sẵn asset tĩnh (gzip + brotli) → giảm transfer size.
+    compressPublicAssets: { gzip: true, brotli: true },
+    routeRules: {
+      // Trang catalog công khai: cache CDN + revalidate nền (SWR).
+      "/": { swr: 3600 },
+      "/products/**": { swr: 3600 },
+      "/categories/**": { swr: 3600 },
+      "/combos/**": { swr: 3600 },
+      // Trang phụ thuộc phiên đăng nhập / giỏ: KHÔNG cache.
+      "/cart": { swr: false },
+      "/checkout": { swr: false },
+      "/account": { swr: false },
+      "/order-success": { swr: false },
+      "/login": { swr: false },
+      "/register": { swr: false },
+      "/search": { swr: false },
+    },
   },
 
   image: {

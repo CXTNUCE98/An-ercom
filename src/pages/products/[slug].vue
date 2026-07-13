@@ -264,10 +264,14 @@ const vblockHead = 'mb-7 max-w-[720px]';
             ]"
             @click="activeIdx = i"
           >
-            <img
+            <NuxtImg
               :src="img"
               :alt="`${product.name} ${i + 1}`"
               loading="lazy"
+              width="120"
+              height="120"
+              sizes="120px"
+              format="webp"
               class="w-full h-full object-cover transition-transform duration-400 group-hover:scale-105"
             />
             <span class="absolute inset-x-0 bottom-0 text-center text-[#fbf6ea] font-condensed text-[0.6rem] tracking-[1.5px] uppercase pt-4 px-1.5 pb-1.5 bg-[linear-gradient(180deg,transparent,color-mix(in_srgb,var(--ink)_85%,transparent))]">
@@ -386,10 +390,12 @@ const vblockHead = 'mb-7 max-w-[720px]';
             class="group relative aspect-[4/5] bg-card border border-rule cursor-pointer overflow-hidden p-0 transition-all duration-300 hover:border-accent"
             @click="openLightbox(i)"
           >
-            <img
+            <NuxtImg
               :src="img"
               :alt="`${product.name} - ${angleLabels[i] || i + 1}`"
               loading="lazy"
+              sizes="50vw md:25vw"
+              format="webp"
               class="w-full h-full object-cover transition-transform duration-600 group-hover:scale-[1.06]"
             />
             <div class="absolute left-0 right-0 bottom-0 flex items-center gap-2 py-3 px-3.5 text-[#fbf6ea] font-condensed tracking-[1.5px] text-[0.7rem] uppercase bg-[linear-gradient(180deg,transparent,color-mix(in_srgb,var(--ink)_85%,transparent))]">
@@ -424,7 +430,7 @@ const vblockHead = 'mb-7 max-w-[720px]';
           />
           <div v-else class="relative w-full h-full grid grid-cols-1 min-[720px]:grid-cols-[1.3fr_1fr]">
             <div class="relative bg-card overflow-hidden">
-              <img :src="product.images[0] || ''" :alt="product.name" class="w-full h-full object-cover opacity-60" />
+              <NuxtImg :src="product.images[0] || ''" :alt="product.name" loading="lazy" sizes="60vw md:40vw" format="webp" class="w-full h-full object-cover opacity-60" />
               <button
                 class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full text-on-accent border-[3px] border-[#fbf6ea] flex items-center justify-center cursor-pointer text-[2.2rem] bg-[color-mix(in_srgb,var(--accent)_92%,transparent)] animate-pulse-ring"
               >
@@ -622,9 +628,11 @@ const vblockHead = 'mb-7 max-w-[720px]';
             <i class="bx bx-chevron-left" />
           </button>
           <figure class="lb-figure m-0 max-w-[min(1100px,90vw)] max-h-[86vh] flex flex-col items-center gap-3.5">
-            <img
+            <NuxtImg
               :src="gallery[lightboxIndex]"
               :alt="product.name"
+              sizes="90vw md:1100px"
+              format="webp"
               class="max-w-full max-h-[78vh] object-contain bg-card p-3.5 border border-[color-mix(in_srgb,var(--accent)_40%,transparent)]"
             />
             <figcaption class="flex items-center gap-3.5 text-[#fbf6ea] font-condensed text-[0.78rem] tracking-[2px] uppercase">
