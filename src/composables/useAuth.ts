@@ -39,6 +39,19 @@ function parseJwt(token: string) {
   }
 }
 
+// Kiểm tra token đã hết hạn / không hợp lệ (chỉ tin cậy ở phía client).
+function isTokenExpired(token: string | null): boolean {
+  if (!token || token === "undefined") return true;
+  // Trên server không giải mã được (parseJwt trả null) → không coi là hết hạn
+  // để tránh phá vỡ trạng thái SSR; việc dọn dẹp sẽ diễn ra ở client.
+  if (!import.meta.client) return false;
+
+  const decoded = parseJwt(token);
+  if (!decoded) return true; // decode lỗi → token hỏng
+  if (!decoded.exp) return false; // không có claim exp → coi như còn hạn
+  return decoded.exp * 1000 <= Date.now();
+}
+
 export function useAuth() {
   // Use useCookie for token persistence (works on SSR and Client)
   const accessToken = useCookie<string | null>(TOKEN_KEY, {
@@ -52,9 +65,12 @@ export function useAuth() {
     () => false
   );
 
-  // Kiểm tra token hợp lệ (không rỗng và không phải chuỗi "undefined")
+  // Kiểm tra token hợp lệ: không rỗng, khác "undefined" và chưa hết hạn.
   const isAuthenticated = computed(
-    () => !!accessToken.value && accessToken.value !== "undefined"
+    () =>
+      !!accessToken.value &&
+      accessToken.value !== "undefined" &&
+      !isTokenExpired(accessToken.value)
   );
 
   // Helper to save profile to cache
@@ -198,7 +214,10 @@ export function useAuth() {
       accessToken.value = localToken;
     }
 
-    if (accessToken.value) {
+    // Token còn tồn tại nhưng đã hết hạn/hỏng → dọn dẹp, không gọi /auth/me.
+    if (accessToken.value && isTokenExpired(accessToken.value)) {
+      logout();
+    } else if (accessToken.value) {
       initUserFromToken();
       // Optionally fetch profile in background
       if (!isFetchingProfile.value && (!user.value || !user.value.createdAt)) {
