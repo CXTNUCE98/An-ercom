@@ -25,7 +25,11 @@ export const checkoutService = {
       method: 'POST',
       headers: authHeaders,
       body: {
-        items: items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
+        items: items.map((i) =>
+          i.kind === 'combo'
+            ? { comboId: i.comboId, quantity: i.quantity }
+            : { productId: i.productId, quantity: i.quantity },
+        ),
         shippingAddress: shipping.shippingAddress,
         phone: shipping.phone.replace(/\s/g, ''),
         note: shipping.note || undefined,

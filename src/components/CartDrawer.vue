@@ -76,11 +76,11 @@ function goToCheckout() {
         <div v-else class="flex flex-col gap-6">
           <div
             v-for="item in cart.items"
-            :key="item.productId"
+            :key="item.lineId"
             class="grid grid-cols-[60px_1fr_auto] gap-4 items-start py-4 border-b border-rule"
           >
             <NuxtLink
-              :to="`/products/${item.slug}`"
+              :to="item.kind === 'combo' ? `/combos/${item.slug}` : `/products/${item.slug}`"
               class="w-[60px] h-[60px] bg-card border border-rule overflow-hidden block"
               @click="cart.closeDrawer()"
             >
@@ -95,7 +95,7 @@ function goToCheckout() {
 
             <div class="flex flex-col gap-1 min-w-0">
               <NuxtLink
-                :to="`/products/${item.slug}`"
+                :to="item.kind === 'combo' ? `/combos/${item.slug}` : `/products/${item.slug}`"
                 class="font-display text-[0.9rem] font-medium text-text no-underline transition-colors duration-300 hover:text-accent truncate"
                 @click="cart.closeDrawer()"
               >{{ item.name }}</NuxtLink>
@@ -105,12 +105,12 @@ function goToCheckout() {
               <div class="flex items-center border border-rule w-fit mt-2">
                 <button
                   class="w-7 h-7 bg-transparent border-0 text-text cursor-pointer text-sm hover:text-accent flex items-center justify-center"
-                  @click="cart.updateQuantity(item.productId, item.quantity - 1)"
+                  @click="cart.updateQuantity(item.lineId, item.quantity - 1)"
                 >−</button>
                 <span class="w-7 text-center font-condensed font-semibold text-[0.8rem] border-x border-rule leading-7">{{ item.quantity }}</span>
                 <button
                   class="w-7 h-7 bg-transparent border-0 text-text cursor-pointer text-sm hover:text-accent flex items-center justify-center"
-                  @click="cart.updateQuantity(item.productId, item.quantity + 1)"
+                  @click="cart.updateQuantity(item.lineId, item.quantity + 1)"
                 >+</button>
               </div>
             </div>
@@ -119,7 +119,7 @@ function goToCheckout() {
               <button
                 class="bg-transparent border-0 text-smoke text-[1.2rem] cursor-pointer p-0 transition-colors duration-300 hover:text-[var(--oxblood)]"
                 aria-label="Xóa"
-                @click="cart.removeItem(item.productId)"
+                @click="cart.removeItem(item.lineId)"
               >
                 <i class="bx bx-trash" />
               </button>

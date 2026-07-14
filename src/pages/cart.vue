@@ -47,11 +47,11 @@ async function applyPromo() {
       <div class="flex flex-col">
         <div
           v-for="item in cart.items"
-          :key="item.productId"
+          :key="item.lineId"
           class="cart-line grid grid-cols-[60px_1fr_auto_auto] lg:grid-cols-[80px_1fr_auto_auto_auto] gap-3 lg:gap-5 items-center py-5 border-b border-[var(--rule)]"
         >
           <NuxtLink
-            :to="`/products/${item.slug}`"
+            :to="item.kind === 'combo' ? `/combos/${item.slug}` : `/products/${item.slug}`"
             class="w-15 h-15 lg:w-20 lg:h-20 bg-[var(--card)] border border-[var(--rule)] overflow-hidden"
           >
             <CommonProductMedia
@@ -65,7 +65,7 @@ async function applyPromo() {
 
           <div class="flex flex-col gap-1">
             <NuxtLink
-              :to="`/products/${item.slug}`"
+              :to="item.kind === 'combo' ? `/combos/${item.slug}` : `/products/${item.slug}`"
               class="font-display text-[0.95rem] font-medium text-[var(--text)] no-underline transition-colors duration-300 hover:text-[var(--accent)]"
             >{{ item.name }}</NuxtLink>
             <div class="text-[0.75rem] text-smoke">{{ item.brand }}</div>
@@ -75,12 +75,12 @@ async function applyPromo() {
           <div class="flex items-center border border-[var(--rule)]">
             <button
               class="w-8 h-8 bg-transparent border-0 text-[var(--text)] cursor-pointer text-base hover:text-[var(--accent)]"
-              @click="cart.updateQuantity(item.productId, item.quantity - 1)"
+              @click="cart.updateQuantity(item.lineId, item.quantity - 1)"
             >−</button>
             <span class="w-8 text-center font-condensed font-semibold text-[0.85rem] border-x border-[var(--rule)] leading-8">{{ item.quantity }}</span>
             <button
               class="w-8 h-8 bg-transparent border-0 text-[var(--text)] cursor-pointer text-base hover:text-[var(--accent)]"
-              @click="cart.updateQuantity(item.productId, item.quantity + 1)"
+              @click="cart.updateQuantity(item.lineId, item.quantity + 1)"
             >+</button>
           </div>
 
@@ -91,7 +91,7 @@ async function applyPromo() {
           <button
             class="bg-transparent border-0 text-smoke text-[1.2rem] cursor-pointer p-1 transition-colors duration-300 hover:text-[var(--oxblood)]"
             aria-label="Xóa"
-            @click="cart.removeItem(item.productId)"
+            @click="cart.removeItem(item.lineId)"
           >
             <i class="bx bx-x" />
           </button>

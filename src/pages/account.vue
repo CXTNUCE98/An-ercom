@@ -6,6 +6,8 @@ import {
 } from '~/composables/useAuthMutation';
 import {
   useMyOrdersQuery,
+  useCancelOrderMutation,
+  CANCELLABLE_STATUSES,
   ORDER_STATUS_LABEL,
   PAYMENT_METHOD_LABEL,
   type OrderStatus,
@@ -100,6 +102,20 @@ const { remove: removeWish } = useWishlistMutations();
 // ─── Đơn hàng ─────────────────────────────────────────────────────────────
 const { data: ordersData, isPending: ordersLoading } = useMyOrdersQuery();
 const orders = computed(() => ordersData.value?.items ?? []);
+
+const cancelOrder = useCancelOrderMutation();
+const cancelTarget = ref<string | null>(null);
+const canCancel = (s: OrderStatus) => CANCELLABLE_STATUSES.includes(s);
+
+function confirmCancelOrder() {
+  const id = cancelTarget.value;
+  if (!id) return;
+  cancelTarget.value = null;
+  cancelOrder.mutate(id, {
+    onSuccess: () => notify('success', 'Đã huỷ đơn hàng'),
+    onError: (e: any) => notify('error', e?.data?.message || 'Huỷ đơn thất bại'),
+  });
+}
 
 // Badge theo trạng thái: [text, bg, border]
 const statusBadge: Record<OrderStatus, string> = {
@@ -404,6 +420,15 @@ const fieldInput = 'w-full bg-surface border border-rule text-text font-body tex
                 </span>
                 <span class="font-display text-[1.15rem] font-bold text-accent">{{ formatPrice(o.totalPrice) }}</span>
               </div>
+              <div v-if="canCancel(o.status)" class="flex justify-end px-5 pb-4">
+                <button
+                  class="btn-outline !text-red-600 !border-red-600/50 hover:!bg-red-600 hover:!text-white text-[0.78rem] py-1.5 px-4 disabled:opacity-50"
+                  :disabled="cancelOrder.isPending.value"
+                  @click="cancelTarget = o.id"
+                >
+                  Huỷ đơn
+                </button>
+              </div>
             </article>
           </div>
         </div>
@@ -622,6 +647,31 @@ const fieldInput = 'w-full bg-surface border border-rule text-text font-body tex
           @click="confirmLogout"
         >
           Đăng xuất
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup Confirm Huỷ đơn -->
+  <div v-if="cancelTarget" class="fixed inset-0 z-[200] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="cancelTarget = null"></div>
+    <div class="relative bg-surface border border-rule w-full max-w-[400px] p-6 shadow-2xl animate-fade-in animate-duration-200">
+      <h3 class="font-display text-[1.4rem] font-bold text-text mb-3 m-0">Huỷ đơn hàng</h3>
+      <p class="font-body text-[0.95rem] text-mid mb-6 m-0 leading-relaxed">
+        Bạn có chắc muốn huỷ đơn hàng này? Thao tác không thể hoàn tác.
+      </p>
+      <div class="flex items-center gap-3 justify-end">
+        <button
+          class="btn-outline flex-1 sm:flex-none text-[0.8rem] py-2 px-6"
+          @click="cancelTarget = null"
+        >
+          Không
+        </button>
+        <button
+          class="btn-primary bg-red-600 hover:bg-red-700 flex-1 sm:flex-none text-[0.8rem] py-2 px-6"
+          @click="confirmCancelOrder"
+        >
+          Huỷ đơn
         </button>
       </div>
     </div>

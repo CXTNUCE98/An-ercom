@@ -21,6 +21,20 @@ export const useCartStore = defineStore('cart', () => {
     return CART_KEY_PREFIX + key;
   }
 
+  /** Backfill lineId/kind cho item cũ (giỏ lưu trước khi hỗ trợ combo). */
+  function migrateItem(raw: any): CartItem | null {
+    if (!raw) return null;
+    if (raw.lineId && raw.kind) return raw as CartItem;
+    // Item cũ chỉ có productId → coi là sản phẩm lẻ.
+    if (raw.productId) {
+      return { ...raw, kind: 'product', lineId: `p:${raw.productId}` };
+    }
+    if (raw.comboId) {
+      return { ...raw, kind: 'combo', lineId: `c:${raw.comboId}` };
+    }
+    return null;
+  }
+
   function readStore(key: string): { items: CartItem[]; appliedPromo: PromoCode | null } {
     if (!import.meta.client) return { items: [], appliedPromo: null };
     try {
@@ -35,8 +49,9 @@ export const useCartStore = defineStore('cart', () => {
       }
       if (!raw) return { items: [], appliedPromo: null };
       const data = JSON.parse(raw);
+      const rawItems = Array.isArray(data?.items) ? data.items : [];
       return {
-        items: Array.isArray(data?.items) ? data.items : [],
+        items: rawItems.map(migrateItem).filter(Boolean) as CartItem[],
         appliedPromo: data?.appliedPromo ?? null,
       };
     } catch {
@@ -59,7 +74,7 @@ export const useCartStore = defineStore('cart', () => {
   }
 
   function mergeItem(source: CartItem) {
-    const existing = items.value.find((i) => i.productId === source.productId);
+    const existing = items.value.find((i) => i.lineId === source.lineId);
     if (existing) existing.quantity += source.quantity;
     else items.value.push({ ...source });
   }
@@ -104,11 +119,14 @@ export const useCartStore = defineStore('cart', () => {
   const total = computed(() => subtotal.value - discount.value);
 
   function addItem(product: CatalogProduct, qty = 1) {
-    const existing = items.value.find((i) => i.productId === product.id);
+    const lineId = `p:${product.id}`;
+    const existing = items.value.find((i) => i.lineId === lineId);
     if (existing) {
       existing.quantity += qty;
     } else {
       items.value.push({
+        lineId,
+        kind: 'product',
         productId: product.id,
         slug: product.slug,
         name: product.name,
@@ -122,18 +140,59 @@ export const useCartStore = defineStore('cart', () => {
     }
   }
 
-  function removeItem(productId: string) {
-    items.value = items.value.filter((i) => i.productId !== productId);
+  /** Thêm combo vào giỏ — giữ giá combo ưu đãi (price = comboPrice). */
+  function addCombo(
+    combo: {
+      id: string;
+      slug: string;
+      name: string;
+      image?: string | null;
+      comboPrice: number;
+    },
+    qty = 1,
+  ) {
+    const lineId = `c:${combo.id}`;
+    const existing = items.value.find((i) => i.lineId === lineId);
+    if (existing) {
+      existing.quantity += qty;
+    } else {
+      items.value.push({
+        lineId,
+        kind: 'combo',
+        comboId: combo.id,
+        slug: combo.slug,
+        name: combo.name,
+        brand: 'Combo',
+        icon: 'gift',
+        image: combo.image ?? undefined,
+        price: combo.comboPrice,
+        quantity: qty,
+      });
+    }
   }
 
-  function updateQuantity(productId: string, qty: number) {
-    const item = items.value.find((i) => i.productId === productId);
+  function removeItem(lineId: string) {
+    items.value = items.value.filter((i) => i.lineId !== lineId);
+  }
+
+  function updateQuantity(lineId: string, qty: number) {
+    const item = items.value.find((i) => i.lineId === lineId);
     if (!item) return;
     if (qty <= 0) {
-      removeItem(productId);
+      removeItem(lineId);
     } else {
       item.quantity = qty;
     }
+  }
+
+  /** Thay toàn bộ item (dùng khi đồng bộ từ BE). */
+  function replaceItems(next: CartItem[]) {
+    items.value = next;
+  }
+
+  /** Đọc item trong giỏ khách (để gộp lên BE khi đăng nhập). */
+  function getGuestItems(): CartItem[] {
+    return readStore(GUEST_KEY).items;
   }
 
   async function applyPromo(code: string): Promise<boolean> {
@@ -156,7 +215,8 @@ export const useCartStore = defineStore('cart', () => {
 
   return {
     items, appliedPromo, isDrawerOpen, count, subtotal, discount, total,
-    addItem, removeItem, updateQuantity, applyPromo, clearPromo, clearCart,
+    addItem, addCombo, removeItem, updateQuantity, replaceItems, getGuestItems,
+    applyPromo, clearPromo, clearCart,
     toggleDrawer, openDrawer, closeDrawer, setOwner,
   };
 });

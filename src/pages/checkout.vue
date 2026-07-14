@@ -291,7 +291,7 @@ const summaryLineBase = 'flex justify-between text-[0.85rem] text-mid py-1';
 
       <div class="bg-card border border-rule p-7 self-start sticky top-[100px] max-[900px]:order-1 max-[900px]:static">
         <h2 class="font-display text-[1.1rem] font-bold text-text m-0 mb-5">Đơn hàng của bạn</h2>
-        <div v-for="item in cart.items" :key="item.productId" class="flex justify-between items-start py-2 gap-3">
+        <div v-for="item in cart.items" :key="item.lineId" class="flex justify-between items-start py-2 gap-3">
           <div class="flex flex-col">
             <span class="text-[0.85rem] text-text">{{ item.name }}</span>
             <span class="text-[0.72rem] text-smoke">× {{ item.quantity }}</span>

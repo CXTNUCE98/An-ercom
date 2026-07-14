@@ -113,7 +113,18 @@ useHead({
 });
 
 function addComboToCart() {
-  combo.value.items.forEach((it) => cart.addItem(it.product as any, 1));
+  const c = raw.value!;
+  // Thêm combo như một dòng giỏ giữ giá ưu đãi (không tách sản phẩm lẻ).
+  cart.addCombo(
+    {
+      id: c.id,
+      slug: c.slug,
+      name: c.name,
+      image: c.image ?? c.items[0]?.product.images?.[0] ?? null,
+      comboPrice: c.comboPrice,
+    },
+    1,
+  );
   addedToast.value = true;
   setTimeout(() => (addedToast.value = false), 2200);
 }
